@@ -46,10 +46,13 @@ Add the following dependency to your `pom.xml` file:
   </repository>
 </distributionManagement>
 ```
+## Eclipse
+
+```bash
+mvn eclipse:eclipse -DdownloadSources=true  -DdownloadJavadocs=true
+```
 ## Usage
 
-```java
-```
 ## License
 
 Copyright © 2013 Trevor Bernard
