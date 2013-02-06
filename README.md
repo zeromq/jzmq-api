@@ -2,12 +2,19 @@
 
 A Java ZeroMQ API for abstracting the various implementations of JZMQ
 
+## Warning
+
+Currently not in a functional state and the API is ever evolving and will be
+subject to much change.
+
 ## Installation
 
 Before you can begin using this library, you need to have the zmq and jzmq
-shared libraries in either: `/usr/lib`, `/usr/local/lib` before you
+shared libraries in either: `/usr/lib`, `/usr/local/lib`.
 
 ### Ubuntu 12.04 Precise
+
+This is currently how I go about setting up my environment.
 
 ```bash
 # This installs v3.2.2 of libzmq 
