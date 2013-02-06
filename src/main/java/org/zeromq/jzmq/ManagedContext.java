@@ -13,6 +13,7 @@ import org.zeromq.api.Context;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.sockets.PullSocketBuilder;
+import org.zeromq.jzmq.sockets.PushSocketBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
 /**
@@ -67,7 +68,9 @@ public class ManagedContext implements Context, Closeable {
         switch (type) {
         case PULL:
             return new PullSocketBuilder(this);
+        case PUSH:
+            return new PushSocketBuilder(this);
         }
-        return null;
+        throw new IllegalArgumentException("Socket type not supported: " + type);
     }
 }
