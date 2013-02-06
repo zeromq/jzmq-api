@@ -33,10 +33,17 @@ Add the following dependency to your `pom.xml` file:
     <groupId>trevorbernard</groupId>
     <artifactId>jzmq-api</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-</dependency>
-            
+</dependency>            
 ```
-
+```xml
+<distributionManagement>
+  <repository>
+    <id>clojars</id>
+    <name>Clojars repository</name>
+    <url>https://clojars.org/repo</url>
+  </repository>
+</distributionManagement>
+```
 ## Usage
 
 ```java
