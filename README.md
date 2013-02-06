@@ -49,7 +49,7 @@ Add the following dependency to your `pom.xml` file:
 ## Eclipse
 
 ```bash
-mvn eclipse:eclipse -DdownloadSources=true  -DdownloadJavadocs=true
+mvn eclipse:eclipse -DdownloadSources=true -DdownloadJavadocs=true
 ```
 ## Usage
 
