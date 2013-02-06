@@ -1,0 +1,10 @@
+before install:
+ - sudo add-apt-repository ppa:chris-lea/zeromq
+ - sudo apt-get update
+ - sudo apt-get install libzmq-dev libpgm-dev
+ - sudo dpkg -i debs/jzmq_2.1.0-1_amd64.deb
+language: java
+jdk:
+ - openjdk6
+ - openjdk7
+ - oraclejdk7
