@@ -38,13 +38,12 @@ Add the following dependency to your `pom.xml` file:
 </dependency>            
 ```
 ```xml
-<distributionManagement>
+<repositories>
   <repository>
-    <id>clojars</id>
-    <name>Clojars repository</name>
+    <id>clojars.org</id>
     <url>https://clojars.org/repo</url>
   </repository>
-</distributionManagement>
+</repositories>
 ```
 ## Eclipse
 
@@ -53,8 +52,12 @@ mvn eclipse:eclipse -DdownloadSources=true -DdownloadJavadocs=true
 ```
 ## Usage
 
+## Contribution Process
+
+This project uses the [C4 process](http://rfc.zeromq.org/spec:16) for all code changes.
+
 ## License
 
 Copyright © 2013 Trevor Bernard
 
-This library is licensed under the LGPLv3
+This is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
