@@ -1,6 +1,6 @@
 # jzmq-api
 
-[![Build Status](https://travis-ci.org/trevorbernard/jzmq-api.png)](https://travis-ci.org/trevorbernard/jzmq-api)
+[![Build Status](https://travis-ci.org/zeromq/jzmq-api.png)](https://travis-ci.org/zeromq/jzmq-api)
 
 A Java ZeroMQ API for abstracting the various implementations of JZMQ
 
