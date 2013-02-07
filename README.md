@@ -37,7 +37,14 @@ Add the following dependency to your `pom.xml` file:
     <version>0.1.0-SNAPSHOT</version>
 </dependency>            
 ```
-
+```xml
+<repositories>
+  <repository>
+    <id>sonatype-nexus-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </repository>
+-</repositories>
+```
 ## Eclipse
 
 ```bash
