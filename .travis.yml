@@ -1,7 +1,7 @@
-before install:
- - echo 'yes' | sudo add-apt-repository ppa:chris-lea/zeromq
- - sudo apt-get update
- - sudo apt-get install libzmq-dev libpgm-dev
+before_install:
+ - sudo add-apt-repository ppa:chris-lea/zeromq -y
+ - sudo apt-get update -y
+ - sudo apt-get install libzmq-dev libpgm-dev -y
  - sudo dpkg -i debs/jzmq_2.1.0-1_i386.deb
 
 language: java
