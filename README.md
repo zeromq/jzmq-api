@@ -25,7 +25,7 @@ sudo apt-get update
 sudo apt-get install libzmq-dev libpgm-dev
 
 cd /tmp
-wget https://raw.github.com/trevorbernard/jzmq-api/master/debs/jzmq_2.1.0-1_amd64.deb
+wget https://raw.github.com/zeromq/jzmq-api/master/debs/jzmq_2.1.0-1_amd64.deb
 sudo dpkg -i jzmq_2.1.0-1_amd64.deb
 ```
 Add the following dependency to your `pom.xml` file:
