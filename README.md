@@ -32,19 +32,12 @@ Add the following dependency to your `pom.xml` file:
 
 ```xml
 <dependency>
-    <groupId>trevorbernard</groupId>
+    <groupId>org.zeromq</groupId>
     <artifactId>jzmq-api</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>            
 ```
-```xml
-<repositories>
-  <repository>
-    <id>clojars.org</id>
-    <url>https://clojars.org/repo</url>
-  </repository>
-</repositories>
-```
+
 ## Eclipse
 
 ```bash
