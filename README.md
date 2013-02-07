@@ -59,6 +59,7 @@ This project uses the [C4 process](http://rfc.zeromq.org/spec:16) for all code c
 ## License
 
 Copyright © 2013 Trevor Bernard
+
 Copyright other contributors as noted in the AUTHORS file.
 
 This is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
