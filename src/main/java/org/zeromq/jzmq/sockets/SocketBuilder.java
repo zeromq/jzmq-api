@@ -12,13 +12,15 @@ import org.zeromq.jzmq.ManagedContext;
 public abstract class SocketBuilder implements Bindable, Connectable {
     private String identity;
     private long swapSize;
-    private long lingerMS;
+    private long lingerMS = 0;
     private long sendHWM;
     private long receiveHWM;
     private SocketType socketType;
+    protected ManagedContext context;
 
     public SocketBuilder(ManagedContext context, SocketType socketType) {
         this.socketType = socketType;
+        this.context = context;
     }
 
     /**

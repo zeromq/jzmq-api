@@ -6,7 +6,7 @@ import org.zeromq.ZMQ;
  * Send Flags 
  */
 public enum SendFlag {
-    NONE(-1), DONTWAIT(ZMQ.DONTWAIT), SNDMORE(ZMQ.SNDMORE);
+    NONE(0), DONTWAIT(ZMQ.DONTWAIT), SNDMORE(ZMQ.SNDMORE);
 
     private final int flag;
 

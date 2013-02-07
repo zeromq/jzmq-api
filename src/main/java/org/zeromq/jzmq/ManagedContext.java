@@ -37,6 +37,10 @@ public class ManagedContext implements Context, Closeable {
         this.context = context;
     }
 
+    public ZMQ.Context getZMQContext() {
+        return context;
+    }
+
     // Do people actually need this?
     public Collection<Socket> getSockets() {
         return Collections.unmodifiableCollection(sockets);
@@ -58,8 +62,10 @@ public class ManagedContext implements Context, Closeable {
             for (Socket s : sockets) {
                 destroySocket(s);
             }
+            System.out.println("Closed sockets");
             sockets.clear();
             context.term();
+            System.out.println("Killed context");
         }
     }
 

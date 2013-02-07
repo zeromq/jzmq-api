@@ -8,34 +8,24 @@ import org.zeromq.api.Context;
 import org.zeromq.api.ReceiveFlag;
 import org.zeromq.api.SendFlag;
 import org.zeromq.api.Socket;
-import org.zeromq.api.SocketType;
-import org.zeromq.jzmq.sockets.SocketBuilder;
 
 /**
  * Managed JZMQ Socket
  */
-public class ManagedSocket implements Socket {
-    private final SocketType socketType;
-    private final long lingerMS;
-    private final long sendHWM;
-    private final long recvHWM;
+public class ManagedSocket implements Socket, Comparable<Socket> {
+    // private final SocketType socketType;
+    // private final long lingerMS;
+    // private final long sendHWM;
+    // private final long recvHWM;
 
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
     private ManagedContext managedContext;
     private ZMQ.Socket socket;
 
-    public ManagedSocket(ManagedContext managedContext, SocketBuilder builder) {
-        if (builder.getSocketType() == null)
-            throw new IllegalArgumentException("SocketType cannot be null");
-        if (managedContext == null)
-            throw new IllegalArgumentException("ManagedContext cannot be null");
-
+    public ManagedSocket(ManagedContext managedContext, ZMQ.Socket socket) {
+        this.socket = socket;
         this.managedContext = managedContext;
-        this.lingerMS = builder.getLinger();
-        this.sendHWM = builder.getSendHWM();
-        this.recvHWM = builder.getRecvHWM();
-        this.socketType = builder.getSocketType();
     }
 
     public ZMQ.Socket getZMQSocket() {
@@ -77,5 +67,16 @@ public class ManagedSocket implements Socket {
     @Override
     public Context getContext() {
         return managedContext;
+    }
+
+    // This is probably a bad way to compare :S
+    @Override
+    public int compareTo(Socket o) {
+        if (socket.getFD() < o.getZMQSocket().getFD())
+            return -1;
+        else if (socket.getFD() == o.getZMQSocket().getFD())
+            return 0;
+        else
+            return 1;
     }
 }
