@@ -14,6 +14,10 @@ subject to much change.
 Before you can begin using this library, you need to have the zmq and jzmq
 shared libraries in either: `/usr/lib`, `/usr/local/lib`.
 
+## Getting Started
+
+You can take a look at the latest javadocs [here](http://zeromq.github.com/jzmq-api/javadocs/).
+
 ### Ubuntu 12.04 Precise
 
 This is currently how I go about setting up my environment.
