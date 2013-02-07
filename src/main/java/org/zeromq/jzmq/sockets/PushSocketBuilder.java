@@ -22,7 +22,9 @@ public class PushSocketBuilder extends SocketBuilder {
         socket.setLinger(this.getLinger());
         socket.setSndHWM(this.getSendHWM());
         socket.connect(url);
-        return new ManagedSocket(context, socket);
+        ManagedSocket s = new ManagedSocket(context, socket);
+        context.addSocket(s);
+        return s;
     }
 
     @Override

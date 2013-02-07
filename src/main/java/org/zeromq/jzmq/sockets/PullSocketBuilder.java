@@ -24,6 +24,8 @@ public class PullSocketBuilder extends SocketBuilder {
         socket.setLinger(this.getLinger());
         socket.setRcvHWM(this.getRecvHWM());
         socket.bind(url);
-        return new ManagedSocket(context, socket);
+        ManagedSocket s = new ManagedSocket(context, socket);
+        context.addSocket(s);
+        return s;
     }
 }

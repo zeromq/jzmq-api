@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.zeromq.ZMQ;
@@ -33,7 +33,7 @@ public class ManagedContext implements Context, Closeable {
         if (context == null) {
             throw new IllegalArgumentException("Context cannot be null");
         }
-        this.sockets = new ConcurrentSkipListSet<Socket>();
+        this.sockets = new CopyOnWriteArraySet<Socket>();
         this.context = context;
     }
 
@@ -52,6 +52,7 @@ public class ManagedContext implements Context, Closeable {
                 socket.getZMQSocket().close();
             } catch (Exception ignore) {
             }
+            System.out.println("Destroyed socket");
             sockets.remove(socket);
         }
     }
@@ -62,11 +63,14 @@ public class ManagedContext implements Context, Closeable {
             for (Socket s : sockets) {
                 destroySocket(s);
             }
-            System.out.println("Closed sockets");
             sockets.clear();
             context.term();
             System.out.println("Killed context");
         }
+    }
+
+    public void addSocket(Socket socket) {
+        sockets.add(socket);
     }
 
     @Override

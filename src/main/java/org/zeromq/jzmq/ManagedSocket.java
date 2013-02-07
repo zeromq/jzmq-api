@@ -12,7 +12,7 @@ import org.zeromq.api.Socket;
 /**
  * Managed JZMQ Socket
  */
-public class ManagedSocket implements Socket, Comparable<Socket> {
+public class ManagedSocket implements Socket {
     // private final SocketType socketType;
     // private final long lingerMS;
     // private final long sendHWM;
@@ -67,16 +67,5 @@ public class ManagedSocket implements Socket, Comparable<Socket> {
     @Override
     public Context getContext() {
         return managedContext;
-    }
-
-    // This is probably a bad way to compare :S
-    @Override
-    public int compareTo(Socket o) {
-        if (socket.getFD() < o.getZMQSocket().getFD())
-            return -1;
-        else if (socket.getFD() == o.getZMQSocket().getFD())
-            return 0;
-        else
-            return 1;
     }
 }
