@@ -9,7 +9,7 @@ public interface Sender {
      * 
      * @param buf element
      */
-    public void send(byte[] buf);
+    public boolean send(byte[] buf);
 
     /**
      * Insert the specified element into the ØMQ Socket queue.
@@ -18,5 +18,5 @@ public interface Sender {
      * @param offset
      * @param flag send flag
      */
-    public void send(byte[] buf, int offset, MessageFlag flag);
+    public boolean send(byte[] buf, int offset, MessageFlag flag);
 }

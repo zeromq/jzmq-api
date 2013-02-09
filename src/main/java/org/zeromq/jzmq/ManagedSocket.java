@@ -50,13 +50,13 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public void send(byte[] buf) {
-        send(buf, 0, MessageFlag.NONE);
+    public boolean send(byte[] buf) {
+        return send(buf, 0, MessageFlag.NONE);
     }
 
     @Override
-    public void send(byte[] buf, int offset, MessageFlag flag) {
-        socket.send(buf, offset, flag.getFlag());
+    public boolean send(byte[] buf, int offset, MessageFlag flag) {
+        return socket.send(buf, offset, flag.getFlag());
     }
 
     @Override
