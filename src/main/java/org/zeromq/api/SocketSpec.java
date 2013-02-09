@@ -1,11 +1,12 @@
 package org.zeromq.api;
 
+
 /**
  * ØMQ Socket specification
  * 
- * Socket options that all Socket types support
+ * Socket options that for Socket type
  */
-public interface BaseSocketSpec {
+public interface SocketSpec {
     public SocketType getSocketType();
 
     public TransportType getTransportType();
