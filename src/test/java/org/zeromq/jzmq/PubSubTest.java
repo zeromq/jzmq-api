@@ -25,7 +25,12 @@ public class PubSubTest {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                byte[] contents = subscriber.receive();
+                byte[] contents = new byte[0];
+                try {
+                    contents = subscriber.receive();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 assertEquals("Hello", new String(contents));
                 resultSeen.set(true);
             }
