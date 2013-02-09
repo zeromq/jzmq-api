@@ -1,10 +1,9 @@
-package org.zeromq.jzmq;
+package org.zeromq.api;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.zeromq.api.Socket;
-import org.zeromq.api.SocketType;
+import org.zeromq.jzmq.ManagedContext;
 
 import static junit.framework.Assert.assertEquals;
 

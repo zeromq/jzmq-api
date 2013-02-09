@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zeromq.ContextFactory;
 
-public class ZMQTest extends TestCase {
+public class PushPullTest extends TestCase {
     private Context context;
 
     @Before
