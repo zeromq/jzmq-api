@@ -24,8 +24,9 @@ public class RepSocketBuilder extends SocketBuilder {
         socket.setRcvHWM(getRecvHWM());
         socket.setSndHWM(getSendHWM());
         socket.bind(url);
-        for (String s : additionalUrls)
+        for (String s : additionalUrls) {
             socket.bind(s);
+        }
         return new ManagedSocket(context, socket);
     }
 }
