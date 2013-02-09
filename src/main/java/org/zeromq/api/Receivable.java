@@ -7,15 +7,13 @@ public interface Receivable {
     /**
      * 
      * @return
-     * @throws Exception
      */
-    public byte[] receive() throws Exception;
+    public byte[] receive();
 
     /**
      * 
      * @param flag message receive flag
      * @return bytes
-     * @throws Exception
      */
-    public byte[] receive(MessageFlag flag) throws Exception;
+    public byte[] receive(MessageFlag flag);
 }

@@ -8,7 +8,7 @@ package org.zeromq.api;
 public interface TypedReceivable<T> {
     public T deserialize(byte[] buf);
 
-    public T receive() throws Exception;
+    public T receive();
 
     public T receive(MessageFlag flag);
 }
