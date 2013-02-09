@@ -1,43 +1,42 @@
 package org.zeromq.jzmq;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.zeromq.api.Context;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 public class PubSubTest {
+    private ManagedContext context;
+
+    @Before
+    public void setUp() {
+        context = new ManagedContext();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        context.close();
+    }
 
     @Test(timeout = 1000)
     public void testPubSub() throws Exception {
-        Context context = new ManagedContext();
         Socket publisher = context.buildSocket(SocketType.PUB).bind("inproc://publisher");
-
-        final AtomicBoolean resultSeen = new AtomicBoolean(false);
-        final Socket subscriber = context.buildSubSocket().subscribe("".getBytes()).connect("inproc://publisher");
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                byte[] contents = subscriber.receive();
-                assertEquals("Hello", new String(contents));
-                resultSeen.set(true);
-            }
-        };
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(runnable);
-
+        Socket subscriber = context.buildSubSocket().subscribe("H".getBytes()).connect("inproc://publisher");
         publisher.send("Hello".getBytes());
+        byte[] contents = subscriber.receive();
+        assertEquals("Hello", new String(contents));
+    }
 
-        executorService.shutdown();
-        executorService.awaitTermination(1, TimeUnit.SECONDS);
-        assertTrue(resultSeen.get());
-        context.close();
+    @Test(timeout = 1000)
+    public void testMultipleSubscribers() throws Exception {
+        Socket publisher = context.buildSocket(SocketType.PUB).bind("inproc://publisher");
+        Socket subscriber1 = context.buildSubSocket().subscribe("H".getBytes()).connect("inproc://publisher");
+        Socket subscriber2 = context.buildSubSocket().subscribe("H".getBytes()).connect("inproc://publisher");
+        publisher.send("Hello".getBytes());
+        assertEquals("Hello", new String(subscriber1.receive()));
+        assertEquals("Hello", new String(subscriber2.receive()));
     }
 }
