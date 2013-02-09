@@ -4,5 +4,5 @@ package org.zeromq.api;
  * 
  */
 public interface Bindable {
-    public Socket bind(String url);
+    public Socket bind(String url, String... additionalUrls);
 }

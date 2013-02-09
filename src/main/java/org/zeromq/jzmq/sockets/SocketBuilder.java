@@ -139,5 +139,5 @@ public abstract class SocketBuilder implements Bindable, Connectable {
 
     public abstract Socket connect(String url);
 
-    public abstract Socket bind(String url);
+    public abstract Socket bind(String url, String... additionalUrls);
 }

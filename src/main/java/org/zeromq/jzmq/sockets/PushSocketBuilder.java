@@ -26,7 +26,7 @@ public class PushSocketBuilder extends SocketBuilder {
     }
 
     @Override
-    public Socket bind(String url) {
+    public Socket bind(String url, String... additionalUrls) {
         throw new IllegalArgumentException("PUSH socket cannot bind");
     }
 }

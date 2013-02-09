@@ -18,12 +18,14 @@ public class PullSocketBuilder extends SocketBuilder {
     }
 
     @Override
-    public Socket bind(String url) {
+    public Socket bind(String url, String... additionalUrls) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
         socket.setRcvHWM(this.getRecvHWM());
         socket.bind(url);
+        for (String s : additionalUrls)
+            socket.bind(s);
         return new ManagedSocket(context, socket);
     }
 }

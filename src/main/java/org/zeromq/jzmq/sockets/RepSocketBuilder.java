@@ -17,13 +17,15 @@ public class RepSocketBuilder extends SocketBuilder {
     }
 
     @Override
-    public Socket bind(String url) {
+    public Socket bind(String url, String... additionalUrls) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
         socket.setRcvHWM(getRecvHWM());
         socket.setSndHWM(getSendHWM());
         socket.bind(url);
+        for (String s : additionalUrls)
+            socket.bind(s);
         return new ManagedSocket(context, socket);
     }
 }

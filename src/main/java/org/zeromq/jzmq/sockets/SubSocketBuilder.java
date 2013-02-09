@@ -34,7 +34,7 @@ public class SubSocketBuilder extends SocketBuilder implements Subscribable {
     }
 
     @Override
-    public Socket bind(String url) {
+    public Socket bind(String url, String... additionalUrls) {
         return null;
     }
 }
