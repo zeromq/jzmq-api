@@ -4,6 +4,7 @@ import org.zeromq.ZMQ;
 import org.zeromq.api.Context;
 import org.zeromq.api.MessageFlag;
 import org.zeromq.api.Socket;
+import org.zeromq.api.TransportType;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ManagedSocket implements Socket {
     // private final SocketType socketType;
+    // private final TransportType transportType;
     // private final long lingerMS;
     // private final long sendHWM;
     // private final long recvHWM;
@@ -67,5 +69,10 @@ public class ManagedSocket implements Socket {
     @Override
     public Context getContext() {
         return managedContext;
+    }
+
+    @Override
+    public TransportType getTransportType() {
+        return null;
     }
 }

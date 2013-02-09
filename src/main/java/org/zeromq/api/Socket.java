@@ -15,4 +15,6 @@ public interface Socket extends Sendable, Receivable, Closeable {
     public Context getContext();
 
     public boolean isActive();
+
+    public TransportType getTransportType();
 }
