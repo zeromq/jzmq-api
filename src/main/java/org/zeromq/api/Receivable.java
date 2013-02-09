@@ -1,12 +1,21 @@
 package org.zeromq.api;
 
-
 /**
  * 
- * @param <T> type t
  */
-public interface Receivable<T> {
-    public T receive() throws Exception;
+public interface Receivable {
+    /**
+     * 
+     * @return
+     * @throws Exception
+     */
+    public byte[] receive() throws Exception;
 
-    public T receive(MessageFlag flag) throws Exception;
+    /**
+     * 
+     * @param flag message receive flag
+     * @return bytes
+     * @throws Exception
+     */
+    public byte[] receive(MessageFlag flag) throws Exception;
 }
