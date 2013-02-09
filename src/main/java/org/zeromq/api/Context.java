@@ -5,11 +5,18 @@ import org.zeromq.jzmq.sockets.SubSocketBuilder;
 
 import java.io.Closeable;
 
-
 /**
- * Define a Context interface to encapsulate the ZMQ.Context
+ * A ØMQ context is thread safe and may be shared among as many application threads as necessary, without any additional
+ * locking required on the part of the caller.
  */
 public interface Context extends Closeable {
+    /**
+     * Create a ØMQ Socket of type SocketType
+     * 
+     * @param type socket type
+     * @return builder object
+     */
     SocketBuilder createSocket(SocketType type);
+    
     SubSocketBuilder createSubSocket();
 }
