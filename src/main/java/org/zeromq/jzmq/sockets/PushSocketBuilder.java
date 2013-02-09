@@ -16,7 +16,7 @@ public class PushSocketBuilder extends SocketBuilder {
     }
 
     @Override
-    public Socket connect(String url) throws Exception {
+    public Socket connect(String url) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
@@ -26,7 +26,7 @@ public class PushSocketBuilder extends SocketBuilder {
     }
 
     @Override
-    public Socket bind(String url) throws Exception {
+    public Socket bind(String url) {
         throw new IllegalArgumentException("PUSH socket cannot bind");
     }
 }

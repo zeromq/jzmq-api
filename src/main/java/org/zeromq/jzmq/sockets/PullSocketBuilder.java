@@ -13,12 +13,12 @@ public class PullSocketBuilder extends SocketBuilder {
     }
 
     @Override
-    public Socket connect(String url) throws Exception {
+    public Socket connect(String url) {
         throw new IllegalArgumentException("PULL socket cannot connect");
     }
 
     @Override
-    public Socket bind(String url) throws Exception {
+    public Socket bind(String url) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());

@@ -137,7 +137,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         return receiveHWM;
     }
 
-    public abstract Socket connect(String url) throws Exception;
+    public abstract Socket connect(String url);
 
-    public abstract Socket bind(String url) throws Exception;
+    public abstract Socket bind(String url);
 }

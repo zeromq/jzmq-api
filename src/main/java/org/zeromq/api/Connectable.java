@@ -8,5 +8,5 @@ public interface Connectable {
      * @param url the url to connect to
      * @return the socket
      */
-    public Socket connect(String url) throws Exception;
+    public Socket connect(String url);
 }
