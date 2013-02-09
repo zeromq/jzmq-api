@@ -8,5 +8,5 @@ package org.zeromq.api;
 public interface Receivable<T> {
     public T receive() throws Exception;
 
-    public T receive(ReceiveFlag flag) throws Exception;
+    public T receive(MessageFlag flag) throws Exception;
 }

@@ -5,8 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.zeromq.ZMQ;
 import org.zeromq.api.Context;
-import org.zeromq.api.ReceiveFlag;
-import org.zeromq.api.SendFlag;
+import org.zeromq.api.MessageFlag;
 import org.zeromq.api.Socket;
 
 /**
@@ -43,17 +42,17 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public byte[] receive(ReceiveFlag flag) throws Exception {
+    public byte[] receive(MessageFlag flag) throws Exception {
         return socket.recv(flag.getFlag());
     }
 
     @Override
     public void send(byte[] buf) throws Exception {
-        send(buf, 0, SendFlag.NONE);
+        send(buf, 0, MessageFlag.NONE);
     }
 
     @Override
-    public void send(byte[] buf, int offset, SendFlag flag) throws Exception {
+    public void send(byte[] buf, int offset, MessageFlag flag) throws Exception {
         socket.send(buf, offset, flag.getFlag());
     }
 
