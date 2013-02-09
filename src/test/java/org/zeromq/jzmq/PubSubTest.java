@@ -18,10 +18,10 @@ public class PubSubTest {
     @Test(timeout = 1000)
     public void testPubSub() throws Exception {
         Context context = new ManagedContext();
-        Socket publisher = context.createSocket(SocketType.PUB).bind("inproc://publisher");
+        Socket publisher = context.buildSocket(SocketType.PUB).bind("inproc://publisher");
 
         final AtomicBoolean resultSeen = new AtomicBoolean(false);
-        final Socket subscriber = context.createSubSocket().subscribe("".getBytes()).connect("inproc://publisher");
+        final Socket subscriber = context.buildSubSocket().subscribe("".getBytes()).connect("inproc://publisher");
         Runnable runnable = new Runnable() {
             @Override
             public void run() {

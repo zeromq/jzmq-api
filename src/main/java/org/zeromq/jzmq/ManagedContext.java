@@ -82,7 +82,7 @@ public class ManagedContext implements Context {
     }
 
     @Override
-    public SocketBuilder createSocket(SocketType type) {
+    public SocketBuilder buildSocket(SocketType type) {
         switch (type) {
             case PULL:
                 return new PullSocketBuilder(this);
@@ -90,12 +90,16 @@ public class ManagedContext implements Context {
                 return new PushSocketBuilder(this);
             case PUB :
                 return new PubSocketBuilder(this);
+            case REP:
+                return new RepSocketBuilder(this);
+            case REQ:
+                return new ReqSocketBuilder(this);
         }
         throw new IllegalArgumentException("Socket type not supported: " + type);
     }
 
     @Override
-    public SubSocketBuilder createSubSocket() {
+    public SubSocketBuilder buildSubSocket() {
         return new SubSocketBuilder(this);
     }
 }

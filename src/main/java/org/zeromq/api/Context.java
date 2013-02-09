@@ -16,7 +16,10 @@ public interface Context extends Closeable {
      * @param type socket type
      * @return builder object
      */
-    SocketBuilder createSocket(SocketType type);
-    
-    SubSocketBuilder createSubSocket();
+    SocketBuilder buildSocket(SocketType type);
+
+    /**
+     * Create a SUB socket builder.
+     */
+    SubSocketBuilder buildSubSocket();
 }
