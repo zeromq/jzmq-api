@@ -1,13 +1,5 @@
 package org.zeromq.jzmq;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ;
@@ -18,10 +10,17 @@ import org.zeromq.jzmq.sockets.PullSocketBuilder;
 import org.zeromq.jzmq.sockets.PushSocketBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Manage JZMQ Context
  */
-public class ManagedContext implements Context, Closeable {
+public class ManagedContext implements Context {
     private static final Logger log = LoggerFactory.getLogger(ManagedContext.class);
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
@@ -74,7 +73,7 @@ public class ManagedContext implements Context, Closeable {
     }
 
     // I'd really like this to be private but I don't want all the builders in here
-    // If we only deal with the Socket interface, callers won't see this
+    // If we only deal with the Context interface, callers won't see this
     public void addSocket(Socket socket) {
         sockets.add(socket);
     }
@@ -82,10 +81,10 @@ public class ManagedContext implements Context, Closeable {
     @Override
     public SocketBuilder createSocket(SocketType type) {
         switch (type) {
-        case PULL:
-            return new PullSocketBuilder(this);
-        case PUSH:
-            return new PushSocketBuilder(this);
+            case PULL:
+                return new PullSocketBuilder(this);
+            case PUSH:
+                return new PushSocketBuilder(this);
         }
         throw new IllegalArgumentException("Socket type not supported: " + type);
     }
