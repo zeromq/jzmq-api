@@ -7,7 +7,7 @@ import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.ManagedSocket;
 
 /**
- * 
+ * For building sockets of type PUSH.
  */
 public class PushSocketBuilder extends SocketBuilder {
 
@@ -22,9 +22,7 @@ public class PushSocketBuilder extends SocketBuilder {
         socket.setLinger(this.getLinger());
         socket.setSndHWM(this.getSendHWM());
         socket.connect(url);
-        ManagedSocket s = new ManagedSocket(context, socket);
-        context.addSocket(s);
-        return s;
+        return new ManagedSocket(context, socket);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.zeromq;
 
-import org.zeromq.ZMQ;
 import org.zeromq.api.Context;
 import org.zeromq.jzmq.ManagedContext;
 

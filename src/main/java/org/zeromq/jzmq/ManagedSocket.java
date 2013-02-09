@@ -1,12 +1,12 @@
 package org.zeromq.jzmq;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.zeromq.ZMQ;
 import org.zeromq.api.Context;
 import org.zeromq.api.MessageFlag;
 import org.zeromq.api.Socket;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Managed JZMQ Socket
@@ -25,6 +25,7 @@ public class ManagedSocket implements Socket {
     public ManagedSocket(ManagedContext managedContext, ZMQ.Socket socket) {
         this.socket = socket;
         this.managedContext = managedContext;
+        this.managedContext.addSocket(this);
     }
 
     public ZMQ.Socket getZMQSocket() {
@@ -33,26 +34,26 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean isActive() {
-        return isClosed.get() == false;
+        return !isClosed.get();
     }
 
     @Override
-    public byte[] receive() throws Exception {
+    public byte[] receive() {
         return socket.recv(0);
     }
 
     @Override
-    public byte[] receive(MessageFlag flag) throws Exception {
+    public byte[] receive(MessageFlag flag) {
         return socket.recv(flag.getFlag());
     }
 
     @Override
-    public void send(byte[] buf) throws Exception {
+    public void send(byte[] buf) {
         send(buf, 0, MessageFlag.NONE);
     }
 
     @Override
-    public void send(byte[] buf, int offset, MessageFlag flag) throws Exception {
+    public void send(byte[] buf, int offset, MessageFlag flag) {
         socket.send(buf, offset, flag.getFlag());
     }
 
