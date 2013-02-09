@@ -25,7 +25,7 @@ public class PubSubTest {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                byte[] contents = new byte[0];
+                byte[] contents;
                 try {
                     contents = subscriber.receive();
                 } catch (Exception e) {
