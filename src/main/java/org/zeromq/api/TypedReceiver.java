@@ -5,7 +5,7 @@ package org.zeromq.api;
  *
  * @param <T> type
  */
-public interface TypedReceivable<T> {
+public interface TypedReceiver<T> {
     public T deserialize(byte[] buf);
 
     public T receive();

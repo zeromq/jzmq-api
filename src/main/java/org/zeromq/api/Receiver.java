@@ -3,7 +3,7 @@ package org.zeromq.api;
 /**
  * 
  */
-public interface Receivable {
+public interface Receiver {
     /**
      * 
      * @return
