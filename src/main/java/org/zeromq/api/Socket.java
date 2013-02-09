@@ -1,13 +1,13 @@
 package org.zeromq.api;
 
-import java.io.Closeable;
-
 import org.zeromq.ZMQ;
+
+import java.io.Closeable;
 
 /**
  * Manage the ZMQ.Socket
  */
-public interface Socket extends Sendable, Receivable<byte[]>, Closeable {
+public interface Socket extends Sendable, Receiver<byte[]>, Closeable {
     public ZMQ.Socket getZMQSocket();
 
     public Context getContext();

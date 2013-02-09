@@ -6,9 +6,7 @@ import org.zeromq.ZMQ;
 import org.zeromq.api.Context;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
-import org.zeromq.jzmq.sockets.PullSocketBuilder;
-import org.zeromq.jzmq.sockets.PushSocketBuilder;
-import org.zeromq.jzmq.sockets.SocketBuilder;
+import org.zeromq.jzmq.sockets.*;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -27,6 +25,10 @@ public class ManagedContext implements Context {
 
     private final ZMQ.Context context;
     private final Set<Socket> sockets;
+
+    public ManagedContext() {
+        this(ZMQ.context(1));
+    }
 
     public ManagedContext(int ioThreads) {
         this(ZMQ.context(ioThreads));
@@ -54,6 +56,7 @@ public class ManagedContext implements Context {
             try {
                 socket.getZMQSocket().close();
             } catch (Exception ignore) {
+                log.warn("Exception caught while closing underlying socket.", ignore);
             }
             log.info("closed socket");
             sockets.remove(socket);
@@ -85,7 +88,14 @@ public class ManagedContext implements Context {
                 return new PullSocketBuilder(this);
             case PUSH:
                 return new PushSocketBuilder(this);
+            case PUB :
+                return new PubSocketBuilder(this);
         }
         throw new IllegalArgumentException("Socket type not supported: " + type);
+    }
+
+    @Override
+    public SubSocketBuilder createSubSocket() {
+        return new SubSocketBuilder(this);
     }
 }

@@ -1,6 +1,7 @@
 package org.zeromq.api;
 
 import org.zeromq.jzmq.sockets.SocketBuilder;
+import org.zeromq.jzmq.sockets.SubSocketBuilder;
 
 import java.io.Closeable;
 
@@ -10,4 +11,5 @@ import java.io.Closeable;
  */
 public interface Context extends Closeable {
     SocketBuilder createSocket(SocketType type);
+    SubSocketBuilder createSubSocket();
 }
