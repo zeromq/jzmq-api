@@ -22,4 +22,14 @@ public interface Context extends Closeable {
      * Create a SUB socket builder.
      */
     SubSocketBuilder buildSubSocket();
+
+    /**
+     * @return the 0mq version, in a pretty-printed String.
+     */
+    String getVersionString();
+
+    /**
+     * @return the 0mq version, in integer form.
+     */
+    int getFullVersion();
 }

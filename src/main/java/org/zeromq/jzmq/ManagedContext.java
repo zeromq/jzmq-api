@@ -102,4 +102,14 @@ public class ManagedContext implements Context {
     public SubSocketBuilder buildSubSocket() {
         return new SubSocketBuilder(this);
     }
+
+    @Override
+    public String getVersionString() {
+        return ZMQ.getVersionString();
+    }
+
+    @Override
+    public int getFullVersion() {
+        return ZMQ.getFullVersion();
+    }
 }
