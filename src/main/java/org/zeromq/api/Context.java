@@ -18,12 +18,12 @@ public interface Context extends Closeable {
     SocketBuilder buildSocket(SocketType type);
 
     /**
-     * @return the 0mq version, in a pretty-printed String.
+     * @return the ØMQ version, in a pretty-printed String.
      */
     String getVersionString();
 
     /**
-     * @return the 0mq version, in integer form.
+     * @return the ØMQ version, in integer form.
      */
     int getFullVersion();
 }

@@ -4,7 +4,7 @@ package org.zeromq.api;
 /**
  * ØMQ Socket specification
  * 
- * Socket options that for Socket type
+ * Socket options for that Socket type
  */
 public interface SocketSpec {
     public SocketType getSocketType();
