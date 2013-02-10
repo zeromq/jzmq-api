@@ -14,7 +14,13 @@ public class PullSocketBuilder extends SocketBuilder {
 
     @Override
     public Socket connect(String url) {
-        throw new IllegalArgumentException("PULL socket cannot connect");
+        ZMQ.Context zmqContext = context.getZMQContext();
+        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
+        socket.setLinger(this.getLinger());
+        socket.setSndHWM(this.getSendHWM());
+        socket.setRcvHWM(this.getReceiveHWM());
+        socket.connect(url);
+        return new ManagedSocket(context, socket);
     }
 
     @Override
@@ -23,6 +29,7 @@ public class PullSocketBuilder extends SocketBuilder {
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
         socket.setRcvHWM(this.getReceiveHWM());
+        socket.setSndHWM(this.getSendHWM());
         socket.bind(url);
         for (String s : additionalUrls) {
             socket.bind(s);
