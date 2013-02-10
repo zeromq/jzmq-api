@@ -6,8 +6,7 @@ A Java ZeroMQ API for abstracting the various implementations of JZMQ
 
 ## Warning
 
-Currently not in a functional state and the API is ever evolving and will be
-subject to much change.
+The API is still in it's infancy and will be subject to much change.
 
 ## Installation
 
