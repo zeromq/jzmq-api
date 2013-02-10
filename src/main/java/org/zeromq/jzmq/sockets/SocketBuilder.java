@@ -11,13 +11,13 @@ public abstract class SocketBuilder implements Bindable, Connectable {
     protected SocketSpec socketSpec;
 
     public class SocketSpec {
-        public String identity;
         public long swapSize;
         public long linger;
         public long sendHighwatermark;
         public long receiveHighWatermark;
         public SocketType socketType;
         public TransportType transportType;
+        public byte[] identity;
     };
 
     public SocketBuilder(ManagedContext context, SocketType socketType) {
@@ -68,7 +68,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @param identity the identity
      * @return builder object
      */
-    public SocketBuilder withIdentity(String identity) {
+    public SocketBuilder withIdentity(byte[] identity) {
         getSocketSpec().identity = identity;
         return this;
     }
@@ -78,7 +78,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * 
      * @return the identity
      */
-    public String getIdentity() {
+    public byte[] getIdentity() {
         return getSocketSpec().identity;
     }
 

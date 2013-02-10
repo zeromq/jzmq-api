@@ -27,8 +27,10 @@ public class SubSocketBuilder extends SocketBuilder implements Subscribable {
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
         socket.setRcvHWM(this.getReceiveHWM());
+        if (this.getIdentity() != null && this.getIdentity().length > 0) {
+            socket.setIdentity(this.getIdentity());
+        }
         socket.subscribe(subscription);
-
         socket.connect(url);
         return new ManagedSocket(context, socket);
     }

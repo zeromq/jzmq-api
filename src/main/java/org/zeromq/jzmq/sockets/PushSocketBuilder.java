@@ -22,21 +22,10 @@ public class PushSocketBuilder extends SocketBuilder {
         socket.setLinger(this.getLinger());
         socket.setRcvHWM(this.getReceiveHWM());
         socket.setSndHWM(this.getSendHWM());
-        socket.connect(url);
-        return new ManagedSocket(context, socket);
-    }
-
-    @Override
-    public Socket bind(String url, String... additionalUrls) {
-        ZMQ.Context zmqContext = context.getZMQContext();
-        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
-        socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getReceiveHWM());
-        socket.setSndHWM(this.getSendHWM());
-        socket.bind(url);
-        for (String s : additionalUrls) {
-            socket.bind(s);
+        if (this.getIdentity() != null && this.getIdentity().length > 0) {
+            socket.setIdentity(this.getIdentity());
         }
+        socket.connect(url);
         return new ManagedSocket(context, socket);
     }
 }

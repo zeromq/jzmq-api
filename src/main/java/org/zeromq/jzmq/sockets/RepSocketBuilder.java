@@ -19,6 +19,9 @@ public class RepSocketBuilder extends SocketBuilder {
         socket.setLinger(getLinger());
         socket.setRcvHWM(getReceiveHWM());
         socket.setSndHWM(getSendHWM());
+        if (this.getIdentity() != null && this.getIdentity().length > 0) {
+            socket.setIdentity(this.getIdentity());
+        }
         socket.bind(url);
         for (String s : additionalUrls) {
             socket.bind(s);

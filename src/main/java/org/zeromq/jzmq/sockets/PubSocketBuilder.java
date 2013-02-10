@@ -18,6 +18,9 @@ public class PubSocketBuilder extends SocketBuilder {
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
         socket.setRcvHWM(this.getReceiveHWM());
+        if (this.getIdentity() != null && this.getIdentity().length > 0) {
+            socket.setIdentity(this.getIdentity());
+        }
         socket.bind(url);
         for (String s : additionalUrls) {
             socket.bind(s);
