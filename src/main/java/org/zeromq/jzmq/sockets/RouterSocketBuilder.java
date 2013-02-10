@@ -6,9 +6,9 @@ import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.ManagedSocket;
 
-public class RepSocketBuilder extends SocketBuilder {
-    public RepSocketBuilder(ManagedContext managedContext) {
-        super(managedContext, SocketType.REP);
+public class RouterSocketBuilder extends SocketBuilder {
+    public RouterSocketBuilder(ManagedContext managedContext) {
+        super(managedContext, SocketType.ROUTER);
     }
 
     @Override
