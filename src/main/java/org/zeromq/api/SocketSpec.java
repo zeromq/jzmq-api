@@ -13,9 +13,9 @@ public interface SocketSpec {
 
     public long getLinger();
 
-    public long getReceiveHighWaterMark();
+    public long getReceiveHighWatermark();
 
-    public long getSendHighWaterMark();
+    public long getSendHighWatermark();
 
     public String getIdentity();
 

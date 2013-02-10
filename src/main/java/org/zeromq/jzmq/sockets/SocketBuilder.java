@@ -98,7 +98,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         return swapSize;
     }
 
-    public SocketBuilder withSendHWM(long sendHWM) {
+    public SocketBuilder withSendHighWatermark(long sendHWM) {
         this.sendHWM = sendHWM;
         return this;
     }
@@ -120,7 +120,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @param receiveHWM recv high water mark
      * @return builder object
      */
-    public SocketBuilder withReceiveHWM(long receiveHWM) {
+    public SocketBuilder withReceiveHighWatermark(long receiveHWM) {
         this.receiveHWM = receiveHWM;
         return this;
     }
