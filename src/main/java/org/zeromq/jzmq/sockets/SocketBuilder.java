@@ -7,16 +7,22 @@ import org.zeromq.jzmq.ManagedContext;
  * SocketBuilder
  */
 public abstract class SocketBuilder implements Bindable, Connectable {
-    private String identity;
-    private long swapSize;
-    private long lingerMS = 0;
-    private long sendHWM;
-    private long receiveHWM;
-    private SocketType socketType;
     protected ManagedContext context;
+    protected SocketSpec socketSpec;
+
+    public class SocketSpec {
+        public String identity;
+        public long swapSize;
+        public long linger;
+        public long sendHighwatermark;
+        public long receiveHighWatermark;
+        public SocketType socketType;
+        public TransportType transportType;
+    };
 
     public SocketBuilder(ManagedContext context, SocketType socketType) {
-        this.socketType = socketType;
+        this.socketSpec = new SocketSpec();
+        this.socketSpec.socketType = socketType;
         this.context = context;
     }
 
@@ -26,7 +32,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return socket type
      */
     public SocketType getSocketType() {
-        return socketType;
+        return socketSpec.socketType;
     }
 
     /**
@@ -37,7 +43,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return builder object
      */
     public SocketBuilder withLinger(long lingerMS) {
-        this.lingerMS = lingerMS;
+        getSocketSpec().linger = lingerMS;
         return this;
     }
 
@@ -47,7 +53,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return linger period
      */
     public long getLinger() {
-        return lingerMS;
+        return getSocketSpec().linger;
     }
 
     /**
@@ -63,7 +69,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return builder object
      */
     public SocketBuilder withIdentity(String identity) {
-        this.identity = identity;
+        getSocketSpec().identity = identity;
         return this;
     }
 
@@ -73,7 +79,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return the identity
      */
     public String getIdentity() {
-        return identity;
+        return getSocketSpec().identity;
     }
 
     /**
@@ -85,7 +91,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return builder object
      */
     public SocketBuilder withSwap(long swapSize) {
-        this.swapSize = swapSize;
+        getSocketSpec().swapSize = swapSize;
         return this;
     }
 
@@ -95,16 +101,26 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return the swap size
      */
     public long getSwap() {
-        return swapSize;
+        return getSocketSpec().swapSize;
     }
 
+    /**
+     * 
+     * @param sendHWM
+     * @return
+     */
     public SocketBuilder withSendHighWatermark(long sendHWM) {
-        this.sendHWM = sendHWM;
+        getSocketSpec().sendHighwatermark = sendHWM;
         return this;
     }
 
+    /**
+     * Get the send high watermark
+     * 
+     * @return send high watermark
+     */
     public long getSendHWM() {
-        return sendHWM;
+        return getSocketSpec().sendHighwatermark;
     }
 
     /**
@@ -121,7 +137,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return builder object
      */
     public SocketBuilder withReceiveHighWatermark(long receiveHWM) {
-        this.receiveHWM = receiveHWM;
+        getSocketSpec().receiveHighWatermark = receiveHWM;
         return this;
     }
 
@@ -131,19 +147,34 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * @return receive high water mark
      */
     public long getReceiveHWM() {
-        return receiveHWM;
+        return getSocketSpec().receiveHighWatermark;
     }
 
+    public SocketSpec getSocketSpec() {
+        return socketSpec;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Socket connect(String url) {
-        throw new UnsupportedOperationException("Socket type " + socketType + " does not support connecting.");
+        throw new UnsupportedOperationException("Socket type " + getSocketSpec().socketType + " does not support connecting.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Socket bind(String url, String... additionalUrls) {
-        throw new UnsupportedOperationException("Socket type " + socketType + " does not support binding.");
+        throw new UnsupportedOperationException("Socket type " + getSocketSpec().socketType + " does not support binding.");
     }
 
+    /**
+     * Coerce the SocketBuilder to be Subscribable
+     * 
+     * @return Subscribable
+     */
     public Subscribable asSubscribable() {
         return (SubSocketBuilder) this;
     }
