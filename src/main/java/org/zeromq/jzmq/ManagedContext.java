@@ -96,6 +96,10 @@ public class ManagedContext implements Context {
                 return new RepSocketBuilder(this);
             case REQ:
                 return new ReqSocketBuilder(this);
+            case ROUTER:
+                return new RouterSocketBuilder(this);
+            case DEALER:
+                return new DealerSocketBuilder(this);
         }
         throw new IllegalArgumentException("Socket type not supported: " + type);
     }

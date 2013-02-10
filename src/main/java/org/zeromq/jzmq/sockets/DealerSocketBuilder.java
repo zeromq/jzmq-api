@@ -6,25 +6,22 @@ import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.ManagedSocket;
 
-public class RepSocketBuilder extends SocketBuilder {
-    public RepSocketBuilder(ManagedContext managedContext) {
-        super(managedContext, SocketType.REP);
+public class DealerSocketBuilder extends SocketBuilder {
+    public DealerSocketBuilder(ManagedContext context) {
+        super(context, SocketType.DEALER);
     }
 
     @Override
-    public Socket bind(String url, String... additionalUrls) {
+    public Socket connect(String url) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
-        socket.setRcvHWM(getReceiveHWM());
         socket.setSndHWM(getSendHWM());
+        socket.setRcvHWM(getReceiveHWM());
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }
-        socket.bind(url);
-        for (String s : additionalUrls) {
-            socket.bind(s);
-        }
+        socket.connect(url);
         return new ManagedSocket(context, socket);
     }
 }
