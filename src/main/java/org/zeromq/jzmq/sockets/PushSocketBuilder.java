@@ -20,9 +20,23 @@ public class PushSocketBuilder extends SocketBuilder {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
+        socket.setRcvHWM(this.getReceiveHWM());
         socket.setSndHWM(this.getSendHWM());
         socket.connect(url);
         return new ManagedSocket(context, socket);
     }
 
+    @Override
+    public Socket bind(String url, String... additionalUrls) {
+        ZMQ.Context zmqContext = context.getZMQContext();
+        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
+        socket.setLinger(this.getLinger());
+        socket.setRcvHWM(this.getReceiveHWM());
+        socket.setSndHWM(this.getSendHWM());
+        socket.bind(url);
+        for (String s : additionalUrls) {
+            socket.bind(s);
+        }
+        return new ManagedSocket(context, socket);
+    }
 }
