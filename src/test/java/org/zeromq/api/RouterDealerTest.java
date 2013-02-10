@@ -26,6 +26,8 @@ public class RouterDealerTest extends TestCase {
         Socket dealer1 = context.buildSocket(SocketType.DEALER).withIdentity("A".getBytes()).connect("ipc://router.ipc");
         Socket dealer2 = context.buildSocket(SocketType.DEALER).withIdentity("B".getBytes()).connect("ipc://router.ipc");
 
+        // Unfortunately you have to wait until the dealers connect or dealer1.receive will block. Add poll later
+        Thread.sleep(100);
         router.send("A".getBytes(), 0, MessageFlag.SEND_MORE);
         router.send("END".getBytes());
         
