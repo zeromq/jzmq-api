@@ -23,7 +23,7 @@ public class PubSubTest {
     @Test(timeout = 1000)
     public void testPubSub() throws Exception {
         Socket publisher = context.buildSocket(SocketType.PUB).bind("inproc://publisher");
-        Socket subscriber = context.buildSubSocket().subscribe("H".getBytes()).connect("inproc://publisher");
+        Socket subscriber = context.buildSocket(SocketType.SUB).asSubscribable().subscribe("H".getBytes()).connect("inproc://publisher");
         publisher.send("Hello".getBytes());
         byte[] contents = subscriber.receive();
         assertEquals("Hello", new String(contents));
@@ -32,8 +32,8 @@ public class PubSubTest {
     @Test(timeout = 1000)
     public void testMultipleSubscribers() throws Exception {
         Socket publisher = context.buildSocket(SocketType.PUB).bind("inproc://publisher");
-        Socket subscriber1 = context.buildSubSocket().subscribe("H".getBytes()).connect("inproc://publisher");
-        Socket subscriber2 = context.buildSubSocket().subscribe("H".getBytes()).connect("inproc://publisher");
+        Socket subscriber1 = context.buildSocket(SocketType.SUB).asSubscribable().subscribe("H".getBytes()).connect("inproc://publisher");
+        Socket subscriber2 = context.buildSocket(SocketType.SUB).asSubscribable().subscribe("H".getBytes()).connect("inproc://publisher");
         publisher.send("Hello".getBytes());
         assertEquals("Hello", new String(subscriber1.receive()));
         assertEquals("Hello", new String(subscriber2.receive()));

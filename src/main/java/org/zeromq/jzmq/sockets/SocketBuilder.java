@@ -1,9 +1,6 @@
 package org.zeromq.jzmq.sockets;
 
-import org.zeromq.api.Bindable;
-import org.zeromq.api.Connectable;
-import org.zeromq.api.Socket;
-import org.zeromq.api.SocketType;
+import org.zeromq.api.*;
 import org.zeromq.jzmq.ManagedContext;
 
 /**
@@ -129,15 +126,25 @@ public abstract class SocketBuilder implements Bindable, Connectable {
     }
 
     /**
-     * Returns the recv high water mark
+     * Returns the receive high water mark
      * 
-     * @return recv high water mark
+     * @return receive high water mark
      */
-    public long getRecvHWM() {
+    public long getReceiveHWM() {
         return receiveHWM;
     }
 
-    public abstract Socket connect(String url);
+    @Override
+    public Socket connect(String url) {
+        throw new UnsupportedOperationException("Socket type " + socketType + " does not support connecting.");
+    }
 
-    public abstract Socket bind(String url, String... additionalUrls);
+    @Override
+    public Socket bind(String url, String... additionalUrls) {
+        throw new UnsupportedOperationException("Socket type " + socketType + " does not support binding.");
+    }
+
+    public Subscribable asSubscribable() {
+        return (SubSocketBuilder) this;
+    }
 }

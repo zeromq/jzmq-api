@@ -13,16 +13,11 @@ public class PubSocketBuilder extends SocketBuilder {
     }
 
     @Override
-    public Socket connect(String url) {
-        throw new IllegalStateException("Cannot call connect on a PUB Socket type");
-    }
-
-    @Override
     public Socket bind(String url, String... additionalUrls) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getRecvHWM());
+        socket.setRcvHWM(this.getReceiveHWM());
         socket.bind(url);
         for (String s : additionalUrls) {
             socket.bind(s);

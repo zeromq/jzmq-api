@@ -22,7 +22,7 @@ public class PullSocketBuilder extends SocketBuilder {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getRecvHWM());
+        socket.setRcvHWM(this.getReceiveHWM());
         socket.bind(url);
         for (String s : additionalUrls) {
             socket.bind(s);

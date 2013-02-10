@@ -88,19 +88,16 @@ public class ManagedContext implements Context {
                 return new PullSocketBuilder(this);
             case PUSH:
                 return new PushSocketBuilder(this);
-            case PUB :
+            case PUB:
                 return new PubSocketBuilder(this);
+            case SUB:
+                return new SubSocketBuilder(this);
             case REP:
                 return new RepSocketBuilder(this);
             case REQ:
                 return new ReqSocketBuilder(this);
         }
         throw new IllegalArgumentException("Socket type not supported: " + type);
-    }
-
-    @Override
-    public SubSocketBuilder buildSubSocket() {
-        return new SubSocketBuilder(this);
     }
 
     @Override

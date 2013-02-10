@@ -11,17 +11,13 @@ public class RepSocketBuilder extends SocketBuilder {
         super(managedContext, SocketType.REP);
     }
 
-    @Override
-    public Socket connect(String url) {
-        throw new UnsupportedOperationException("REP sockets must be bound, not connected.");
-    }
 
     @Override
     public Socket bind(String url, String... additionalUrls) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
-        socket.setRcvHWM(getRecvHWM());
+        socket.setRcvHWM(getReceiveHWM());
         socket.setSndHWM(getSendHWM());
         socket.bind(url);
         for (String s : additionalUrls) {

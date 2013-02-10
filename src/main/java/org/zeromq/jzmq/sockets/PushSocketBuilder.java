@@ -25,8 +25,4 @@ public class PushSocketBuilder extends SocketBuilder {
         return new ManagedSocket(context, socket);
     }
 
-    @Override
-    public Socket bind(String url, String... additionalUrls) {
-        throw new IllegalArgumentException("PUSH socket cannot bind");
-    }
 }

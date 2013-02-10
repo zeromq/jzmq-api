@@ -17,13 +17,9 @@ public class ReqSocketBuilder extends SocketBuilder {
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
         socket.setSndHWM(getSendHWM());
-        socket.setRcvHWM(getRecvHWM());
+        socket.setRcvHWM(getReceiveHWM());
         socket.connect(url);
         return new ManagedSocket(context, socket);
     }
 
-    @Override
-    public Socket bind(String url, String... additionalUrls) {
-        throw new UnsupportedOperationException("REQ sockets should be connected, rather than bound.");
-    }
 }
