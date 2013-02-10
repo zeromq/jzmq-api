@@ -3,9 +3,8 @@ package org.zeromq.jzmq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ;
-import org.zeromq.api.Context;
-import org.zeromq.api.Socket;
-import org.zeromq.api.SocketType;
+import org.zeromq.api.*;
+import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.sockets.*;
 
 import java.io.IOException;
@@ -112,5 +111,19 @@ public class ManagedContext implements Context {
     @Override
     public int getFullVersion() {
         return ZMQ.getFullVersion();
+    }
+
+    @Override
+    public PollerBuilder buildPoller() {
+        return new PollerBuilder(this);
+    }
+
+    public ZMQ.Poller newZmqPoller() {
+        return context.poller();
+    }
+
+    @Override
+    public Pollable newPollable(Socket socket, PollerType... options) {
+        return new PollableImpl(socket, options);
     }
 }

@@ -21,7 +21,7 @@ public class PushPullTest extends TestCase {
 
     @Test
     public void testSimplePushPull() throws Exception {
-        final String expected = "PING";
+        String expected = "PING";
         Socket puller = context.buildSocket(SocketType.PULL).bind("ipc://pushpull.ipc");
         Socket pusher = context.buildSocket(SocketType.PUSH).connect("ipc://pushpull.ipc");
         pusher.send(expected.getBytes());

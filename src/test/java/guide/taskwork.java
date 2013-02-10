@@ -4,7 +4,7 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
 
-public class taskworker {
+public class taskwork {
 
     public static void main(String[] args) throws InterruptedException {
         ManagedContext context = new ManagedContext();

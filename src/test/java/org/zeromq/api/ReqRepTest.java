@@ -23,7 +23,7 @@ public class ReqRepTest {
 
     @Test(timeout = 1000)
     public void testReqRep() throws Exception {
-        final Socket repSocket = context.buildSocket(SocketType.REP).bind("inproc://serverSocket");
+        Socket repSocket = context.buildSocket(SocketType.REP).bind("inproc://serverSocket");
         Socket requestSocket = context.buildSocket(SocketType.REQ).connect("inproc://serverSocket");
         requestSocket.send("request".getBytes());
         byte[] request = repSocket.receive();
