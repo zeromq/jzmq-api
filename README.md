@@ -15,7 +15,9 @@ shared libraries in either: `/usr/lib`, `/usr/local/lib`.
 
 ## Getting Started
 
-You can take a look at the latest javadocs [here](http://zeromq.github.com/jzmq-api/javadocs/).
+The latest [javadocs](http://zeromq.github.com/jzmq-api/javadocs/).
+
+Be sure to read the [wiki](https://github.com/zeromq/jzmq-api/wiki).
 
 ### Ubuntu 12.04 Precise
 
