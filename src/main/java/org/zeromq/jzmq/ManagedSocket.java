@@ -60,10 +60,10 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public boolean send(byte[] buf, MessageFlag flag) {
-        System.out.println("ManagedSocket.send");
-        boolean result = socket.send(buf, flag.getFlag());
-        System.out.println("ManagedSocket.send complete");
+    public boolean sendMore(String message) {
+        System.out.println("ManagedSocket.sendMore");
+        boolean result = socket.sendMore(message);
+        System.out.println("ManagedSocket.sendMore complete");
         return result;
     }
 
