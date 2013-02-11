@@ -11,7 +11,7 @@ public interface Sender {
      */
     public boolean send(byte[] buf);
 
-    public boolean sendMore(String message);
+    public boolean send(byte[] message, MessageFlag flag);
 
     /**
      * Insert the specified element into the ØMQ Socket queue.

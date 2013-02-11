@@ -26,8 +26,8 @@ public class DealerRepTest extends TestCase {
         Socket dealerSocket = context.buildSocket(SocketType.DEALER).bind("inproc://serverSocket");
         Socket replySocket = context.buildSocket(SocketType.REP).connect("inproc://serverSocket");
 
-        dealerSocket.sendMore("returnAddress");
-        dealerSocket.sendMore("");
+        dealerSocket.send("returnAddress".getBytes(), MessageFlag.SEND_MORE);
+        dealerSocket.send("".getBytes(), MessageFlag.SEND_MORE);
         dealerSocket.send("request".getBytes());
 
         byte[] request = replySocket.receive();
