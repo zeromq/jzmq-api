@@ -8,12 +8,17 @@ public interface Receiver {
      * 
      * @return
      */
-    public byte[] receive();
+     byte[] receive();
 
     /**
      * 
      * @param flag message receive flag
      * @return bytes
      */
-    public byte[] receive(MessageFlag flag);
+    byte[] receive(MessageFlag flag);
+
+    /**
+     * This receiver has more of a multi-part message waiting for receipt.
+     */
+    boolean hasMoreToReceive();
 }

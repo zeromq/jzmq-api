@@ -50,8 +50,18 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
+    public boolean hasMoreToReceive() {
+        return socket.hasReceiveMore();
+    }
+
+    @Override
     public boolean send(byte[] buf) {
         return send(buf, 0, MessageFlag.NONE);
+    }
+
+    @Override
+    public boolean send(byte[] buf, MessageFlag flag) {
+        return send(buf, 0, flag);
     }
 
     @Override
