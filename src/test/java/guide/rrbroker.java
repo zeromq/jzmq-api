@@ -35,7 +35,11 @@ public class rrbroker {
             while (!done) {
                 byte[] bytes = source.receive();
                 done = !source.hasMoreToReceive();
-                destination.send(bytes, !done ? MessageFlag.SEND_MORE : MessageFlag.NONE);
+                if (done) {
+                    destination.send(bytes);
+                } else {
+                    destination.send(bytes, 0, MessageFlag.SEND_MORE);
+                }
             }
         }
     }
