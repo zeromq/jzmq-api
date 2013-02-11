@@ -31,7 +31,7 @@ public class DealerRepTest extends TestCase {
 
         dealerSocket.send("returnAddress".getBytes(), MessageFlag.SEND_MORE);
         System.out.println("sent address");
-        dealerSocket.send(new byte[0], MessageFlag.SEND_MORE);
+        dealerSocket.send("".getBytes(), MessageFlag.SEND_MORE);
         System.out.println("sent blank");
         dealerSocket.send("request".getBytes());
         System.out.println("sent request frame");
