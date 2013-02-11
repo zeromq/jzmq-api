@@ -38,4 +38,15 @@ public class DealerRepTest extends TestCase {
         assertArrayEquals("".getBytes(), dealerSocket.receive());
         assertArrayEquals("response".getBytes(), dealerSocket.receive());
     }
+
+    @Test
+    public void testBrokenStuff() throws Exception {
+        Socket testServer = context.buildSocket(SocketType.REP).bind("inproc://borken");
+        Socket testSocket = context.buildSocket(SocketType.REQ).connect("inproc://borken");
+        testSocket.send("".getBytes(), MessageFlag.SEND_MORE);
+        testSocket.send("hello, there".getBytes());
+        byte[] received = testServer.receive();
+        assertEquals(0, received.length);
+        testServer.receive();
+    }
 }
