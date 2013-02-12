@@ -48,7 +48,7 @@ Add the following dependency to your `pom.xml` file:
     <id>sonatype-nexus-snapshots</id>
     <url>https://oss.sonatype.org/content/repositories/snapshots</url>
   </repository>
--</repositories>
+</repositories>
 ```
 ## Eclipse
 
