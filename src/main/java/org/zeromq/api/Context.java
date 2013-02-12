@@ -42,4 +42,9 @@ public interface Context extends Closeable {
      * @return a new Pollable, for use with a Poller.
      */
     Pollable newPollable(Socket socket, PollerType... options);
+
+    /**
+     * Create a ZMQ proxy and start it up.  Returns when the context is closed.
+     */
+    void proxy(Socket frontEnd, Socket backEnd);
 }

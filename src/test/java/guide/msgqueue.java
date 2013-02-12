@@ -6,9 +6,6 @@ import org.zeromq.jzmq.ManagedContext;
 
 import java.io.IOException;
 
-/**
- * On hold until the zmq_proxy function is available in our version of the jzmq jni libs.
- */
 public class msgqueue {
     public static void main(String[] args) throws IOException {
         ManagedContext context = new ManagedContext();
@@ -16,7 +13,7 @@ public class msgqueue {
         Socket frontEnd = context.buildSocket(SocketType.ROUTER).bind("tcp://*:5559");
         Socket backEnd = context.buildSocket(SocketType.DEALER).bind("tcp://*:5560");
 
-//        context.proxy(frontEnd, backEnd);
+        context.proxy(frontEnd, backEnd);
         context.close();
     }
 }

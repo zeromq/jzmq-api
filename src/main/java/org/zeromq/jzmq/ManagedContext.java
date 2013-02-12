@@ -126,4 +126,9 @@ public class ManagedContext implements Context {
     public Pollable newPollable(Socket socket, PollerType... options) {
         return new PollableImpl(socket, options);
     }
+
+    @Override
+    public void proxy(Socket frontEnd, Socket backEnd) {
+        ZMQ.proxy(frontEnd.getZMQSocket(), backEnd.getZMQSocket(), null);
+    }
 }
