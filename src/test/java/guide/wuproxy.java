@@ -19,14 +19,12 @@ public class wuproxy {
         Socket backend = context.buildSocket(SocketType.PUB).bind("tcp://10.1.1.0:8100");
 
         while (!Thread.currentThread().isInterrupted()) {
-            while (true) {
+            boolean moreToReceive;
+            do {
                 byte[] message = frontEnd.receive();
-                boolean hasMoreToReceive = frontEnd.hasMoreToReceive();
-                backend.send(message, hasMoreToReceive ? MessageFlag.SEND_MORE : MessageFlag.NONE);
-                if (!hasMoreToReceive) {
-                    break;
-                }
-            }
+                moreToReceive = frontEnd.hasMoreToReceive();
+                backend.send(message, moreToReceive ? MessageFlag.SEND_MORE : MessageFlag.NONE);
+            } while (moreToReceive);
         }
 
         context.close();
