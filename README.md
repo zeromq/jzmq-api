@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/zeromq/jzmq-api.png)](https://travis-ci.org/zeromq/jzmq-api)
 
-A Java ZeroMQ API for abstracting the various implementations of ZeroMQ Message Transport Protocol.
+A Java ØMQ API for abstracting the various implementations of ZeroMQ Message Transport Protocol.
 
 ## Warning
 
