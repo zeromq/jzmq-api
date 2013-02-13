@@ -1,7 +1,9 @@
 package org.zeromq.jzmq.sockets;
 
+import org.zeromq.ZMQ;
 import org.zeromq.api.*;
 import org.zeromq.jzmq.ManagedContext;
+import org.zeromq.jzmq.ManagedSocket;
 
 /**
  * SocketBuilder
@@ -154,20 +156,41 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         return socketSpec;
     }
 
+
+    //todo should these be here & removed from the subclasses?  They appear to all be the same implementations.
     /**
      * {@inheritDoc}
      */
-    @Override
     public Socket connect(String url) {
-        throw new UnsupportedOperationException("Socket type " + getSocketSpec().socketType + " does not support connecting.");
+        ZMQ.Context zmqContext = context.getZMQContext();
+        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
+        socket.setLinger(getLinger());
+        socket.setSndHWM(getSendHWM());
+        socket.setRcvHWM(getReceiveHWM());
+        if (this.getIdentity() != null && this.getIdentity().length > 0) {
+            socket.setIdentity(this.getIdentity());
+        }
+        socket.connect(url);
+        return new ManagedSocket(context, socket);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public Socket bind(String url, String... additionalUrls) {
-        throw new UnsupportedOperationException("Socket type " + getSocketSpec().socketType + " does not support binding.");
+        ZMQ.Context zmqContext = context.getZMQContext();
+        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
+        socket.setLinger(this.getLinger());
+        socket.setRcvHWM(this.getReceiveHWM());
+        socket.setSndHWM(this.getSendHWM());
+        if (this.getIdentity() != null && this.getIdentity().length > 0) {
+            socket.setIdentity(this.getIdentity());
+        }
+        socket.bind(url);
+        for (String s : additionalUrls) {
+            socket.bind(s);
+        }
+        return new ManagedSocket(context, socket);
     }
 
     /**
@@ -178,4 +201,6 @@ public abstract class SocketBuilder implements Bindable, Connectable {
     public Subscribable asSubscribable() {
         return (SubSocketBuilder) this;
     }
+
+
 }
