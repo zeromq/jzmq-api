@@ -10,4 +10,3 @@ script: mvn test
 
 jdk:
  - openjdk6
- - oraclejdk7
