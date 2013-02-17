@@ -30,13 +30,13 @@ public class RouterDealerTest extends TestCase {
 
         // Unfortunately you have to wait until the dealers connect or dealer1.receive will block. Add poll later
         Thread.sleep(100);
-        router.send("A".getBytes(), 0, MessageFlag.SEND_MORE);
+        router.send("A".getBytes(), MessageFlag.SEND_MORE);
         router.send("END".getBytes());
 
         String expected = new String(dealer1.receive());
         assertEquals("END", expected);
 
-        router.send("B".getBytes(), 0, MessageFlag.SEND_MORE);
+        router.send("B".getBytes(), MessageFlag.SEND_MORE);
         router.send("END".getBytes());
 
         expected = new String(dealer2.receive());
@@ -55,7 +55,7 @@ public class RouterDealerTest extends TestCase {
         assertEquals("A", new String(id));
         assertEquals("PING", new String(expected));
 
-        router.send(id, 0, MessageFlag.SEND_MORE);
+        router.send(id, MessageFlag.SEND_MORE);
         router.send("END".getBytes());
 
         expected = dealer.receive();
