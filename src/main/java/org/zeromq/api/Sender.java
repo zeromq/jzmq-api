@@ -1,24 +1,16 @@
 package org.zeromq.api;
 
+import java.nio.ByteBuffer;
+
 /**
  * 
  */
 public interface Sender {
-    /**
-     * Insert the specified element into the ØMQ Socket queue.
-     * 
-     * @param buf element
-     */
     public boolean send(byte[] buf);
 
-    public boolean send(byte[] message, MessageFlag flag);
+    public boolean send(byte[] buf, MessageFlag flag);
 
-    /**
-     * Insert the specified element into the ØMQ Socket queue.
-     * 
-     * @param buf
-     * @param offset
-     * @param flag send flag
-     */
-    public boolean send(byte[] buf, int offset, MessageFlag flag);
+    public boolean send(byte[] buf, int offset, int length, MessageFlag flag);
+
+    public boolean sendZeroCopy(ByteBuffer buf, int length, MessageFlag flag);
 }

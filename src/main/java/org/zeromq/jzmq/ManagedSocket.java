@@ -7,6 +7,7 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.TransportType;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -56,7 +57,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean send(byte[] buf) {
-        return send(buf, 0, MessageFlag.NONE);
+        return socket.send(buf, 0, buf.length, 0);
     }
 
     @Override
@@ -65,8 +66,13 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public boolean send(byte[] buf, int offset, MessageFlag flag) {
-        return socket.send(buf, offset, flag.getFlag());
+    public boolean send(byte[] buf, int offset, int length, MessageFlag flag) {
+        return socket.send(buf, offset, length, flag.getFlag());
+    }
+
+    @Override
+    public boolean sendZeroCopy(ByteBuffer buf, int length, MessageFlag flag) {
+        return socket.sendZeroCopy(buf, length, flag.getFlag());
     }
 
     @Override
