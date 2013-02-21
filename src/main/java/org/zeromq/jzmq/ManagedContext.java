@@ -7,7 +7,6 @@ import org.zeromq.api.*;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.sockets.*;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -63,7 +62,7 @@ public class ManagedContext implements Context {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (closed.compareAndSet(false, true)) {
             for (Socket s : sockets) {
                 destroySocket(s);
@@ -121,8 +120,12 @@ public class ManagedContext implements Context {
         return new PollerBuilder(this);
     }
 
+    public ZMQ.Poller newZmqPoller(int initialNumberOfItems) {
+        return new ZMQ.Poller(initialNumberOfItems);
+    }
+
     public ZMQ.Poller newZmqPoller() {
-        return context.poller();
+        return newZmqPoller(32);
     }
 
     @Override

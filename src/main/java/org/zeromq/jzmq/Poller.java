@@ -17,7 +17,7 @@ public class Poller {
     private final ZMQ.Poller poller;
 
     public Poller(ManagedContext context, Map<Pollable, PollListener> pollables) {
-        this.poller = context.newZmqPoller();
+        this.poller = context.newZmqPoller(pollables.size());
         for (Map.Entry<Pollable, PollListener> entry : pollables.entrySet()) {
             Pollable pollable = entry.getKey();
 
