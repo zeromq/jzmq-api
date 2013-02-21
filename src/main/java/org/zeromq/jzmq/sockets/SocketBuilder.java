@@ -162,6 +162,12 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * {@inheritDoc}
      */
     public Socket connect(String url) {
+        ZMQ.Socket socket = createConnectableSocketWithStandardSettings(url);
+        socket.connect(url);
+        return new ManagedSocket(context, socket);
+    }
+
+    protected ZMQ.Socket createConnectableSocketWithStandardSettings(String url) {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
@@ -170,8 +176,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }
-        socket.connect(url);
-        return new ManagedSocket(context, socket);
+        return socket;
     }
 
     /**

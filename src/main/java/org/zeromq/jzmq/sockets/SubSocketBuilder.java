@@ -23,13 +23,10 @@ public class SubSocketBuilder extends SocketBuilder implements Subscribable {
 
     @Override
     public Socket connect(String url) {
-        ZMQ.Context zmqContext = context.getZMQContext();
-        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
-        socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getReceiveHWM());
-        if (this.getIdentity() != null && this.getIdentity().length > 0) {
-            socket.setIdentity(this.getIdentity());
+        if (subscription == null) {
+            throw new IllegalStateException("You must have a SUB socket subscribe to something before you can connect it.");
         }
+        ZMQ.Socket socket = createConnectableSocketWithStandardSettings(url);
         socket.subscribe(subscription);
         socket.connect(url);
         return new ManagedSocket(context, socket);
