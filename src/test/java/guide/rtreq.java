@@ -69,7 +69,7 @@ public class rtreq {
                     break;
                 }
             }
-            System.out.printf("[%s] total work requests received = %d%n", Thread.currentThread().getName(), total);
+            System.out.printf("[%s] Completed %d tasks%n", Thread.currentThread().getName(), total);
             try {
                 context.close();
             } catch (IOException e) {
