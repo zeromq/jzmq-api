@@ -26,7 +26,7 @@ public class SubSocketBuilder extends SocketBuilder implements Subscribable {
         if (subscription == null) {
             throw new IllegalStateException("You must have a SUB socket subscribe to something before you can connect it.");
         }
-        ZMQ.Socket socket = createConnectableSocketWithStandardSettings(url);
+        ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         socket.subscribe(subscription);
         socket.connect(url);
         return new ManagedSocket(context, socket);

@@ -1,14 +1,14 @@
 package org.zeromq.jzmq;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.zeromq.ZMQ;
 import org.zeromq.api.Context;
 import org.zeromq.api.MessageFlag;
 import org.zeromq.api.Socket;
 import org.zeromq.api.TransportType;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Managed JZMQ Socket
@@ -67,12 +67,12 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean send(byte[] buf) {
-        return socket.send(buf, 0, buf.length, 0);
+        return send(buf, 0, buf.length, MessageFlag.NONE);
     }
 
     @Override
     public boolean send(byte[] message, MessageFlag flag) {
-        return socket.send(message, flag.getFlag());
+        return send(message, 0, message.length, flag);
     }
 
     @Override

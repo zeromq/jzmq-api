@@ -162,12 +162,12 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * {@inheritDoc}
      */
     public Socket connect(String url) {
-        ZMQ.Socket socket = createConnectableSocketWithStandardSettings(url);
+        ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         socket.connect(url);
         return new ManagedSocket(context, socket);
     }
 
-    protected ZMQ.Socket createConnectableSocketWithStandardSettings(String url) {
+    protected ZMQ.Socket createConnectableSocketWithStandardSettings() {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
@@ -183,6 +183,19 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * {@inheritDoc}
      */
     public Socket bind(String url, String... additionalUrls) {
+        ZMQ.Socket socket = createBindableSocketWithStandardSettings();
+        bind(socket, url, additionalUrls);
+        return new ManagedSocket(context, socket);
+    }
+
+    protected void bind(ZMQ.Socket socket, String url, String[] additionalUrls) {
+        socket.bind(url);
+        for (String s : additionalUrls) {
+            socket.bind(s);
+        }
+    }
+
+    protected ZMQ.Socket createBindableSocketWithStandardSettings() {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
@@ -191,20 +204,21 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }
-        socket.bind(url);
-        for (String s : additionalUrls) {
-            socket.bind(s);
-        }
-        return new ManagedSocket(context, socket);
+        return socket;
     }
 
     /**
      * Coerce the SocketBuilder to be Subscribable
-     * 
-     * @return Subscribable
      */
     public Subscribable asSubscribable() {
         return (SubSocketBuilder) this;
+    }
+
+    /**
+     * Coerce the SocketBuilder to be Routable
+     */
+    public Routable asRoutable() {
+        return (RouterSocketBuilder) this;
     }
 
 
