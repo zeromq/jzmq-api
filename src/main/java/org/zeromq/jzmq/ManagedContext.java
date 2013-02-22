@@ -99,8 +99,7 @@ public class ManagedContext implements Context {
             case DEALER:
                 return new DealerSocketBuilder(this);
             case PAIR:
-                //todo could we just make the SocketBuilder concrete, but allow subclasses as well?
-                return new SocketBuilder(this, SocketType.PAIR) {};
+                return new SocketBuilder(this, SocketType.PAIR);
         }
         throw new IllegalArgumentException("Socket type not supported: " + type);
     }

@@ -8,7 +8,7 @@ import org.zeromq.jzmq.ManagedSocket;
 /**
  * SocketBuilder
  */
-public abstract class SocketBuilder implements Bindable, Connectable {
+public class SocketBuilder implements Bindable, Connectable {
     protected ManagedContext context;
     protected SocketSpec socketSpec;
 
