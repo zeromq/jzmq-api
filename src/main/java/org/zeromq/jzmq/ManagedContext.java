@@ -56,7 +56,7 @@ public class ManagedContext implements Context {
             } catch (Exception ignore) {
                 log.warn("Exception caught while closing underlying socket.", ignore);
             }
-            log.info("closed socket");
+            log.debug("closed socket");
             sockets.remove(socket);
         }
     }
@@ -69,7 +69,7 @@ public class ManagedContext implements Context {
             }
             sockets.clear();
             context.term();
-            log.info("closed context");
+            log.debug("closed context");
         }
     }
 

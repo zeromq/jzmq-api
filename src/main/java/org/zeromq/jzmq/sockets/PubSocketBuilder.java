@@ -17,7 +17,7 @@ public class PubSocketBuilder extends SocketBuilder {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getReceiveHWM());
+        socket.setRcvHWM(this.getReceiveHighWaterMark());
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }

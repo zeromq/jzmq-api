@@ -17,6 +17,8 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         public long linger;
         public long sendHighwatermark;
         public long receiveHighWatermark;
+        public int receiveTimeout = -1;
+        public int sendTimeout = -1;
         public SocketType socketType;
         public TransportType transportType;
         public byte[] identity;
@@ -121,7 +123,7 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * 
      * @return send high watermark
      */
-    public long getSendHWM() {
+    public long getSendHighWaterMark() {
         return getSocketSpec().sendHighwatermark;
     }
 
@@ -148,12 +150,28 @@ public abstract class SocketBuilder implements Bindable, Connectable {
      * 
      * @return receive high water mark
      */
-    public long getReceiveHWM() {
+    public long getReceiveHighWaterMark() {
         return getSocketSpec().receiveHighWatermark;
     }
 
     public SocketSpec getSocketSpec() {
         return socketSpec;
+    }
+
+    /**
+     * todo: javadoc me
+     */
+    public SocketBuilder withReceiveTimeout(int receiveTimeout) {
+        getSocketSpec().receiveTimeout = receiveTimeout;
+        return this;
+    }
+
+    /**
+     * todo: javadoc me
+     */
+    public SocketBuilder withSendTimeout(int sendTimeout) {
+        getSocketSpec().sendTimeout = sendTimeout;
+        return this;
     }
 
 
@@ -171,8 +189,10 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
-        socket.setSndHWM(getSendHWM());
-        socket.setRcvHWM(getReceiveHWM());
+        socket.setSndHWM(getSendHighWaterMark());
+        socket.setRcvHWM(getReceiveHighWaterMark());
+        socket.setReceiveTimeOut(getSocketSpec().receiveTimeout);
+        socket.setSendTimeOut(getSocketSpec().sendTimeout);
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }
@@ -199,8 +219,10 @@ public abstract class SocketBuilder implements Bindable, Connectable {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getReceiveHWM());
-        socket.setSndHWM(this.getSendHWM());
+        socket.setRcvHWM(this.getReceiveHighWaterMark());
+        socket.setSndHWM(this.getSendHighWaterMark());
+        socket.setReceiveTimeOut(getSocketSpec().receiveTimeout);
+        socket.setSendTimeOut(getSocketSpec().sendTimeout);
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }

@@ -17,8 +17,8 @@ public class PullSocketBuilder extends SocketBuilder {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
-        socket.setSndHWM(getSendHWM());
-        socket.setRcvHWM(getReceiveHWM());
+        socket.setSndHWM(getSendHighWaterMark());
+        socket.setRcvHWM(getReceiveHighWaterMark());
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }
@@ -31,8 +31,8 @@ public class PullSocketBuilder extends SocketBuilder {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getReceiveHWM());
-        socket.setSndHWM(this.getSendHWM());
+        socket.setRcvHWM(this.getReceiveHighWaterMark());
+        socket.setSndHWM(this.getSendHighWaterMark());
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }

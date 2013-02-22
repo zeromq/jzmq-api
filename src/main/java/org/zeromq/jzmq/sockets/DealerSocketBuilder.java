@@ -16,8 +16,8 @@ public class DealerSocketBuilder extends SocketBuilder {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
-        socket.setSndHWM(getSendHWM());
-        socket.setRcvHWM(getReceiveHWM());
+        socket.setSndHWM(getSendHighWaterMark());
+        socket.setRcvHWM(getReceiveHighWaterMark());
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }
@@ -29,8 +29,8 @@ public class DealerSocketBuilder extends SocketBuilder {
         ZMQ.Context zmqContext = context.getZMQContext();
         ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
         socket.setLinger(getLinger());
-        socket.setRcvHWM(getReceiveHWM());
-        socket.setSndHWM(getSendHWM());
+        socket.setRcvHWM(getReceiveHighWaterMark());
+        socket.setSndHWM(getSendHighWaterMark());
         if (this.getIdentity() != null && this.getIdentity().length > 0) {
             socket.setIdentity(this.getIdentity());
         }
