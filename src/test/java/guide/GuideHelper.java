@@ -1,5 +1,6 @@
 package guide;
 
+import org.zeromq.api.Message;
 import org.zeromq.api.Socket;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
@@ -37,6 +38,13 @@ public class GuideHelper {
         }
 
         System.out.println(String.format("[%03d] %s", msg.length, data));
+    }
+
+    public static void dump(Message message) {
+        System.out.println("------------------------------------------");
+        for (Message.Frame frame : message.getFrames()) {
+            print(frame.getData());
+        }
     }
 
     public static SocketBuilder assignPrintableIdentity(SocketBuilder builder) {

@@ -1,13 +1,11 @@
 package org.zeromq.jzmq;
 
 import org.zeromq.ZMQ;
-import org.zeromq.api.Context;
-import org.zeromq.api.MessageFlag;
-import org.zeromq.api.Socket;
-import org.zeromq.api.TransportType;
+import org.zeromq.api.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -64,6 +62,48 @@ public class ManagedSocket implements Socket {
     public boolean hasMoreToReceive() {
         return socket.hasReceiveMore();
     }
+
+
+    @Override
+    public Message receiveMessage() {
+        return fillInFrames(new Message());
+    }
+
+    @Override
+    public RoutedMessage receiveRoutedMessage() {
+        return fillInFrames(new RoutedMessage());
+    }
+
+    private <T extends Message> T fillInFrames(T result) {
+        byte[] bytes = receive();
+        if (bytes == null) {
+            return null;
+        }
+        result.addFrame(bytes);
+        while (hasMoreToReceive()) {
+            byte[] data = receive();
+            result.addFrame(data);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean send(Message message) {
+        List<Message.Frame> frames = message.getFrames();
+        int frameNumber = 0;
+        for (Message.Frame frame : frames) {
+            if (++frameNumber < frames.size()) {
+                boolean sent = send(frame.getData(), MessageFlag.SEND_MORE);
+                if (!sent) {
+                    return false;
+                }
+            } else {
+                return send(frame.getData());
+            }
+        }
+        return true;  // no frames? What should we return?
+    }
+
 
     @Override
     public boolean send(byte[] buf) {

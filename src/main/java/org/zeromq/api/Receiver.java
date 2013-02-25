@@ -45,4 +45,15 @@ public interface Receiver {
      * This receiver has more of a multi-part message waiting for receipt.
      */
     boolean hasMoreToReceive();
+
+    /**
+     * @return The full message (all frames) from the socket.
+     */
+    Message receiveMessage();
+
+    /**
+     * @return The full message (all frames) from the socket, assuming it has been through a Router socket, and has
+     * routing frames associated with it.
+     */
+    RoutedMessage receiveRoutedMessage();
 }
