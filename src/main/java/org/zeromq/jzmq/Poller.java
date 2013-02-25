@@ -40,8 +40,11 @@ public class Poller {
         return sum;
     }
 
-    public void poll() {
-        poller.poll();
+    public void poll(long timeoutMillis) {
+        int numberOfObjects = poller.poll(timeoutMillis);
+        if (numberOfObjects == 0) {
+            return;
+        }
         for (Map.Entry<Integer, Socket> entry : socketIndex.entrySet()) {
             Integer index = entry.getKey();
             if (poller.pollin(index)) {
@@ -54,5 +57,9 @@ public class Poller {
                 listeners.get(index).handleError(entry.getValue());
             }
         }
+
+    }
+    public void poll() {
+        poll(-1);
     }
 }

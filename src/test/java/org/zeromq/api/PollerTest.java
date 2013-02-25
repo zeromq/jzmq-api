@@ -42,7 +42,7 @@ public class PollerTest {
         Socket request = context.buildSocket(SocketType.REQ).connect("inproc://repSocket");
         request.send("hello".getBytes());
 
-        testClass.poll();
+        testClass.poll(100L);
         assertTrue(requestReceived.get());
     }
 
@@ -61,7 +61,7 @@ public class PollerTest {
                 .create();
 
 
-        testClass.poll();
+        testClass.poll(100L);
 
         byte[] message = server.receive();
         assertArrayEquals("hello".getBytes(), message);
