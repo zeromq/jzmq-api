@@ -1,15 +1,16 @@
 package org.zeromq.api;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertArrayEquals;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.zeromq.api.Message.Frame;
 
 public class RoutedMessageTest {
 
@@ -56,13 +57,13 @@ public class RoutedMessageTest {
                 new Message.Frame("payload".getBytes()))));
 
         Message result = testClass.getPayload();
-        assertArrayEquals("payload".getBytes(), result.getFirstFrame());
+        assertArrayEquals("payload".getBytes(), result.getFirstFrame().getData());
     }
 
     @Test
     public void testGetRoutes_noRoutes() throws Exception {
         RoutedMessage testClass = new RoutedMessage();
-        testClass.addFrame("payload".getBytes());
+        testClass.addFrame(new Frame("payload"));
 
         List<RoutedMessage.Route> result = testClass.getRoutes();
         assertTrue(result.isEmpty());
@@ -71,7 +72,7 @@ public class RoutedMessageTest {
     @Test
     public void testUnwrap_noRoutes() throws Exception {
         RoutedMessage testClass = new RoutedMessage();
-        testClass.addFrame("payload".getBytes());
+        testClass.addFrame(new Frame("payload"));
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("Cannot unwrap an unrouted message.");

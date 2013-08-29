@@ -24,10 +24,10 @@ public class Poller {
             Socket socket = pollable.getSocket();
             int options = sumOptions(pollable);
             int index = poller.register(socket.getZMQSocket(), options);
-            socketIndex.put(index, socket);
+            socketIndex.put(Integer.valueOf(index), socket);
 
             PollListener listener = entry.getValue();
-            listeners.put(index, listener);
+            listeners.put(Integer.valueOf(index), listener);
         }
     }
 
@@ -47,13 +47,13 @@ public class Poller {
         }
         for (Map.Entry<Integer, Socket> entry : socketIndex.entrySet()) {
             Integer index = entry.getKey();
-            if (poller.pollin(index)) {
+            if (poller.pollin(index.intValue())) {
                 listeners.get(index).handleIn(entry.getValue());
             }
-            if (poller.pollout(index)) {
+            if (poller.pollout(index.intValue())) {
                 listeners.get(index).handleOut(entry.getValue());
             }
-            if (poller.pollerr(index)) {
+            if (poller.pollerr(index.intValue())) {
                 listeners.get(index).handleError(entry.getValue());
             }
         }

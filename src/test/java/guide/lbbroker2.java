@@ -56,7 +56,7 @@ public class lbbroker2 {
                 if (message == null) {
                     continue;
                 }
-                System.out.println("Worker: " + new String(message.getPayload().getFirstFrame()));
+                System.out.println("Worker: " + new String(message.getPayload().getFirstFrame().getData()));
                 List<RoutedMessage.Route> routes = message.getRoutes();
                 worker.send(new RoutedMessage(routes, new Message("OK".getBytes())));
             }
@@ -109,7 +109,7 @@ public class lbbroker2 {
                     workerQueue.add(topRoute);
 
                     Message payload = routedMessage.getPayload();
-                    byte[] clientAddress = payload.getFirstFrame();
+                    byte[] clientAddress = payload.getFirstFrame().getData();
                     if (!Arrays.equals(READY, clientAddress)) {
                         frontend.send(new RoutedMessage(routedMessage.getRoutes(), payload));
 
