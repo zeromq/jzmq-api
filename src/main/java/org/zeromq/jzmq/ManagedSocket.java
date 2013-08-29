@@ -1,12 +1,18 @@
 package org.zeromq.jzmq;
 
-import org.zeromq.ZMQ;
-import org.zeromq.api.*;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.zeromq.ZMQ;
+import org.zeromq.api.Context;
+import org.zeromq.api.Message;
+import org.zeromq.api.Message.Frame;
+import org.zeromq.api.MessageFlag;
+import org.zeromq.api.RoutedMessage;
+import org.zeromq.api.Socket;
+import org.zeromq.api.TransportType;
 
 /**
  * Managed JZMQ Socket
@@ -29,6 +35,7 @@ public class ManagedSocket implements Socket {
         this.managedContext.addSocket(this);
     }
 
+    @Override
     public ZMQ.Socket getZMQSocket() {
         return socket;
     }
@@ -79,10 +86,10 @@ public class ManagedSocket implements Socket {
         if (bytes == null) {
             return null;
         }
-        result.addFrame(bytes);
+        result.addFrame(new Frame(bytes));
         while (hasMoreToReceive()) {
             byte[] data = receive();
-            result.addFrame(data);
+            result.addFrame(new Frame(data));
         }
         return result;
     }

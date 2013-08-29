@@ -4,13 +4,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//NOT THREAD SAFE
+/**
+ * Routed message contains route frames and payload frames.
+ */
 public class RoutedMessage extends Message {
 
     public RoutedMessage() {
 
     }
 
+    /**
+     * Takes a route with no frames.
+     */
+    public RoutedMessage(Route route) {
+        super(route.getRoutingFrames());
+    }
+
+    /**
+     * Takes routes with no frames.
+     */
     public RoutedMessage(List<Route> routes) {
         for (Route route : routes) {
             addFrames(route.getRoutingFrames());
@@ -21,7 +33,7 @@ public class RoutedMessage extends Message {
      * Takes the existing message and adds a route to the beginning of it.
      */
     public RoutedMessage(Route route, Message message) {
-        this(Arrays.asList(route));
+        this(route);
         addFrames(message);
     }
 
@@ -31,12 +43,6 @@ public class RoutedMessage extends Message {
     public RoutedMessage(List<Route> routes, Message message) {
         this(routes);
         addFrames(message);
-    }
-
-    private void addFrames(List<Frame> routingFrames) {
-        for (Frame routingFrame : routingFrames) {
-            addFrame(routingFrame.getData());
-        }
     }
 
     public Message getPayload() {
@@ -84,12 +90,20 @@ public class RoutedMessage extends Message {
         //todo store Frame or bytes?
         private final byte[] address;
 
+        public Route(String address) {
+            this(address.getBytes());
+        }
+
         public Route(byte[] address) {
             this.address = address;
         }
 
         public byte[] getAddress() {
             return address;
+        }
+
+        public String getString() {
+            return new String(address);
         }
 
         public List<Frame> getRoutingFrames() {
