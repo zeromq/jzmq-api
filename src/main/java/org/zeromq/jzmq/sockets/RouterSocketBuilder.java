@@ -15,10 +15,10 @@ public class RouterSocketBuilder extends SocketBuilder implements Routable {
     }
 
     @Override
-    public Socket connect(String url) {
+    public Socket connect(String url, String... additionalUrls) {
         ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         socket.setRouterMandatory(routerMandatory);
-        socket.connect(url);
+        connect(socket, url, additionalUrls);
         return new ManagedSocket(context, socket);
     }
 

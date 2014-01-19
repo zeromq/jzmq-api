@@ -2,7 +2,6 @@ package org.zeromq.jzmq;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.zeromq.ZMQ;
@@ -96,10 +95,9 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean send(Message message) {
-        List<Message.Frame> frames = message.getFrames();
         int frameNumber = 0;
-        for (Message.Frame frame : frames) {
-            if (++frameNumber < frames.size()) {
+        for (Frame frame : message) {
+            if (++frameNumber < message.size()) {
                 boolean sent = send(frame.getData(), MessageFlag.SEND_MORE);
                 if (!sent) {
                     return false;

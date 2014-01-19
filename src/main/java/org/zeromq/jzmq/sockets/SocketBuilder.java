@@ -180,10 +180,17 @@ public class SocketBuilder implements Bindable, Connectable {
      * {@inheritDoc}
      */
     @Override
-    public Socket connect(String url) {
+    public Socket connect(String url, String... additionalUrls) {
         ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
-        socket.connect(url);
+        connect(socket, url, additionalUrls);
         return new ManagedSocket(context, socket);
+    }
+
+    protected void connect(ZMQ.Socket socket, String url, String[] additionalUrls) {
+        socket.connect(url);
+        for (String s : additionalUrls) {
+            socket.connect(s);
+        }
     }
 
     protected ZMQ.Socket createConnectableSocketWithStandardSettings() {
