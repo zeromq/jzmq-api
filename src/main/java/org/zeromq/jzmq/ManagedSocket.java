@@ -17,12 +17,6 @@ import org.zeromq.api.TransportType;
  * Managed JZMQ Socket
  */
 public class ManagedSocket implements Socket {
-    // private final SocketType socketType;
-    // private final TransportType transportType;
-    // private final long lingerMS;
-    // private final long sendHWM;
-    // private final long recvHWM;
-
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
     private ManagedContext managedContext;
