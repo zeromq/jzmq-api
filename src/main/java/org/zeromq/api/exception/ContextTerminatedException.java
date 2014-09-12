@@ -1,6 +1,5 @@
 package org.zeromq.api.exception;
 
-import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 
 /**
@@ -10,7 +9,7 @@ import org.zeromq.ZMQException;
  * @author sjohnr
  */
 public class ContextTerminatedException extends ZMQRuntimeException {
-    private static final long serialVersionUID = -3914068543257736644L;
+    private static final long serialVersionUID = 7996414013283268950L;
 
     /**
      * Constructor, with ZMQException cause.
@@ -19,8 +18,7 @@ public class ContextTerminatedException extends ZMQRuntimeException {
      * @param cause The underlying cause
      */
     public ContextTerminatedException(String message, ZMQException cause) {
-        super(message, (int) ZMQ.Error.ETERM.getCode());
-        initCause(cause);
+        super(message, cause);
     }
 
     /**
@@ -30,6 +28,6 @@ public class ContextTerminatedException extends ZMQRuntimeException {
      * @param cause The underlying cause
      */
     public ContextTerminatedException(ZMQException cause) {
-        this(cause.getMessage(), cause);
+        super(cause);
     }
 }

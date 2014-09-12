@@ -23,6 +23,15 @@ public class ZMQRuntimeException extends ZMQException {
     /**
      * Constructor, with ZMQException cause.
      * 
+     * @param cause The underlying cause
+     */
+    public ZMQRuntimeException(ZMQException cause) {
+        this(cause.getMessage(), cause);
+    }
+
+    /**
+     * Constructor, with ZMQException cause.
+     * 
      * @param message The error message
      * @param cause The underlying cause
      */
