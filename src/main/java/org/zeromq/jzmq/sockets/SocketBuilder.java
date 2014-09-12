@@ -1,7 +1,15 @@
 package org.zeromq.jzmq.sockets;
 
 import org.zeromq.ZMQ;
-import org.zeromq.api.*;
+import org.zeromq.ZMQException;
+import org.zeromq.api.Bindable;
+import org.zeromq.api.Connectable;
+import org.zeromq.api.Routable;
+import org.zeromq.api.Socket;
+import org.zeromq.api.SocketType;
+import org.zeromq.api.Subscribable;
+import org.zeromq.api.TransportType;
+import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.ManagedSocket;
 
@@ -195,14 +203,19 @@ public class SocketBuilder implements Bindable, Connectable {
 
     protected ZMQ.Socket createConnectableSocketWithStandardSettings() {
         ZMQ.Context zmqContext = context.getZMQContext();
-        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
-        socket.setLinger(getLinger());
-        socket.setSndHWM(getSendHighWaterMark());
-        socket.setRcvHWM(getReceiveHighWaterMark());
-        socket.setReceiveTimeOut(getSocketSpec().receiveTimeout);
-        socket.setSendTimeOut(getSocketSpec().sendTimeout);
-        if (this.getIdentity() != null && this.getIdentity().length > 0) {
-            socket.setIdentity(this.getIdentity());
+        ZMQ.Socket socket;
+        try {
+            socket = zmqContext.socket(this.getSocketType().getType());
+            socket.setLinger(getLinger());
+            socket.setSndHWM(getSendHighWaterMark());
+            socket.setRcvHWM(getReceiveHighWaterMark());
+            socket.setReceiveTimeOut(getSocketSpec().receiveTimeout);
+            socket.setSendTimeOut(getSocketSpec().sendTimeout);
+            if (this.getIdentity() != null && this.getIdentity().length > 0) {
+                socket.setIdentity(this.getIdentity());
+            }
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
         }
         return socket;
     }
@@ -226,14 +239,19 @@ public class SocketBuilder implements Bindable, Connectable {
 
     protected ZMQ.Socket createBindableSocketWithStandardSettings() {
         ZMQ.Context zmqContext = context.getZMQContext();
-        ZMQ.Socket socket = zmqContext.socket(this.getSocketType().getType());
-        socket.setLinger(this.getLinger());
-        socket.setRcvHWM(this.getReceiveHighWaterMark());
-        socket.setSndHWM(this.getSendHighWaterMark());
-        socket.setReceiveTimeOut(getSocketSpec().receiveTimeout);
-        socket.setSendTimeOut(getSocketSpec().sendTimeout);
-        if (this.getIdentity() != null && this.getIdentity().length > 0) {
-            socket.setIdentity(this.getIdentity());
+        ZMQ.Socket socket;
+        try {
+            socket = zmqContext.socket(this.getSocketType().getType());
+            socket.setLinger(this.getLinger());
+            socket.setRcvHWM(this.getReceiveHighWaterMark());
+            socket.setSndHWM(this.getSendHighWaterMark());
+            socket.setReceiveTimeOut(getSocketSpec().receiveTimeout);
+            socket.setSendTimeOut(getSocketSpec().sendTimeout);
+            if (this.getIdentity() != null && this.getIdentity().length > 0) {
+                socket.setIdentity(this.getIdentity());
+            }
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
         }
         return socket;
     }
@@ -251,6 +269,4 @@ public class SocketBuilder implements Bindable, Connectable {
     public Routable asRoutable() {
         return (RouterSocketBuilder) this;
     }
-
-
 }

@@ -16,6 +16,7 @@ import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
+import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.sockets.DealerSocketBuilder;
 import org.zeromq.jzmq.sockets.PairSocketBuilder;
@@ -90,8 +91,7 @@ public class ManagedContext implements Context {
 
     // I'd really like this to be private but I don't want all the builders in here
     // If we only deal with the Context interface, callers won't see this
-    // TODO: Make this package-private?
-    public void addSocket(Socket socket) {
+    void addSocket(Socket socket) {
         sockets.add(socket);
     }
 
@@ -116,8 +116,9 @@ public class ManagedContext implements Context {
                 return new DealerSocketBuilder(this);
             case PAIR:
                 return new PairSocketBuilder(this);
+            default:
+                throw new IllegalArgumentException("Socket type not supported: " + type);
         }
-        throw new IllegalArgumentException("Socket type not supported: " + type);
     }
 
     @Override
@@ -190,9 +191,9 @@ public class ManagedContext implements Context {
         public void run() {
             try {
                 backgroundable.run(context, pipe, args);
-            } catch (ZMQException e) {
-                if (e.getErrorCode() != ZMQ.Error.ETERM.getCode()) {
-                    throw e; // TODO: Init Cause?
+            } catch (ZMQException ex) {
+                if (!ZMQExceptions.isContextTerminated(ex)) {
+                    throw ZMQExceptions.wrap(ex);
                 }
             }
         }
