@@ -52,7 +52,7 @@ public interface Context extends Closeable {
      * @param backEnd The back-end socket which will be proxied to/from the front-end
      */
     void proxy(Socket frontEnd, Socket backEnd);
-    
+
     /**
      * Run a background thread with an inproc PAIR socket for communication.
      * 
@@ -61,4 +61,9 @@ public interface Context extends Closeable {
      * @return the inproc PAIR socket for communicating with the background thread
      */
     Socket fork(Backgroundable backgroundable, Object... args);
+
+    /**
+     * Close the context and any open sockets.
+     */
+    void close();
 }

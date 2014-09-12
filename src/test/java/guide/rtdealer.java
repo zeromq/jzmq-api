@@ -72,11 +72,7 @@ public class rtdealer {
                 }
             }
             System.out.printf("[%s] Completed %d tasks%n", Thread.currentThread().getName(), total);
-            try {
-                context.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            context.close();
         }
     }
 }

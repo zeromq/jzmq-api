@@ -1,6 +1,5 @@
 package org.zeromq.jzmq;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -19,12 +18,6 @@ import org.zeromq.api.exception.ZMQExceptions;
  * Managed JZMQ Socket
  */
 public class ManagedSocket implements Socket {
-    // private final SocketType socketType;
-    // private final TransportType transportType;
-    // private final long lingerMS;
-    // private final long sendHWM;
-    // private final long recvHWM;
-
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
     private ManagedContext managedContext;
@@ -161,7 +154,7 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (isClosed.compareAndSet(false, true)) {
             managedContext.destroySocket(this);
         }
