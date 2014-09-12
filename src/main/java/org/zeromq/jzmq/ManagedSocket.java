@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.zeromq.ZMQ;
+import org.zeromq.ZMQException;
 import org.zeromq.api.Context;
 import org.zeromq.api.Message;
 import org.zeromq.api.Message.Frame;
@@ -12,6 +13,7 @@ import org.zeromq.api.MessageFlag;
 import org.zeromq.api.RoutedMessage;
 import org.zeromq.api.Socket;
 import org.zeromq.api.TransportType;
+import org.zeromq.api.exception.ZMQExceptions;
 
 /**
  * Managed JZMQ Socket
@@ -46,27 +48,47 @@ public class ManagedSocket implements Socket {
 
     @Override
     public byte[] receive() {
-        return socket.recv(0);
+        try {
+            return socket.recv(0);
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
+        }
     }
 
     @Override
     public byte[] receive(MessageFlag flag) {
-        return socket.recv(flag.getFlag());
+        try {
+            return socket.recv(flag.getFlag());
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
+        }
     }
 
     @Override
     public int receive(byte[] buf, int offset, int len, MessageFlag flag) {
-        return socket.recv(buf, offset, len, flag.getFlag());
+        try {
+            return socket.recv(buf, offset, len, flag.getFlag());
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
+        }
     }
 
     @Override
     public int receiveZeroCopy(ByteBuffer buf, int len, MessageFlag flag) {
-        return socket.recvZeroCopy(buf, len, flag.getFlag());
+        try {
+            return socket.recvZeroCopy(buf, len, flag.getFlag());
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
+        }
     }
 
     @Override
     public boolean hasMoreToReceive() {
-        return socket.hasReceiveMore();
+        try {
+            return socket.hasReceiveMore();
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
+        }
     }
 
 
@@ -122,12 +144,20 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean send(byte[] buf, int offset, int length, MessageFlag flag) {
-        return socket.send(buf, offset, length, flag.getFlag());
+        try {
+            return socket.send(buf, offset, length, flag.getFlag());
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
+        }
     }
 
     @Override
     public boolean sendZeroCopy(ByteBuffer buf, int length, MessageFlag flag) {
-        return socket.sendZeroCopy(buf, length, flag.getFlag());
+        try {
+            return socket.sendZeroCopy(buf, length, flag.getFlag());
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
+        }
     }
 
     @Override

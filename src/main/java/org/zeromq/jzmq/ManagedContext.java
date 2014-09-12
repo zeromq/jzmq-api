@@ -16,6 +16,7 @@ import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
+import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.sockets.DealerSocketBuilder;
 import org.zeromq.jzmq.sockets.PairSocketBuilder;
@@ -190,9 +191,9 @@ public class ManagedContext implements Context {
         public void run() {
             try {
                 backgroundable.run(context, pipe, args);
-            } catch (ZMQException e) {
-                if (e.getErrorCode() != ZMQ.Error.ETERM.getCode()) {
-                    throw e; // TODO: Init Cause?
+            } catch (ZMQException ex) {
+                if (!ZMQExceptions.isContextTerminated(ex)) {
+                    throw ZMQExceptions.wrap(ex);
                 }
             }
         }
