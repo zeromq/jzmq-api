@@ -1,6 +1,5 @@
 package org.zeromq.jzmq;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -125,7 +124,7 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (isClosed.compareAndSet(false, true)) {
             managedContext.destroySocket(this);
         }
