@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.Poller;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

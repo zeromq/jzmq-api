@@ -2,7 +2,7 @@ package guide;
 
 import org.zeromq.api.*;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.PollerBuilder;
+import org.zeromq.jzmq.poll.PollerBuilder;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;

@@ -1,4 +1,4 @@
-package org.zeromq.jzmq;
+package org.zeromq.jzmq.poll;
 
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -8,16 +8,18 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 import org.zeromq.api.PollListener;
 import org.zeromq.api.Pollable;
+import org.zeromq.api.Poller;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.api.exception.ZMQExceptions;
+import org.zeromq.jzmq.ManagedContext;
 
-public class Poller {
+public class PollerImpl implements Poller {
 
     private final Map<Pollable, PollListener> pollables;
     private final ZMQ.Poller poller;
 
-    public Poller(ManagedContext context, Map<Pollable, PollListener> pollables) {
+    public PollerImpl(ManagedContext context, Map<Pollable, PollListener> pollables) {
         this.poller = context.newZmqPoller(pollables.size());
         this.pollables = new LinkedHashMap<Pollable, PollListener>(pollables);
         for (Pollable pollable : pollables.keySet()) {
@@ -34,6 +36,7 @@ public class Poller {
         return sum;
     }
 
+    @Override
     public void poll(long timeoutMillis) {
         int numberOfObjects;
         try {
@@ -61,10 +64,12 @@ public class Poller {
 
     }
 
+    @Override
     public void poll() {
         poll(-1);
     }
 
+    @Override
     public int enable(Socket socket) {
         int result = -1;
         Pollable pollable = pollable(socket);
@@ -74,6 +79,7 @@ public class Poller {
         return result;
     }
 
+    @Override
     public boolean disable(Socket socket) {
         boolean result = false;
         Pollable pollable = pollable(socket);

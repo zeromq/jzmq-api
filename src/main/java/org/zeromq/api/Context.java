@@ -1,6 +1,6 @@
 package org.zeromq.api;
 
-import org.zeromq.jzmq.PollerBuilder;
+import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
 import java.io.Closeable;

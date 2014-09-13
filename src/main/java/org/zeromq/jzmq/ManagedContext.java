@@ -18,6 +18,7 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.poll.PollableImpl;
+import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.sockets.DealerSocketBuilder;
 import org.zeromq.jzmq.sockets.PairSocketBuilder;
 import org.zeromq.jzmq.sockets.PubSocketBuilder;
