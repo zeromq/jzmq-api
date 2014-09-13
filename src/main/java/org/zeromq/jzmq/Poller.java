@@ -1,33 +1,27 @@
 package org.zeromq.jzmq;
 
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.zeromq.ZMQ;
+import org.zeromq.ZMQException;
 import org.zeromq.api.PollListener;
 import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
-
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import org.zeromq.api.exception.ZMQExceptions;
 
 public class Poller {
 
-    private final Map<Integer, Socket> socketIndex = new HashMap<Integer, Socket>();
-    private final Map<Integer, PollListener> listeners = new HashMap<Integer, PollListener>();
+    private final Map<Pollable, PollListener> pollables;
     private final ZMQ.Poller poller;
 
     public Poller(ManagedContext context, Map<Pollable, PollListener> pollables) {
         this.poller = context.newZmqPoller(pollables.size());
-        for (Map.Entry<Pollable, PollListener> entry : pollables.entrySet()) {
-            Pollable pollable = entry.getKey();
-
-            Socket socket = pollable.getSocket();
-            int options = sumOptions(pollable);
-            int index = poller.register(socket.getZMQSocket(), options);
-            socketIndex.put(Integer.valueOf(index), socket);
-
-            PollListener listener = entry.getValue();
-            listeners.put(Integer.valueOf(index), listener);
+        this.pollables = new LinkedHashMap<Pollable, PollListener>(pollables);
+        for (Pollable pollable : pollables.keySet()) {
+            register(pollable);
         }
     }
 
@@ -41,25 +35,71 @@ public class Poller {
     }
 
     public void poll(long timeoutMillis) {
-        int numberOfObjects = poller.poll(timeoutMillis);
-        if (numberOfObjects == 0) {
-            return;
+        int numberOfObjects;
+        try {
+            numberOfObjects = poller.poll(timeoutMillis);
+            if (numberOfObjects == 0) {
+                return;
+            }
+        } catch (ZMQException ex) {
+            throw ZMQExceptions.wrap(ex);
         }
-        for (Map.Entry<Integer, Socket> entry : socketIndex.entrySet()) {
-            Integer index = entry.getKey();
-            if (poller.pollin(index.intValue())) {
-                listeners.get(index).handleIn(entry.getValue());
-            }
-            if (poller.pollout(index.intValue())) {
-                listeners.get(index).handleOut(entry.getValue());
-            }
-            if (poller.pollerr(index.intValue())) {
-                listeners.get(index).handleError(entry.getValue());
-            }
+
+        int index = 0;
+        for (Map.Entry<Pollable, PollListener> entry : pollables.entrySet()) {
+            Socket socket = entry.getKey().getSocket();
+            PollListener listener = entry.getValue();
+            if (poller.pollin(index))
+                listener.handleIn(socket);
+            if (poller.pollout(index))
+                listener.handleOut(socket);
+            if (poller.pollerr(index))
+                listener.handleError(socket);
+
+            index++;
         }
 
     }
+
     public void poll() {
         poll(-1);
+    }
+
+    public int enable(Socket socket) {
+        int result = -1;
+        Pollable pollable = pollable(socket);
+        if (pollable != null) {
+            result = register(pollable);
+        }
+        return result;
+    }
+
+    public boolean disable(Socket socket) {
+        boolean result = false;
+        Pollable pollable = pollable(socket);
+        if (pollable != null) {
+            poller.unregister(socket.getZMQSocket());
+            result = true;
+        }
+        return result;
+    }
+
+    private int register(Pollable pollable) {
+        return poller.register(pollable.getSocket().getZMQSocket(), sumOptions(pollable));
+    }
+
+    private Pollable pollable(Socket socket) {
+        Pollable result = null;
+        for (Pollable pollable : pollables.keySet()) {
+            if (pollable.getSocket() == socket) {
+                result = pollable;
+                break;
+            }
+        }
+        // re-add to end of list (for index-based ZMQ.Poller)
+        if (result != null) {
+            pollables.put(result, pollables.remove(result));
+        }
+        return result;
     }
 }
