@@ -17,4 +17,6 @@ public interface Socket extends Sender, Receiver, Closeable {
     public boolean isActive();
 
     public TransportType getTransportType();
+    
+    void close();
 }
