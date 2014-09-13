@@ -12,6 +12,8 @@ import org.zeromq.api.MessageFlag;
 import org.zeromq.api.RoutedMessage;
 import org.zeromq.api.Socket;
 import org.zeromq.api.TransportType;
+import org.zeromq.api.exception.ContextTerminatedException;
+import org.zeromq.api.exception.InvalidSocketException;
 import org.zeromq.api.exception.ZMQExceptions;
 
 /**
@@ -87,25 +89,35 @@ public class ManagedSocket implements Socket {
 
     @Override
     public Message receiveMessage() {
-        return fillInFrames(new Message());
+        Message message = null;
+        try {
+            message = fillInFrames(new Message());
+        } catch (ContextTerminatedException | InvalidSocketException ex) {
+        }
+        return message;
     }
 
     @Override
     public RoutedMessage receiveRoutedMessage() {
-        return fillInFrames(new RoutedMessage());
+        RoutedMessage message = null;
+        try {
+            message = fillInFrames(new RoutedMessage());
+        } catch (ContextTerminatedException | InvalidSocketException ex) {
+        }
+        return message;
     }
 
-    private <T extends Message> T fillInFrames(T result) {
+    private <T extends Message> T fillInFrames(T message) {
         byte[] bytes = receive();
         if (bytes == null) {
             return null;
         }
-        result.addFrame(new Frame(bytes));
+        message.addFrame(new Frame(bytes));
         while (hasMoreToReceive()) {
             byte[] data = receive();
-            result.addFrame(new Frame(data));
+            message.addFrame(new Frame(data));
         }
-        return result;
+        return message;
     }
 
     @Override
