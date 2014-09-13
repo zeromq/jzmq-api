@@ -214,6 +214,7 @@ public class ManagedContext implements Context {
                     throw ZMQExceptions.wrap(ex);
                 }
             }
+            log.debug("Background thread {} has shut down", Thread.currentThread().getName());
         }
     }
 
