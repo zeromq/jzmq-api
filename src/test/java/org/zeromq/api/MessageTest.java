@@ -2,13 +2,29 @@ package org.zeromq.api;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.zeromq.ContextFactory;
 import org.zeromq.api.Message.Frame;
 
 public class MessageTest {
+
+    private Context context;
+
+    @Before
+    public void setUp() {
+        this.context = ContextFactory.createContext(1);
+    }
+
+    @After
+    public void tearDown() {
+        context.close();
+    }
 
     @Test
     public void testAddFrame() throws Exception {
@@ -48,6 +64,21 @@ public class MessageTest {
 
         Message newMessage = new Message(initial);
         assertEquals(initial.getFrames(), newMessage.getFrames());
+    }
+
+    @Test
+    public void testClosedSocket() throws Exception {
+        Socket pub = context.buildSocket(SocketType.PUB)
+                .bind("inproc://message-test");
+        Socket sub = context.buildSocket(SocketType.SUB)
+                .asSubscribable()
+                .subscribe("".getBytes())
+                .connect("inproc://message-test");
+
+        pub.send("hello".getBytes());
+
+        sub.close();
+        assertNull(sub.receiveMessage());
     }
 
 }
