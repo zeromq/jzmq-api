@@ -2,6 +2,7 @@ package org.zeromq.jzmq.sockets;
 
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
+import org.zeromq.api.Backgroundable;
 import org.zeromq.api.Bindable;
 import org.zeromq.api.Connectable;
 import org.zeromq.api.Routable;
@@ -30,6 +31,8 @@ public class SocketBuilder implements Bindable, Connectable {
         public SocketType socketType;
         public TransportType transportType;
         public byte[] identity;
+        public Backgroundable backgroundable;
+        public Object[] backgroundableArgs;
     };
 
     public SocketBuilder(ManagedContext context, SocketType socketType) {
@@ -182,6 +185,11 @@ public class SocketBuilder implements Bindable, Connectable {
         return this;
     }
 
+    public SocketBuilder withBackgroundable(Backgroundable backgroundable, Object... args) {
+        getSocketSpec().backgroundable = backgroundable;
+        getSocketSpec().backgroundableArgs = args;
+        return this;
+    }
 
     //todo should these be here & removed from the subclasses?  They appear to all be the same implementations.
     /**
@@ -191,7 +199,7 @@ public class SocketBuilder implements Bindable, Connectable {
     public Socket connect(String url, String... additionalUrls) {
         ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         connect(socket, url, additionalUrls);
-        return new ManagedSocket(context, socket);
+        return newManagedSocket(socket);
     }
 
     protected void connect(ZMQ.Socket socket, String url, String[] additionalUrls) {
@@ -227,7 +235,7 @@ public class SocketBuilder implements Bindable, Connectable {
     public Socket bind(String url, String... additionalUrls) {
         ZMQ.Socket socket = createBindableSocketWithStandardSettings();
         bind(socket, url, additionalUrls);
-        return new ManagedSocket(context, socket);
+        return newManagedSocket(socket);
     }
 
     protected void bind(ZMQ.Socket socket, String url, String[] additionalUrls) {
@@ -254,6 +262,14 @@ public class SocketBuilder implements Bindable, Connectable {
             throw ZMQExceptions.wrap(ex);
         }
         return socket;
+    }
+
+    protected Socket newManagedSocket(ZMQ.Socket socket) {
+        ManagedSocket managedSocket = new ManagedSocket(context, socket);
+        if (getSocketSpec().backgroundable != null) {
+            context.fork(managedSocket, getSocketSpec().backgroundable, getSocketSpec().backgroundableArgs);
+        }
+        return managedSocket;
     }
 
     /**

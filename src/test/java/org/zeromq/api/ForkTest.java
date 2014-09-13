@@ -32,6 +32,12 @@ public class ForkTest {
                     assertEquals("hi", new String(pipe.receive()));
                 }
             }
+            
+            @Override
+            public void onClose() {
+                // TODO Auto-generated method stub
+                
+            }
         });
         
         assertEquals("hello", new String(pipe.receive()));

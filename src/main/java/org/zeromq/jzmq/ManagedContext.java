@@ -1,7 +1,9 @@
 package org.zeromq.jzmq;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,6 +42,7 @@ public class ManagedContext implements Context {
 
     private final ZMQ.Context context;
     private final Set<Socket> sockets;
+    private final List<Backgroundable> backgroundables = new ArrayList<Backgroundable>();
 
     public ManagedContext() {
         this(ZMQ.context(1));
@@ -81,6 +84,9 @@ public class ManagedContext implements Context {
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
+            for (Backgroundable b : backgroundables) {
+                b.onClose();
+            }
             for (Socket s : sockets) {
                 destroySocket(s);
             }
@@ -155,6 +161,10 @@ public class ManagedContext implements Context {
         ZMQ.proxy(frontEnd.getZMQSocket(), backEnd.getZMQSocket(), null);
     }
 
+    public void addBackgroundable(Backgroundable backgroundable) {
+        backgroundables.add(backgroundable);
+    }
+
     @Override
     public Socket fork(Backgroundable backgroundable, Object... args) {
         Integer pipeId = Integer.valueOf(backgroundable.hashCode());
@@ -166,9 +176,16 @@ public class ManagedContext implements Context {
         
         // start child thread
         Thread shim = new ShimThread(this, backgroundable, backend, args);
+        backgroundables.add(backgroundable);
         shim.start();
         
         return frontend;
+    }
+
+    public void fork(Socket socket, Backgroundable backgroundable, Object... args) {
+        Thread shim = new ShimThread(this, backgroundable, socket, args);
+        backgroundables.add(backgroundable);
+        shim.start();
     }
 
     /**
