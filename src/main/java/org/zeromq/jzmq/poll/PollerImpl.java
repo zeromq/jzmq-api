@@ -102,10 +102,6 @@ public class PollerImpl implements Poller {
                 break;
             }
         }
-        // re-add to end of list (for index-based ZMQ.Poller)
-        if (result != null) {
-            pollables.put(result, pollables.remove(result));
-        }
         return result;
     }
 }
