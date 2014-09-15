@@ -63,6 +63,16 @@ public interface Context extends Closeable {
     Socket fork(Backgroundable backgroundable, Object... args);
 
     /**
+     * Run a background thread using the given socket for communication.
+     * 
+     * @param socket The socket owned by the background thread
+     * @param backgroundable The task to be performed on the background thread
+     * @param args Optional arguments for the task
+     * @return the inproc PAIR socket for communicating with the background thread
+     */
+    void fork(Socket socket, Backgroundable backgroundable, Object... args);
+
+    /**
      * Close the context and any open sockets.
      */
     void close();

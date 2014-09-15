@@ -175,13 +175,12 @@ public class ManagedContext implements Context {
         Socket backend = buildSocket(SocketType.PAIR).connect(endpoint);
         
         // start child thread
-        Thread shim = new ShimThread(this, backgroundable, backend, args);
-        backgroundables.add(backgroundable);
-        shim.start();
+        fork(backend, backgroundable, args);
         
         return frontend;
     }
 
+    @Override
     public void fork(Socket socket, Backgroundable backgroundable, Object... args) {
         Thread shim = new ShimThread(this, backgroundable, socket, args);
         backgroundables.add(backgroundable);
