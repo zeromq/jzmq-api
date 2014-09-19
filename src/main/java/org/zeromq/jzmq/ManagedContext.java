@@ -40,6 +40,7 @@ public class ManagedContext implements Context {
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
+    private final boolean termContext;
     private final ZMQ.Context context;
     private final Set<Socket> sockets;
     private final List<Backgroundable> backgroundables = new ArrayList<Backgroundable>();
@@ -53,11 +54,16 @@ public class ManagedContext implements Context {
     }
 
     public ManagedContext(ZMQ.Context context) {
+        this(context, true);
+    }
+
+    public ManagedContext(ZMQ.Context context, boolean termContext) {
         if (context == null) {
             throw new IllegalArgumentException("Context cannot be null");
         }
         this.sockets = new CopyOnWriteArraySet<Socket>();
         this.context = context;
+        this.termContext = termContext;
     }
 
     public ZMQ.Context getZMQContext() {
@@ -82,6 +88,11 @@ public class ManagedContext implements Context {
     }
 
     @Override
+    public ManagedContext shadow() {
+        return new ManagedContext(context, false);
+    }
+
+    @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
             for (Backgroundable b : backgroundables) {
@@ -91,7 +102,9 @@ public class ManagedContext implements Context {
                 destroySocket(s);
             }
             sockets.clear();
-            context.term();
+            if (termContext) {
+                context.term();
+            }
             log.debug("closed context");
         }
     }
