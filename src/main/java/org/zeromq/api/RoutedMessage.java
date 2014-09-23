@@ -9,12 +9,17 @@ import java.util.List;
  */
 public class RoutedMessage extends Message {
 
+    /**
+     * Construct an empty message.
+     */
     public RoutedMessage() {
 
     }
 
     /**
      * Takes a route with no frames.
+     * 
+     * @param route The initial route
      */
     public RoutedMessage(Route route) {
         super(route.getRoutingFrames());
@@ -22,6 +27,8 @@ public class RoutedMessage extends Message {
 
     /**
      * Takes routes with no frames.
+     * 
+     * @param An initial list of routes
      */
     public RoutedMessage(List<Route> routes) {
         for (Route route : routes) {
@@ -31,6 +38,9 @@ public class RoutedMessage extends Message {
 
     /**
      * Takes the existing message and adds a route to the beginning of it.
+     * 
+     * @param route The initial route
+     * @param message A message containing frames to be added
      */
     public RoutedMessage(Route route, Message message) {
         this(route);
@@ -39,12 +49,21 @@ public class RoutedMessage extends Message {
 
     /**
      * Takes the existing message and adds routes to the beginning of it.
+     * 
+     * @param routes An initial list of routes
+     * @param message A message containing frames to be added
      */
     public RoutedMessage(List<Route> routes, Message message) {
         this(routes);
         addFrames(message);
     }
 
+    /**
+     * Get the message portion of the routed message, which is the frames after
+     * all routing frames.
+     * 
+     * @return The message payload
+     */
     public Message getPayload() {
         List<Frame> frames = getFrames();
         //each route is 2 frames, so get everything after the routing frames.
@@ -84,6 +103,10 @@ public class RoutedMessage extends Message {
         return new Route(route.getData());
     }
 
+    /**
+     * Represents a route, or address frame, which will be combined with a blank
+     * frame over the wire.
+     */
     public static class Route {
         public static final Frame BLANK = new Frame(new byte[0]);
 
@@ -91,7 +114,7 @@ public class RoutedMessage extends Message {
         private final byte[] address;
 
         public Route(String address) {
-            this(address.getBytes());
+            this(address.getBytes(Message.CHARSET));
         }
 
         public Route(byte[] address) {
@@ -103,11 +126,11 @@ public class RoutedMessage extends Message {
         }
 
         public String getString() {
-            return new String(address);
+            return new String(address, Message.CHARSET);
         }
 
         public List<Frame> getRoutingFrames() {
-            ArrayList<Frame> frames = new ArrayList<Frame>(2);
+            List<Frame> frames = new ArrayList<Frame>(2);
             frames.add(new Frame(address));
             frames.add(BLANK);
             return frames;
@@ -115,7 +138,7 @@ public class RoutedMessage extends Message {
 
         @Override
         public String toString() {
-            return "Route{address=" + new String(address) + '}';
+            return "Route{address=" + new String(address, Message.CHARSET) + '}';
         }
 
         @Override

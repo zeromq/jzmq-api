@@ -92,7 +92,8 @@ public class ManagedSocket implements Socket {
         Message message = null;
         try {
             message = fillInFrames(new Message());
-        } catch (ContextTerminatedException | InvalidSocketException ex) {
+        } catch (ContextTerminatedException ex) {
+        } catch (InvalidSocketException ex) {
         }
         return message;
     }
@@ -102,7 +103,8 @@ public class ManagedSocket implements Socket {
         RoutedMessage message = null;
         try {
             message = fillInFrames(new RoutedMessage());
-        } catch (ContextTerminatedException | InvalidSocketException ex) {
+        } catch (ContextTerminatedException ex) {
+        } catch (InvalidSocketException ex) {
         }
         return message;
     }

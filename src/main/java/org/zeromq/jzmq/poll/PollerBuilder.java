@@ -1,7 +1,9 @@
-package org.zeromq.jzmq;
+package org.zeromq.jzmq.poll;
 
 import org.zeromq.api.PollListener;
 import org.zeromq.api.Pollable;
+import org.zeromq.api.Poller;
+import org.zeromq.jzmq.ManagedContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,13 +17,12 @@ public class PollerBuilder {
         this.context = context;
     }
 
-
     public PollerBuilder withPollable(Pollable pollable, PollListener listener) {
         pollablesAndListeners.put(pollable, listener);
         return this;
     }
 
     public Poller create() {
-        return new Poller(context, pollablesAndListeners);
+        return new PollerImpl(context, pollablesAndListeners);
     }
 }

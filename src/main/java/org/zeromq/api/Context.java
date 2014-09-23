@@ -1,6 +1,6 @@
 package org.zeromq.api;
 
-import org.zeromq.jzmq.PollerBuilder;
+import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
 import java.io.Closeable;
@@ -19,12 +19,12 @@ public interface Context extends Closeable {
     SocketBuilder buildSocket(SocketType type);
 
     /**
-     * @return the ØMQ version, in a pretty-printed String.
+     * @return The ØMQ version, in a pretty-printed String.
      */
     String getVersionString();
 
     /**
-     * @return the ØMQ version, in integer form.
+     * @return The ØMQ version, in integer form.
      */
     int getFullVersion();
 
@@ -41,7 +41,7 @@ public interface Context extends Closeable {
      * 
      * @param socket A socket to wrap for polling
      * @param options Polling options (IN, OUT, ERROR)
-     * @return a new Pollable, for use with a Poller.
+     * @return A new Pollable, for use with a Poller.
      */
     Pollable newPollable(Socket socket, PollerType... options);
 
@@ -58,9 +58,30 @@ public interface Context extends Closeable {
      * 
      * @param backgroundable The task to be performed on the background thread
      * @param args Optional arguments for the task
-     * @return the inproc PAIR socket for communicating with the background thread
+     * @return The inproc PAIR socket for communicating with the background thread
      */
     Socket fork(Backgroundable backgroundable, Object... args);
+
+    /**
+     * Run a background thread using the given socket for communication.
+     * 
+     * @param socket The socket owned by the background thread
+     * @param backgroundable The task to be performed on the background thread
+     * @param args Optional arguments for the task
+     * @return The pre-configured socket to be used on the background thread
+     */
+    void fork(Socket socket, Backgroundable backgroundable, Object... args);
+
+    /**
+     * Create a new Context with the same underlying ØMQ context, with an empty
+     * (separate) list of managed Sockets and Backgroundables.
+     * <p>
+     * The returned context will not attempt to terminate the underlying ØMQ
+     * context when closed, and will only close managed sockets, etc.
+     * 
+     * @return A new context with the same underlying ØMQ context
+     */
+    Context shadow();
 
     /**
      * Close the context and any open sockets.

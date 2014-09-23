@@ -2,7 +2,6 @@ package guide;
 
 import org.zeromq.api.*;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.Poller;
 
 import java.util.List;
 import java.util.Random;

@@ -1,11 +1,11 @@
 package guide;
 
 import org.zeromq.api.PollAdapter;
+import org.zeromq.api.Poller;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.Poller;
 
 public class mspoller {
     public static void main(String[] args) {

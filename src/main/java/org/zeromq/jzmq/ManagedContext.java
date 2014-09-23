@@ -1,7 +1,9 @@
 package org.zeromq.jzmq;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,6 +20,7 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.poll.PollableImpl;
+import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.sockets.DealerSocketBuilder;
 import org.zeromq.jzmq.sockets.PairSocketBuilder;
 import org.zeromq.jzmq.sockets.PubSocketBuilder;
@@ -37,8 +40,10 @@ public class ManagedContext implements Context {
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
+    private final boolean termContext;
     private final ZMQ.Context context;
     private final Set<Socket> sockets;
+    private final List<Backgroundable> backgroundables = new ArrayList<Backgroundable>();
 
     public ManagedContext() {
         this(ZMQ.context(1));
@@ -49,11 +54,16 @@ public class ManagedContext implements Context {
     }
 
     public ManagedContext(ZMQ.Context context) {
+        this(context, true);
+    }
+
+    public ManagedContext(ZMQ.Context context, boolean termContext) {
         if (context == null) {
             throw new IllegalArgumentException("Context cannot be null");
         }
         this.sockets = new CopyOnWriteArraySet<Socket>();
         this.context = context;
+        this.termContext = termContext;
     }
 
     public ZMQ.Context getZMQContext() {
@@ -78,13 +88,23 @@ public class ManagedContext implements Context {
     }
 
     @Override
+    public ManagedContext shadow() {
+        return new ManagedContext(context, false);
+    }
+
+    @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
+            for (Backgroundable b : backgroundables) {
+                b.onClose();
+            }
             for (Socket s : sockets) {
                 destroySocket(s);
             }
             sockets.clear();
-            context.term();
+            if (termContext) {
+                context.term();
+            }
             log.debug("closed context");
         }
     }
@@ -154,6 +174,10 @@ public class ManagedContext implements Context {
         ZMQ.proxy(frontEnd.getZMQSocket(), backEnd.getZMQSocket(), null);
     }
 
+    public void addBackgroundable(Backgroundable backgroundable) {
+        backgroundables.add(backgroundable);
+    }
+
     @Override
     public Socket fork(Backgroundable backgroundable, Object... args) {
         Integer pipeId = Integer.valueOf(backgroundable.hashCode());
@@ -164,10 +188,16 @@ public class ManagedContext implements Context {
         Socket backend = buildSocket(SocketType.PAIR).connect(endpoint);
         
         // start child thread
-        Thread shim = new ShimThread(this, backgroundable, backend, args);
-        shim.start();
+        fork(backend, backgroundable, args);
         
         return frontend;
+    }
+
+    @Override
+    public void fork(Socket socket, Backgroundable backgroundable, Object... args) {
+        Thread shim = new ShimThread(this, backgroundable, socket, args);
+        backgroundables.add(backgroundable);
+        shim.start();
     }
 
     /**
@@ -196,6 +226,7 @@ public class ManagedContext implements Context {
                     throw ZMQExceptions.wrap(ex);
                 }
             }
+            log.debug("Background thread {} has shut down", Thread.currentThread().getName());
         }
     }
 

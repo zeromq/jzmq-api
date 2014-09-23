@@ -1,6 +1,9 @@
 package org.zeromq.api;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,7 +13,7 @@ import org.zeromq.ContextFactory;
 public class ForkTest {
 
     private Context context;
-    private boolean shutDown = false;
+    private volatile boolean shutDown = false;
     
     @Before
     public void setUp() {
@@ -32,6 +35,12 @@ public class ForkTest {
                     assertEquals("hi", new String(pipe.receive()));
                 }
             }
+            
+            @Override
+            public void onClose() {
+                // TODO Auto-generated method stub
+                
+            }
         });
         
         assertEquals("hello", new String(pipe.receive()));
@@ -42,6 +51,43 @@ public class ForkTest {
         pipe.send("hi".getBytes());
         
         context.close();
+    }
+    
+    @Test
+    public void testBackgroundable() throws Exception {
+        final AtomicBoolean closed = new AtomicBoolean(false);
+        Socket req = context.buildSocket(SocketType.REQ)
+            .bind("inproc://background-test");
+        
+        // background thread will handle this socket
+        /* Socket rep = */
+        context.buildSocket(SocketType.REP)
+            .withBackgroundable(new Backgroundable() {
+                @Override
+                public void run(Context context, Socket socket, Object... args) {
+                    while (!shutDown) {
+                        assertEquals("hello", new String(socket.receive()));
+                        socket.send("hello, world".getBytes());
+                    }
+                    
+                }
+                
+                @Override
+                public void onClose() {
+                    closed.set(true);
+                }
+            })
+            .connect("inproc://background-test");
+        
+        req.send("hello".getBytes());
+        assertEquals("hello, world", new String(req.receive()));
+        
+        shutDown = true;
+        req.send("hello".getBytes());
+        assertEquals("hello, world", new String(req.receive()));
+        
+        context.close();
+        assertTrue(closed.get());
     }
 
 }
