@@ -5,7 +5,6 @@ import org.zeromq.api.Routable;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.ManagedSocket;
 
 public class RouterSocketBuilder extends SocketBuilder implements Routable {
     private boolean routerMandatory = false;
@@ -19,7 +18,7 @@ public class RouterSocketBuilder extends SocketBuilder implements Routable {
         ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         socket.setRouterMandatory(routerMandatory);
         connect(socket, url, additionalUrls);
-        return new ManagedSocket(context, socket);
+        return newManagedSocket(socket);
     }
 
     @Override
@@ -27,7 +26,7 @@ public class RouterSocketBuilder extends SocketBuilder implements Routable {
         ZMQ.Socket socket = createBindableSocketWithStandardSettings();
         socket.setRouterMandatory(routerMandatory);
         bind(socket, url, additionalUrls);
-        return new ManagedSocket(context, socket);
+        return newManagedSocket(socket);
     }
 
     @Override
