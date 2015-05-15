@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zeromq.ContextFactory;
 import org.zeromq.api.Message.Frame;
@@ -67,6 +68,7 @@ public class MessageTest {
     }
 
     @Test
+    @Ignore("The JZMQ and JeroMQ libraries differ in how closed sockets behave - JeroMQ sometimes can hang, while JZMQ returns null")
     public void testClosedSocket() throws Exception {
         Socket pub = context.buildSocket(SocketType.PUB)
                 .bind("inproc://message-test");

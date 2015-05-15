@@ -33,8 +33,7 @@ public class ZMQExceptions {
      * @return true if the exception indicates ETERM, false otherwise
      */
     public static boolean isContextTerminated(ZMQException thrown) {
-        ZMQ.Error error = ZMQ.Error.findByCode(thrown.getErrorCode());
-        return error.name().equals("ETERM");
+        return (thrown.getErrorCode() == ZMQ.Error.ETERM.getCode());
     }
 
     /**
@@ -44,7 +43,7 @@ public class ZMQExceptions {
      * @return true if the exception indicates ENOTSOCK, false otherwise
      */
     public static boolean isInvalidSocket(ZMQException thrown) {
-        ZMQ.Error error = ZMQ.Error.findByCode(thrown.getErrorCode());
-        return error.name().equals("ENOTSOCK");
+        return (thrown.getErrorCode() == ZMQ.Error.ENOTSOCK.getCode()
+            || thrown.getErrorCode() == ZMQ.Error.EAGAIN.getCode());
     }
 }
