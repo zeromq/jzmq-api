@@ -35,7 +35,7 @@ public class SubSocketBuilder extends SocketBuilder implements Subscribable {
     @Override
     public Socket bind(String url, String... additionalUrls) {
         if (subscription == null) {
-            throw new IllegalStateException("You must have a SUB socket subscribe to something before you can connect it.");
+            throw new IllegalStateException("You must have a SUB socket subscribe to something before you can bind it.");
         }
         ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         socket.subscribe(subscription);
