@@ -2,8 +2,6 @@ package org.zeromq.api;
 
 /**
  * Poller for polling sockets and receiving callbacks for events.
- * 
- * @author sjohnr
  */
 public interface Poller {
 
