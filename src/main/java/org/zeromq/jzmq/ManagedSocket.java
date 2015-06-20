@@ -69,9 +69,9 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public int receiveZeroCopy(ByteBuffer buf, int len, MessageFlag flag) {
+    public int receiveByteBuffer(ByteBuffer buf, MessageFlag flag) {
         try {
-            return socket.recvZeroCopy(buf, len, flag.getFlag());
+            return socket.recvByteBuffer(buf, flag.getFlag());
         } catch (ZMQException ex) {
             throw ZMQExceptions.wrap(ex);
         }
@@ -159,9 +159,9 @@ public class ManagedSocket implements Socket {
     }
 
     @Override
-    public boolean sendZeroCopy(ByteBuffer buf, int length, MessageFlag flag) {
+    public boolean sendByteBuffer(ByteBuffer buf, MessageFlag flag) {
         try {
-            return socket.sendZeroCopy(buf, length, flag.getFlag());
+            return socket.sendByteBuffer(buf, flag.getFlag()) >= 0;
         } catch (ZMQException ex) {
             throw ZMQExceptions.wrap(ex);
         }

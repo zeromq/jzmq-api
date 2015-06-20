@@ -3,6 +3,9 @@ package org.zeromq.api.exception;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 
+/**
+ * Helper class for handling exceptions, especially with jzmq.
+ */
 public class ZMQExceptions {
 
     private ZMQExceptions() {}
@@ -14,13 +17,12 @@ public class ZMQExceptions {
      * @return A new exception, which wraps a ZMQException
      */
     public static ZMQRuntimeException wrap(ZMQException thrown) {
-        switch (ZMQ.Error.findByCode(thrown.getErrorCode())) {
-            case ETERM:
-                return new ContextTerminatedException(thrown);
-            case ENOTSOCK:
-                return new InvalidSocketException(thrown);
-            default:
-                return new ZMQRuntimeException(thrown);
+        if (isContextTerminated(thrown)) {
+            return new ContextTerminatedException(thrown);
+        } else if (isInvalidSocket(thrown)) {
+            return new InvalidSocketException(thrown);
+        } else {
+            return new ZMQRuntimeException(thrown);
         }
     }
 
@@ -31,7 +33,7 @@ public class ZMQExceptions {
      * @return true if the exception indicates ETERM, false otherwise
      */
     public static boolean isContextTerminated(ZMQException thrown) {
-        return (ZMQ.Error.ETERM.getCode() == thrown.getErrorCode());
+        return (thrown.getErrorCode() == ZMQ.Error.ETERM.getCode());
     }
 
     /**
@@ -41,6 +43,7 @@ public class ZMQExceptions {
      * @return true if the exception indicates ENOTSOCK, false otherwise
      */
     public static boolean isInvalidSocket(ZMQException thrown) {
-        return (ZMQ.Error.ENOTSOCK.getCode() == thrown.getErrorCode());
+        return (thrown.getErrorCode() == ZMQ.Error.ENOTSOCK.getCode()
+            || thrown.getErrorCode() == ZMQ.Error.EAGAIN.getCode());
     }
 }

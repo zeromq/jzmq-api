@@ -18,6 +18,8 @@ import org.zeromq.jzmq.ManagedSocket;
  * SocketBuilder
  */
 public class SocketBuilder implements Bindable, Connectable {
+    private static final String[] EMPTY_ADDITIONAL_URLS = new String[0];
+
     protected ManagedContext context;
     protected SocketSpec socketSpec;
 
@@ -196,6 +198,11 @@ public class SocketBuilder implements Bindable, Connectable {
      * {@inheritDoc}
      */
     @Override
+    public Socket connect(String url) {
+        return connect(url, EMPTY_ADDITIONAL_URLS);
+    }
+
+    @Override
     public Socket connect(String url, String... additionalUrls) {
         ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         connect(socket, url, additionalUrls);
@@ -231,6 +238,11 @@ public class SocketBuilder implements Bindable, Connectable {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Socket bind(String url) {
+        return bind(url, EMPTY_ADDITIONAL_URLS);
+    }
+
     @Override
     public Socket bind(String url, String... additionalUrls) {
         ZMQ.Socket socket = createBindableSocketWithStandardSettings();

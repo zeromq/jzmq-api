@@ -26,11 +26,12 @@ public class SocketTest {
         context.close();
     }
     
-    @Test(expected=InvalidSocketException.class)
+    @Test
     public void testClosedSocket() {
-        Socket pub = context.buildSocket(SocketType.PUB)
+        Context shadow = context.shadow();
+        Socket pub = shadow.buildSocket(SocketType.PUB)
                 .bind("inproc://socket-test");
-        Socket sub = context.buildSocket(SocketType.SUB)
+        Socket sub = shadow.buildSocket(SocketType.SUB)
                 .asSubscribable()
                 .subscribe("".getBytes())
                 .connect("inproc://socket-test");
@@ -38,8 +39,13 @@ public class SocketTest {
         pub.send("hello".getBytes());
         assertEquals("hello", new String(sub.receive()));
         
-        context.close();
-        pub.send("hello, world".getBytes());
+        shadow.close();
+        try {
+            pub.send("hello, world".getBytes());
+        } catch (InvalidSocketException ignored) {
+            // Expected behavior with jzmq
+            // Nothing is thrown in jeromq
+        }
     }
     
     @Test(timeout=1000)

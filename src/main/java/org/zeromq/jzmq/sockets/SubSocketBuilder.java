@@ -5,7 +5,6 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.api.Subscribable;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.ManagedSocket;
 
 public class SubSocketBuilder extends SocketBuilder implements Subscribable {
     private byte[] subscription;
@@ -29,7 +28,18 @@ public class SubSocketBuilder extends SocketBuilder implements Subscribable {
         ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
         socket.subscribe(subscription);
         connect(socket, url, additionalUrls);
-        return new ManagedSocket(context, socket);
+        return newManagedSocket(socket);
+    }
+    
+    @Override
+    public Socket bind(String url, String... additionalUrls) {
+        if (subscription == null) {
+            throw new IllegalStateException("You must have a SUB socket subscribe to something before you can bind it.");
+        }
+        ZMQ.Socket socket = createConnectableSocketWithStandardSettings();
+        socket.subscribe(subscription);
+        bind(socket, url, additionalUrls);
+        return newManagedSocket(socket);
     }
 
 }
