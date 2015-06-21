@@ -1,15 +1,7 @@
 before_install:
-#   libsodium
- - git clone git://github.com/jedisct1/libsodium.git
- - ( cd libsodium; ./autogen.sh; ./configure; make check; sudo make install; sudo ldconfig )
-
-#   libzmq
- - git clone git://github.com/zeromq/libzmq.git
- - ( cd libzmq; ./autogen.sh; ./configure; make check; sudo make install; sudo ldconfig )
-
-#   jzmq
- - git clone git://github.com/zeromq/jzmq.git
- - ( cd jzmq; ./autogen.sh; ./configure; sudo make install; sudo ldconfig )
+ - sudo apt-get update -y
+ - sudo apt-get install libzmq3-dev libpgm-dev -y
+ - sudo dpkg -i debs/jzmq_2.1.1-1_amd64.deb
 
 language: java
 
