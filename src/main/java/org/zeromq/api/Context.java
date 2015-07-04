@@ -54,6 +54,15 @@ public interface Context extends Closeable {
     void proxy(Socket frontEnd, Socket backEnd);
 
     /**
+     * Create a ZMQ proxy and start it up on another thread that exits when the context
+     * is closed.
+     *
+     * @param frontEnd The front-end socket which will be proxied to/from the back-end
+     * @param backEnd The back-end socket which will be proxied to/from the front-end
+     */
+    void queue(Socket frontEnd, Socket backEnd);
+
+    /**
      * Run a background thread with an inproc PAIR socket for communication.
      * 
      * @param backgroundable The task to be performed on the background thread
@@ -68,7 +77,6 @@ public interface Context extends Closeable {
      * @param socket The socket owned by the background thread
      * @param backgroundable The task to be performed on the background thread
      * @param args Optional arguments for the task
-     * @return The pre-configured socket to be used on the background thread
      */
     void fork(Socket socket, Backgroundable backgroundable, Object... args);
 
