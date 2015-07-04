@@ -43,7 +43,7 @@ public class ManagedContext implements Context {
     private final boolean termContext;
     private final ZMQ.Context context;
     private final Set<Socket> sockets;
-    private final List<Backgroundable> backgroundables = new ArrayList<Backgroundable>();
+    private final List<Backgroundable> backgroundables;
 
     public ManagedContext() {
         this(ZMQ.context(1));
@@ -61,7 +61,8 @@ public class ManagedContext implements Context {
         if (context == null) {
             throw new IllegalArgumentException("Context cannot be null");
         }
-        this.sockets = new CopyOnWriteArraySet<Socket>();
+        this.sockets = new CopyOnWriteArraySet<>();
+        this.backgroundables = new ArrayList<>();
         this.context = context;
         this.termContext = termContext;
     }
@@ -174,13 +175,18 @@ public class ManagedContext implements Context {
         ZMQ.proxy(frontEnd.getZMQSocket(), backEnd.getZMQSocket(), null);
     }
 
+    @Override
+    public void queue(Socket frontEnd, Socket backEnd) {
+        new ProxyThread(this, frontEnd, backEnd).start();
+    }
+
     public void addBackgroundable(Backgroundable backgroundable) {
         backgroundables.add(backgroundable);
     }
 
     @Override
     public Socket fork(Backgroundable backgroundable, Object... args) {
-        Integer pipeId = Integer.valueOf(backgroundable.hashCode());
+        int pipeId = backgroundable.hashCode();
         String endpoint = String.format("inproc://jzmq-pipe-%d", pipeId);
         
         // link PAIR pipes together
@@ -196,7 +202,7 @@ public class ManagedContext implements Context {
     @Override
     public void fork(Socket socket, Backgroundable backgroundable, Object... args) {
         Thread shim = new ShimThread(this, backgroundable, socket, args);
-        backgroundables.add(backgroundable);
+        addBackgroundable(backgroundable);
         shim.start();
     }
 
@@ -227,6 +233,30 @@ public class ManagedContext implements Context {
                 }
             }
             log.debug("Background thread {} has shut down", Thread.currentThread().getName());
+        }
+    }
+
+    private static class ProxyThread extends Thread {
+        private ManagedContext context;
+        private Socket frontEnd;
+        private Socket backEnd;
+
+        public ProxyThread(ManagedContext context, Socket frontEnd, Socket backEnd) {
+            this.context = context;
+            this.frontEnd = frontEnd;
+            this.backEnd = backEnd;
+        }
+
+        @Override
+        public void run() {
+            try {
+                context.proxy(frontEnd, backEnd);
+            } catch (ZMQException ex) {
+                if (!ZMQExceptions.isContextTerminated(ex)) {
+                    throw ZMQExceptions.wrap(ex);
+                }
+            }
+            log.debug("Proxy thread {} has shut down", Thread.currentThread().getName());
         }
     }
 
