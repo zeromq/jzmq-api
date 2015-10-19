@@ -176,8 +176,13 @@ public class ManagedContext implements Context {
     }
 
     @Override
-    public void queue(Socket frontEnd, Socket backEnd) {
+    public void forward(Socket frontEnd, Socket backEnd) {
         new ProxyThread(this, frontEnd, backEnd).start();
+    }
+
+    @Override
+    public void queue(Socket frontEnd, Socket backEnd) {
+        forward(frontEnd, backEnd);
     }
 
     public void addBackgroundable(Backgroundable backgroundable) {

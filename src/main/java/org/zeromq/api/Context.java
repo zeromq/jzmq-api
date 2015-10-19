@@ -60,6 +60,14 @@ public interface Context extends Closeable {
      * @param frontEnd The front-end socket which will be proxied to/from the back-end
      * @param backEnd The back-end socket which will be proxied to/from the front-end
      */
+    void forward(Socket frontEnd, Socket backEnd);
+
+    /**
+     * Alias of {@link #forward}.
+     *
+     * @param frontEnd The front-end socket which will be proxied to/from the back-end
+     * @param backEnd The back-end socket which will be proxied to/from the front-end
+     */
     void queue(Socket frontEnd, Socket backEnd);
 
     /**
