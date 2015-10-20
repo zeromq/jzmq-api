@@ -44,6 +44,11 @@ public class PollerImpl implements Poller {
             if (numberOfObjects == 0) {
                 return;
             }
+
+            // simulate ETERM to make JeroMQ act like jzmq, which no longer returns -1
+            if (numberOfObjects < 0) {
+                throw new ZMQException("Simulated ETERM error", ZMQ.Error.ETERM.getCode());
+            }
         } catch (ZMQException ex) {
             throw ZMQExceptions.wrap(ex);
         }
