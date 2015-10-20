@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class ManagedContext implements Context {
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    private final boolean termContext;
+    private boolean termContext;
     private final ZMQ.Context context;
     private final Set<Socket> sockets;
     private final List<Backgroundable> backgroundables;
@@ -84,7 +85,6 @@ public class ManagedContext implements Context {
                 log.warn("Exception caught while closing underlying socket.", ignore);
             }
             log.debug("closed socket");
-            sockets.remove(socket);
         }
     }
 
@@ -107,6 +107,24 @@ public class ManagedContext implements Context {
                 context.term();
             }
             log.debug("closed context");
+        }
+    }
+
+    @Override
+    public void terminate() {
+        if (termContext) {
+            // Terminate context on another thread
+            TermThread thread = new TermThread(this);
+            thread.start();
+            try {
+                // Wait until thread has started, and a bit more
+                thread.await();
+                Thread.sleep(15);
+            } catch (InterruptedException ignored) {
+            }
+
+            // Don't double-terminate context
+            termContext = false;
         }
     }
 
@@ -266,4 +284,22 @@ public class ManagedContext implements Context {
         }
     }
 
+    private static class TermThread extends Thread {
+        private final ManagedContext context;
+        private CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        public TermThread(ManagedContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            countDownLatch.countDown();
+            context.getZMQContext().term();
+        }
+
+        public void await() throws InterruptedException {
+            countDownLatch.await();
+        }
+    }
 }

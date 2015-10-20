@@ -103,4 +103,10 @@ public interface Context extends Closeable {
      * Close the context and any open sockets.
      */
     void close();
+
+    /**
+     * Asynchronously terminate the context without closing any open sockets,
+     * forcing pollers and waiters to abort.
+     */
+    void terminate();
 }
