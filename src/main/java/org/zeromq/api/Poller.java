@@ -34,4 +34,13 @@ public interface Poller {
      */
     boolean disable(Socket socket);
 
+    /**
+     * Enable a socket in the poller after it has been disabled.
+     *
+     * @param pollable The pollable containing the socket and polling options
+     * @param listener The listener that handles events for the given pollable
+     * @return The new index of the socket in the poller, for reference
+     */
+    int register(Pollable pollable, PollListener listener);
+
 }
