@@ -1,8 +1,5 @@
 package org.zeromq.jzmq.poll;
 
-import java.util.EnumSet;
-import java.util.Map;
-
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 import org.zeromq.api.PollListener;
@@ -13,13 +10,17 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.ManagedContext;
 
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class PollerImpl implements Poller {
     private final Map<Pollable, PollListener> pollables;
     private final ZMQ.Poller poller;
 
     public PollerImpl(ManagedContext context, Map<Pollable, PollListener> pollables) {
         this.poller = context.newZmqPoller(pollables.size());
-        this.pollables = pollables;
+        this.pollables = new LinkedHashMap<>(pollables);
         for (Pollable pollable : pollables.keySet()) {
             register(pollable);
         }
@@ -64,7 +65,6 @@ public class PollerImpl implements Poller {
 
             index++;
         }
-
     }
 
     @Override

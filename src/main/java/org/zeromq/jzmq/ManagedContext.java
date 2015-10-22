@@ -20,8 +20,10 @@ import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.api.exception.ZMQExceptions;
+import org.zeromq.jzmq.bstar.BinaryStarBuilder;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.poll.PollerBuilder;
+import org.zeromq.jzmq.reactor.ReactorBuilder;
 import org.zeromq.jzmq.sockets.DealerSocketBuilder;
 import org.zeromq.jzmq.sockets.PairSocketBuilder;
 import org.zeromq.jzmq.sockets.PubSocketBuilder;
@@ -186,6 +188,16 @@ public class ManagedContext implements Context {
     @Override
     public Pollable newPollable(Socket socket, PollerType... options) {
         return new PollableImpl(socket, options);
+    }
+
+    @Override
+    public ReactorBuilder buildReactor() {
+        return new ReactorBuilder(this);
+    }
+
+    @Override
+    public BinaryStarBuilder buildBinaryStar() {
+        return new BinaryStarBuilder(this);
     }
 
     @Override

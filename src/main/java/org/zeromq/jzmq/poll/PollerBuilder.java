@@ -7,13 +7,13 @@ import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.jzmq.ManagedContext;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PollerBuilder {
 
     private final ManagedContext context;
-    private Map<Pollable, PollListener> pollablesAndListeners = new HashMap<Pollable, PollListener>();
+    private final Map<Pollable, PollListener> pollablesAndListeners = new LinkedHashMap<>();
 
     public PollerBuilder(ManagedContext context) {
         this.context = context;
@@ -44,7 +44,12 @@ public class PollerBuilder {
         return withPollable(context.newPollable(socket, PollerType.POLL_IN, PollerType.POLL_OUT, PollerType.POLL_ERROR), listener);
     }
 
+    @Deprecated
     public Poller create() {
+        return build();
+    }
+
+    public Poller build() {
         return new PollerImpl(context, pollablesAndListeners);
     }
 }

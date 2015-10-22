@@ -1,6 +1,8 @@
 package org.zeromq.api;
 
+import org.zeromq.jzmq.bstar.BinaryStarBuilder;
 import org.zeromq.jzmq.poll.PollerBuilder;
+import org.zeromq.jzmq.reactor.ReactorBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
 import java.io.Closeable;
@@ -14,7 +16,7 @@ public interface Context extends Closeable {
      * Create a ØMQ Socket of type SocketType
      * 
      * @param type socket type
-     * @return builder object
+     * @return A builder for constructing and connecting ØMQ Sockets
      */
     SocketBuilder buildSocket(SocketType type);
 
@@ -31,10 +33,27 @@ public interface Context extends Closeable {
     /**
      * Create a new Poller, which will allow callback-based polling of Sockets.
      * 
+     * @return A builder for constructing ØMQ Pollers
      * @see Pollable
      * @see PollerType
      */
     PollerBuilder buildPoller();
+
+    /**
+     * Create a new Reactor, which will allow event-driven and timer-based
+     * polling of Sockets.
+     * 
+     * @return A builder for constructing a Reactor
+     */
+    ReactorBuilder buildReactor();
+
+    /**
+     * Create a new BinaryStar, which will create one half of an HA-pair
+     * with event-driven polling of a client Socket.
+     * 
+     * @return A builder for constructing a BinaryStar
+     */
+    BinaryStarBuilder buildBinaryStar();
 
     /**
      * Create a new Pollable from the socket, with the requested options.

@@ -35,7 +35,7 @@ public class SocketBuilder implements Bindable, Connectable {
         public byte[] identity;
         public Backgroundable backgroundable;
         public Object[] backgroundableArgs;
-    };
+    }
 
     public SocketBuilder(ManagedContext context, SocketType socketType) {
         this.socketSpec = new SocketSpec();
