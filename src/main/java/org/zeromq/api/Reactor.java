@@ -10,6 +10,11 @@ public interface Reactor {
     void start();
 
     /**
+     * Start the reactor
+     */
+    void stop();
+
+    /**
      * Add a new Pollable to this Reactor.
      * <p>
      * This method is not thread-safe, and should only be done from inside the

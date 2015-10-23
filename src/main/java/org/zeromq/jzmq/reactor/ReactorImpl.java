@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +17,13 @@ import org.zeromq.api.exception.ContextTerminatedException;
 import org.zeromq.api.exception.InvalidSocketException;
 import org.zeromq.jzmq.ManagedContext;
 
-public class ReactorImpl extends Thread implements Reactor {
+public class ReactorImpl implements Reactor, Runnable {
     private static final Logger log = LoggerFactory.getLogger(Reactor.class);
 
-    private final Poller poller;
+    private final Thread thread = new Thread(this);
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
+    private final Poller poller;
     private final List<PollItem> pollItems;
     private final Queue<ReactorTimer> timers;
 
@@ -67,9 +70,26 @@ public class ReactorImpl extends Thread implements Reactor {
     }
 
     @Override
+    public void start() {
+        thread.start();
+    }
+
+    @Override
+    public void stop() {
+        running.set(false);
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    @Override
     public void run() {
+        running.set(true);
+
         // Main reactor loop
-        while (!Thread.currentThread().isInterrupted()) {
+        while (running.get()) {
             long wait = ticklessTimer();
             try {
                 /*
@@ -80,6 +100,11 @@ public class ReactorImpl extends Thread implements Reactor {
                  */
                 poller.poll(wait);
             } catch (ContextTerminatedException | InvalidSocketException ex) {
+                break;
+            }
+
+            // Break out early if shutting down
+            if (!running.get()) {
                 break;
             }
 

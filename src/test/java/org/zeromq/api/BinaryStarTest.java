@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.zeromq.ZMQ;
 import org.zeromq.jzmq.ManagedContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -98,18 +96,12 @@ public class BinaryStarTest {
 
     @After
     public void tearDown() {
-        context1.terminate();
+        primary.stop();
         context1.close();
-        context2.terminate();
+        backup.stop();
         context2.close();
 
         context.close();
-    }
-
-    @Test
-    @Ignore
-    public void testAlive() throws Exception {
-        Thread.sleep(Long.MAX_VALUE);
     }
 
     @Test

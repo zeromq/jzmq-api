@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReactorTest {
     private ManagedContext context;
-    private ManagedContext shadow;
     private Socket in;
     private Socket out;
 
@@ -21,24 +20,15 @@ public class ReactorTest {
     @Before
     public void setUp() throws Exception {
         context = new ManagedContext();
-        shadow = context.shadow();
-        out = shadow.buildSocket(SocketType.PUB).bind("inproc://test");
-        in = shadow.buildSocket(SocketType.SUB).asSubscribable().subscribe("".getBytes()).connect("inproc://test");
+        out = context.buildSocket(SocketType.PUB).bind("inproc://test");
+        in = context.buildSocket(SocketType.SUB).asSubscribable().subscribe("".getBytes()).connect("inproc://test");
         Thread.sleep(15);
     }
 
     @After
     public void tearDown() throws Exception {
-        new Thread() {
-            @Override
-            public void run() {
-                // terminate context without closing sockets to shut down reactor thread
-                context.close();
-            }
-        }.start();
-
-        Thread.sleep(15);
-        shadow.close();
+        context.terminate();
+        context.close();
     }
 
     @Test
@@ -130,7 +120,7 @@ public class ReactorTest {
         };
 
         for (int i = 0; i < 1000; i++) {
-            Socket s = shadow.buildSocket(SocketType.SUB)
+            Socket s = context.buildSocket(SocketType.SUB)
                     .asSubscribable().subscribe("".getBytes())
                     .connect("inproc://test");
             builder.withInPollable(s, handler);

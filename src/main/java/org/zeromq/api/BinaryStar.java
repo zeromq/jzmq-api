@@ -73,6 +73,11 @@ public interface BinaryStar {
     void start();
 
     /**
+     * Stop the underlying Reactor.
+     */
+    void stop();
+
+    /**
      * Register a client voter socket. Only one socket can be registered.
      *
      * @param socket The client socket

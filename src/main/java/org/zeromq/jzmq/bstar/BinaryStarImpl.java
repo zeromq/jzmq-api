@@ -85,6 +85,14 @@ public class BinaryStarImpl implements BinaryStar {
     }
 
     /**
+     * Stop the reactor.
+     */
+    @Override
+    public void stop() {
+        reactor.stop();
+    }
+
+    /**
      * This method registers a client voter socket. Messages received
      * on this socket provide the CLIENT_REQUEST events for the Binary Star
      * FSM and are passed to the provided application handler. We require
