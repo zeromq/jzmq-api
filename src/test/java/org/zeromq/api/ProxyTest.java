@@ -17,6 +17,7 @@ public class ProxyTest {
 
     @After
     public void tearDown() throws Exception {
+        context.terminate();
         context.close();
     }
 
