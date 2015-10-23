@@ -1,11 +1,13 @@
 package org.zeromq.api;
 
+import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarBuilder;
 import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.reactor.ReactorBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
 import java.io.Closeable;
+import java.nio.channels.SelectableChannel;
 
 /**
  * A ØMQ context is thread safe and may be shared among as many application threads as necessary, without any additional
@@ -63,6 +65,15 @@ public interface Context extends Closeable {
      * @return A new Pollable, for use with a Poller.
      */
     Pollable newPollable(Socket socket, PollerType... options);
+
+    /**
+     * Create a new Pollable from the socket, with the requested options.
+     *
+     * @param channel A channel to wrap for polling
+     * @param options Polling options (IN, OUT, ERROR)
+     * @return A new Pollable, for use with a Poller.
+     */
+    Pollable newPollable(SelectableChannel channel, PollerType... options);
 
     /**
      * Create a ZMQ proxy and start it up.  Returns when the context is closed.
