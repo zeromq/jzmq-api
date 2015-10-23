@@ -58,6 +58,14 @@ public interface Context extends Closeable {
     BinaryStarBuilder buildBinaryStar();
 
     /**
+     * Create a new BeaconReactor, which will send and receive UDP beacons
+     * on a broadcast address, with event-driven handling of received beacons.
+     * 
+     * @return A builder for constructing a BeaconReactor
+     */
+    BeaconReactorBuilder buildBeaconReactor();
+
+    /**
      * Create a new Pollable from the socket, with the requested options.
      * 
      * @param socket A socket to wrap for polling

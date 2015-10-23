@@ -208,6 +208,11 @@ public class ManagedContext implements Context {
     }
 
     @Override
+    public BeaconReactorBuilder buildBeaconReactor() {
+        return new BeaconReactorBuilder(this);
+    }
+
+    @Override
     public void proxy(Socket frontEnd, Socket backEnd) {
         ZMQ.proxy(frontEnd.getZMQSocket(), backEnd.getZMQSocket(), null);
     }
