@@ -23,7 +23,7 @@ public enum DeviceType {
 
     private final int type;
 
-    private DeviceType(int type) {
+    DeviceType(int type) {
         this.type = type;
     }
 

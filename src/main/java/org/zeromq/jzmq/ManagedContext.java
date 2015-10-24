@@ -16,6 +16,7 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 import org.zeromq.api.Backgroundable;
 import org.zeromq.api.Context;
+import org.zeromq.api.DeviceType;
 import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
@@ -23,6 +24,7 @@ import org.zeromq.api.SocketType;
 import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarBuilder;
+import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.reactor.ReactorBuilder;
@@ -216,6 +218,11 @@ public class ManagedContext implements Context {
     @Override
     public BeaconReactorBuilder buildBeaconReactor() {
         return new BeaconReactorBuilder(this);
+    }
+
+    @Override
+    public DeviceBuilder buildDevice(DeviceType deviceType) {
+        return new DeviceBuilder(this, deviceType);
     }
 
     @Override

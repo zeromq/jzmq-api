@@ -2,6 +2,7 @@ package org.zeromq.api;
 
 import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarBuilder;
+import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.reactor.ReactorBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
@@ -64,6 +65,15 @@ public interface Context extends Closeable {
      * @return A builder for constructing a BeaconReactor
      */
     BeaconReactorBuilder buildBeaconReactor();
+
+    /**
+     * Create a ØMQ Device of type DeviceType, which will bridge two networks
+     * together using patterns for specific SocketTypes.
+     *
+     * @param deviceType The device type, specifying the pattern to use
+     * @return A builder for constructing ØMQ Devices
+     */
+    DeviceBuilder buildDevice(DeviceType deviceType);
 
     /**
      * Create a new Pollable from the socket, with the requested options.
