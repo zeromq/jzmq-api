@@ -36,6 +36,8 @@ import org.zeromq.jzmq.sockets.ReqSocketBuilder;
 import org.zeromq.jzmq.sockets.RouterSocketBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 import org.zeromq.jzmq.sockets.SubSocketBuilder;
+import org.zeromq.jzmq.sockets.XPubSocketBuilder;
+import org.zeromq.jzmq.sockets.XSubSocketBuilder;
 
 /**
  * Manage JZMQ Context
@@ -149,6 +151,10 @@ public class ManagedContext implements Context {
                 return new PubSocketBuilder(this);
             case SUB:
                 return new SubSocketBuilder(this);
+            case XPUB:
+                return new XPubSocketBuilder(this);
+            case XSUB:
+                return new XSubSocketBuilder(this);
             case REP:
                 return new RepSocketBuilder(this);
             case REQ:
