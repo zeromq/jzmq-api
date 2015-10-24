@@ -40,9 +40,9 @@ public class BinaryStarTest {
         context1 = new ManagedContext();
         primary = context1.buildBinaryStar()
             .withMode(BinaryStar.Mode.PRIMARY)
-            .withLocalUrl("tcp://localhost:5555")
+            .withLocalUrl("tcp://*:5555")
             .withRemoteUrl("tcp://localhost:5556")
-            .withVoterSocket("tcp://localhost:5557")
+            .withVoterSocket("tcp://*:5557")
             .withVoterHandler(new LoopHandler() {
                 @Override
                 public void execute(Reactor reactor, Socket socket, Object... args) {
@@ -69,9 +69,9 @@ public class BinaryStarTest {
         context2 = new ManagedContext();
         backup = context2.buildBinaryStar()
             .withMode(BinaryStar.Mode.BACKUP)
-            .withLocalUrl("tcp://localhost:5556")
+            .withLocalUrl("tcp://*:5556")
             .withRemoteUrl("tcp://localhost:5555")
-            .withVoterSocket("tcp://localhost:5558")
+            .withVoterSocket("tcp://*:5558")
             .withVoterHandler(new LoopHandler() {
                 @Override
                 public void execute(Reactor reactor, Socket socket, Object... args) {
