@@ -111,9 +111,6 @@
   <profiles>
     <profile>
       <id>jzmq</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <dependencies>
         <dependency>
           <groupId>org.zeromq</groupId>
@@ -124,6 +121,9 @@
     </profile>
     <profile>
       <id>jeromq</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <dependencies>
         <dependency>
           <groupId>org.zeromq</groupId>
