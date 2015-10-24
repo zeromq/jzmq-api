@@ -115,7 +115,7 @@
         <dependency>
           <groupId>org.zeromq</groupId>
           <artifactId>jzmq</artifactId>
-          <version>3.1.1-SNAPSHOT</version>
+          <version>3.1.0</version>
         </dependency>
       </dependencies>
     </profile>
@@ -128,7 +128,7 @@
         <dependency>
           <groupId>org.zeromq</groupId>
           <artifactId>jeromq</artifactId>
-          <version>0.3.5-SNAPSHOT</version>
+          <version>0.3.5</version>
         </dependency>
       </dependencies>
     </profile>
