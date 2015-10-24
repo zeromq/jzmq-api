@@ -26,7 +26,7 @@ public class SocketTest {
         context.close();
     }
     
-    @Test
+    @Test(expected=InvalidSocketException.class)
     public void testClosedSocket() {
         Context shadow = context.shadow();
         Socket pub = shadow.buildSocket(SocketType.PUB)
@@ -40,12 +40,7 @@ public class SocketTest {
         assertEquals("hello", new String(sub.receive()));
         
         shadow.close();
-        try {
-            pub.send("hello, world".getBytes());
-        } catch (InvalidSocketException ignored) {
-            // Expected behavior with jzmq
-            // Nothing is thrown in jeromq
-        }
+        pub.send("hello, world".getBytes());
     }
     
     @Test(timeout=1000)

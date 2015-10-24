@@ -82,7 +82,7 @@ public class ManagedContext implements Context {
     public void destroySocket(Socket socket) {
         if (sockets.contains(socket)) {
             try {
-                socket.getZMQSocket().close();
+                socket.close();
             } catch (Exception ignore) {
                 log.warn("Exception caught while closing underlying socket.", ignore);
             }

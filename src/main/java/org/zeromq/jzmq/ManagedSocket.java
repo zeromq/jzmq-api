@@ -43,6 +43,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public byte[] receive() {
+        checkClosed();
         try {
             return socket.recv(0);
         } catch (ZMQException ex) {
@@ -52,6 +53,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public byte[] receive(MessageFlag flag) {
+        checkClosed();
         try {
             return socket.recv(flag.getFlag());
         } catch (ZMQException ex) {
@@ -61,6 +63,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public int receive(byte[] buf, int offset, int len, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.recv(buf, offset, len, flag.getFlag());
         } catch (ZMQException ex) {
@@ -70,6 +73,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public int receiveByteBuffer(ByteBuffer buf, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.recvByteBuffer(buf, flag.getFlag());
         } catch (ZMQException ex) {
@@ -79,6 +83,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean hasMoreToReceive() {
+        checkClosed();
         try {
             return socket.hasReceiveMore();
         } catch (ZMQException ex) {
@@ -92,8 +97,7 @@ public class ManagedSocket implements Socket {
         Message message = null;
         try {
             message = fillInFrames(new Message());
-        } catch (ContextTerminatedException ex) {
-        } catch (InvalidSocketException ex) {
+        } catch (ContextTerminatedException | InvalidSocketException ignored) {
         }
         return message;
     }
@@ -103,8 +107,7 @@ public class ManagedSocket implements Socket {
         RoutedMessage message = null;
         try {
             message = fillInFrames(new RoutedMessage());
-        } catch (ContextTerminatedException ex) {
-        } catch (InvalidSocketException ex) {
+        } catch (ContextTerminatedException | InvalidSocketException ignored) {
         }
         return message;
     }
@@ -151,6 +154,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean send(byte[] buf, int offset, int length, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.send(buf, offset, length, flag.getFlag());
         } catch (ZMQException ex) {
@@ -160,6 +164,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean sendByteBuffer(ByteBuffer buf, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.sendByteBuffer(buf, flag.getFlag()) >= 0;
         } catch (ZMQException ex) {
@@ -170,7 +175,7 @@ public class ManagedSocket implements Socket {
     @Override
     public void close() {
         if (isClosed.compareAndSet(false, true)) {
-            managedContext.destroySocket(this);
+            socket.close();
         }
     }
 
@@ -182,5 +187,11 @@ public class ManagedSocket implements Socket {
     @Override
     public TransportType getTransportType() {
         return null;
+    }
+
+    private void checkClosed() {
+        if (isClosed.get()) {
+            throw new InvalidSocketException("Socket closed");
+        }
     }
 }
