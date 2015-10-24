@@ -1,6 +1,5 @@
 package org.zeromq.jzmq.bstar;
 
-import org.zeromq.ZMQ;
 import org.zeromq.api.BinaryStar;
 import org.zeromq.api.BinaryStar.Mode;
 import org.zeromq.api.LoopHandler;
@@ -55,7 +54,7 @@ public class BinaryStarBuilder {
 
     public BinaryStarBuilder withVoterSocket(String url) {
         Socket socket = context.buildSocket(SocketType.SUB)
-            .asSubscribable().subscribe(ZMQ.SUBSCRIPTION_ALL)
+            .asSubscribable().subscribeAll()
             .bind(url);
 
         return withVoterSocket(socket);

@@ -21,6 +21,11 @@ public class SubSocketBuilder extends SocketBuilder implements Subscribable {
     }
 
     @Override
+    public SocketBuilder subscribeAll() {
+        return subscribe(new byte[0]);
+    }
+
+    @Override
     public Socket connect(String url, String... additionalUrls) {
         if (subscription == null) {
             throw new IllegalStateException("You must have a SUB socket subscribe to something before you can connect it.");

@@ -2,7 +2,6 @@ package org.zeromq.jzmq.bstar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.zeromq.ZMQ;
 import org.zeromq.api.BinaryStar;
 import org.zeromq.api.LoopHandler;
 import org.zeromq.api.PollerType;
@@ -11,7 +10,6 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.api.ZInteger;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.sockets.SocketBuilder;
 
 public class BinaryStarImpl implements BinaryStar {
     private static final Logger log = LoggerFactory.getLogger(BinaryStarImpl.class);
@@ -63,7 +61,7 @@ public class BinaryStarImpl implements BinaryStar {
 
         // Create subscriber for state coming from peer
         this.stateSub = context.buildSocket(SocketType.SUB)
-            .asSubscribable().subscribe(ZMQ.SUBSCRIPTION_ALL)
+            .asSubscribable().subscribeAll()
             .connect(remote);
 
         // Set-up basic reactor events
