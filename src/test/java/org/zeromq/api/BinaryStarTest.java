@@ -45,20 +45,20 @@ public class BinaryStarTest {
             .withVoterSocket("tcp://*:5557")
             .withVoterHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     primaryVoter.incrementAndGet();
                     socket.receiveMessage();
                 }
             })
             .withActiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     primaryActive.incrementAndGet();
                 }
             })
             .withPassiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     primaryPassive.incrementAndGet();
                 }
             })
@@ -74,20 +74,20 @@ public class BinaryStarTest {
             .withVoterSocket("tcp://*:5558")
             .withVoterHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     backupVoter.incrementAndGet();
                     socket.receiveMessage();
                 }
             })
             .withActiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     backupActive.incrementAndGet();
                 }
             })
             .withPassiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     backupPassive.incrementAndGet();
                 }
             })

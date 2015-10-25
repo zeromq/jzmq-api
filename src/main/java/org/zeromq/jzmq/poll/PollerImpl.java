@@ -57,29 +57,12 @@ public class PollerImpl implements Poller {
         for (Map.Entry<Pollable, PollListener> entry : pollables.entrySet()) {
             Pollable pollable = entry.getKey();
             PollListener listener = entry.getValue();
-
-            // handle pollable socket
-            if (pollable.getSocket() != null) {
-                Socket socket = entry.getKey().getSocket();
-                if (poller.pollin(index))
-                    listener.handleIn(socket);
-                if (poller.pollout(index))
-                    listener.handleOut(socket);
-                if (poller.pollerr(index))
-                    listener.handleError(socket);
-            }
-
-            // handle pollable channel
-            if (pollable.getChannel() != null) {
-                SelectableChannel channel = entry.getKey().getChannel();
-                if (poller.pollin(index))
-                    listener.handleIn(channel);
-                if (poller.pollout(index))
-                    listener.handleOut(channel);
-                if (poller.pollerr(index))
-                    listener.handleError(channel);
-
-            }
+            if (poller.pollin(index))
+                listener.handleIn(pollable);
+            if (poller.pollout(index))
+                listener.handleOut(pollable);
+            if (poller.pollerr(index))
+                listener.handleError(pollable);
 
             index++;
         }

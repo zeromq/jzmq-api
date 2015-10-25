@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.zeromq.api.BeaconListener;
 import org.zeromq.api.BeaconReactor;
 import org.zeromq.api.LoopHandler;
+import org.zeromq.api.Pollable;
 import org.zeromq.api.Reactor;
-import org.zeromq.api.Socket;
 import org.zeromq.api.UdpBeacon;
 import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.UdpSocket;
@@ -56,7 +56,7 @@ public class BeaconReactorImpl implements BeaconReactor {
 
     private final LoopHandler SEND_BEACON = new LoopHandler() {
         @Override
-        public void execute(Reactor reactor, Socket s, Object... args) {
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
             try {
                 socket.send(beacon.getBuffer());
             } catch (IOException ex) {
@@ -69,7 +69,7 @@ public class BeaconReactorImpl implements BeaconReactor {
         private ByteBuffer buffer = ByteBuffer.allocate(Short.MAX_VALUE);
 
         @Override
-        public void execute(Reactor reactor, Socket s, Object... args) {
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
             try {
                 int read = socket.receive(buffer);
                 buffer.rewind();

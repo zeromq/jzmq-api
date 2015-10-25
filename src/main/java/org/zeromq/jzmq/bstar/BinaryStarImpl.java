@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.api.BinaryStar;
 import org.zeromq.api.LoopHandler;
+import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Reactor;
 import org.zeromq.api.Socket;
@@ -292,7 +293,7 @@ public class BinaryStarImpl implements BinaryStar {
      */
     private final LoopHandler SEND_STATE = new LoopHandler() {
         @Override
-        public void execute(Reactor reactor, Socket socket, Object... args) {
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
             stateBuf.put(state.ordinal()).send(statePub);
         }
     };
@@ -302,7 +303,7 @@ public class BinaryStarImpl implements BinaryStar {
      */
     private final LoopHandler RECEIVE_STATE = new LoopHandler() {
         @Override
-        public void execute(Reactor reactor, Socket socket, Object... args) {
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
             int ordinal = stateBuf.receive(stateSub);
             assert (ordinal >= 0 && ordinal < Event.values().length);
             updatePeerExpiry();
@@ -322,13 +323,13 @@ public class BinaryStarImpl implements BinaryStar {
      */
     private final LoopHandler VOTER_READY = new LoopHandler() {
         @Override
-        public void execute(Reactor reactor, Socket socket, Object... args) {
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
             // If server can accept input now, call applicable handler
             if (handleEvent(Event.CLIENT_REQUEST)) {
-                voterHandler.execute(reactor, socket, voterArgs);
+                voterHandler.execute(reactor, pollable, voterArgs);
             } else {
                 // Destroy waiting message, no-one to read it
-                socket.receiveMessage();
+                pollable.getSocket().receiveMessage();
             }
         }
     };

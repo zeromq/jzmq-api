@@ -1,8 +1,8 @@
 package org.zeromq.client;
 
 import org.zeromq.api.LoopHandler;
+import org.zeromq.api.Pollable;
 import org.zeromq.api.Reactor;
-import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.bstar.BinaryStarImpl;
@@ -48,7 +48,7 @@ public class PrimaryStar {
 
     public static class MyHandler implements LoopHandler {
         @Override
-        public void execute(Reactor reactor, Socket socket, Object... args) {
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
             System.out.println(Arrays.asList(args).toString());
         }
     }
