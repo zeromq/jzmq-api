@@ -1,6 +1,7 @@
 package org.zeromq.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,7 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BinaryStarTest {
     private Context context;
-    private Socket socket;
+    private Socket socket1;
+    private Socket socket2;
 
     private Context context1;
     private BinaryStar primary;
@@ -28,8 +30,10 @@ public class BinaryStarTest {
     @Before
     public void setUp() throws Exception {
         context = new ManagedContext();
-        socket = context.buildSocket(SocketType.PUB)
-            .connect("tcp://localhost:5557", "tcp://localhost:5558");
+        socket1 = context.buildSocket(SocketType.REQ)
+            .connect("tcp://localhost:5557");
+        socket2 = context.buildSocket(SocketType.REQ)
+            .connect("tcp://localhost:5558");
 
         startPrimary();
         startBackup();
@@ -47,7 +51,8 @@ public class BinaryStarTest {
                 @Override
                 public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     primaryVoter.incrementAndGet();
-                    socket.receiveMessage();
+                    pollable.getSocket().send(pollable.getSocket().receiveMessage());
+                    
                 }
             })
             .withActiveHandler(new LoopHandler() {
@@ -76,7 +81,7 @@ public class BinaryStarTest {
                 @Override
                 public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     backupVoter.incrementAndGet();
-                    socket.receiveMessage();
+                    pollable.getSocket().send(pollable.getSocket().receiveMessage());
                 }
             })
             .withActiveHandler(new LoopHandler() {
@@ -134,8 +139,13 @@ public class BinaryStarTest {
         Thread.sleep(2500);
         ZInteger buf = new ZInteger();
         for (int i = 0; i < 10; i++) {
-            buf.put(i).send(socket);
+            buf.put(i).send(socket1);
+            socket1.receive();
         }
+
+        buf.put(1).send(socket2);
+        Thread.sleep(25);
+        assertNull(socket2.receive(MessageFlag.DONT_WAIT));
 
         Thread.sleep(250);
         assertEquals(10, primaryVoter.get());

@@ -53,8 +53,7 @@ public class BinaryStarBuilder {
     }
 
     public BinaryStarBuilder withVoterSocket(String url) {
-        Socket socket = context.buildSocket(SocketType.SUB)
-            .asSubscribable().subscribeAll()
+        Socket socket = context.buildSocket(SocketType.ROUTER)
             .bind(url);
 
         return withVoterSocket(socket);
