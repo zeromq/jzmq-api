@@ -8,42 +8,55 @@ import org.zeromq.jzmq.ManagedContext;
 import java.io.IOException;
 
 public class BeaconReactorBuilder {
+    public static class Spec {
+        public UdpBeacon beacon;
+        public int port;
+        public BeaconListener listener;
+        public long broadcastInterval;
+        public boolean ignoreLocalAddress = true;
+    }
+
     private final ManagedContext context;
-    private UdpBeacon beacon;
-    private int port;
-    private BeaconListener listener;
-    private boolean ignoreLocalAddress = true;
+    private final Spec spec = new Spec();
 
     public BeaconReactorBuilder(ManagedContext context) {
         this.context = context;
     }
 
     public BeaconReactorBuilder withBeacon(UdpBeacon beacon) {
-        this.beacon = beacon;
+        spec.beacon = beacon;
         return this;
     }
 
     public BeaconReactorBuilder withPort(int port) {
-        this.port = port;
+        spec.port = port;
         return this;
     }
 
     public BeaconReactorBuilder withListener(BeaconListener listener) {
-        this.listener = listener;
+        spec.listener = listener;
+        return this;
+    }
+
+    public BeaconReactorBuilder withBroadcastInterval(long broadcastInterval) {
+        spec.broadcastInterval = broadcastInterval;
         return this;
     }
 
     public BeaconReactorBuilder withIgnoreLocalAddress(boolean ignoreLocalAddress) {
-        this.ignoreLocalAddress = ignoreLocalAddress;
+        spec.ignoreLocalAddress = ignoreLocalAddress;
         return this;
     }
 
     public BeaconReactor build() throws IOException {
-        assert (listener != null);
+        assert (spec.listener != null);
 
-        BeaconReactorImpl reactor = new BeaconReactorImpl(context, port, beacon);
-        reactor.setIgnoreLocalAddress(ignoreLocalAddress);
-        reactor.setListener(listener);
+        BeaconReactorImpl reactor = new BeaconReactorImpl(context, spec.port, spec.beacon);
+        reactor.setIgnoreLocalAddress(spec.ignoreLocalAddress);
+        reactor.setListener(spec.listener);
+        if (spec.broadcastInterval != 0) {
+            reactor.setBroadcastInterval(spec.broadcastInterval);
+        }
 
         return reactor;
     }

@@ -6,6 +6,7 @@ import org.zeromq.api.BeaconListener;
 import org.zeromq.api.BeaconReactor;
 import org.zeromq.api.LoopHandler;
 import org.zeromq.api.Pollable;
+import org.zeromq.api.PollerType;
 import org.zeromq.api.Reactor;
 import org.zeromq.api.UdpBeacon;
 import org.zeromq.jzmq.ManagedContext;
@@ -20,24 +21,27 @@ public class BeaconReactorImpl implements BeaconReactor {
     private static final Logger log = LoggerFactory.getLogger(BeaconReactorImpl.class);
     private static final long DEFAULT_BROADCAST_INTERVAL = 1000L;
 
+    private final ManagedContext context;
     private final Reactor reactor;
     private final UdpSocket socket;
     private final UdpBeacon beacon;
     private BeaconListener listener;
+    private long broadcastInterval = DEFAULT_BROADCAST_INTERVAL;
     private boolean ignoreLocalAddress = false;
 
     public BeaconReactorImpl(ManagedContext context, int broadcastPort, UdpBeacon beacon) throws IOException {
+        this.context = context;
         this.beacon = beacon;
         this.socket = new UdpSocket(broadcastPort);
         this.reactor = context.buildReactor()
-            .withInPollable(socket.getChannel(), RECEIVE_BEACON)
-            .withTimerRepeating(DEFAULT_BROADCAST_INTERVAL, SEND_BEACON)
             .build();
     }
 
     @Override
     public void start() {
         assert (listener != null);
+        reactor.addTimer(broadcastInterval, -1, SEND_BEACON);
+        reactor.addPollable(context.newPollable(socket.getChannel(), PollerType.POLL_IN), RECEIVE_BEACON);
         reactor.start();
     }
 
@@ -48,6 +52,10 @@ public class BeaconReactorImpl implements BeaconReactor {
 
     public void setListener(BeaconListener listener) {
         this.listener = listener;
+    }
+
+    public void setBroadcastInterval(long broadcastInterval) {
+        this.broadcastInterval = broadcastInterval;
     }
 
     public void setIgnoreLocalAddress(boolean ignoreLocalAddress) {

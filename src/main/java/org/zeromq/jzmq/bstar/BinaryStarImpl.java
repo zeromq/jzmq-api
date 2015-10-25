@@ -29,6 +29,7 @@ public class BinaryStarImpl implements BinaryStar {
     private final Mode mode;
     private State state;
     private long peerExpiry;
+    private long heartbeatInterval = BSTAR_HEARTBEAT;
 
     private LoopHandler activeHandler;
     private Object[] activeArgs;
@@ -67,8 +68,6 @@ public class BinaryStarImpl implements BinaryStar {
 
         // Set-up basic reactor events
         this.reactor = context.buildReactor()
-            .withTimerRepeating(BSTAR_HEARTBEAT, SEND_STATE, this)
-            .withInPollable(stateSub, RECEIVE_STATE, this)
             .build();
     }
 
@@ -80,6 +79,8 @@ public class BinaryStarImpl implements BinaryStar {
         assert (voterHandler != null);
 
         updatePeerExpiry();
+        reactor.addTimer(heartbeatInterval, -1, SEND_STATE, this);
+        reactor.addPollable(context.newPollable(stateSub, PollerType.POLL_IN), RECEIVE_STATE, this);
         reactor.start();
     }
 
@@ -152,8 +153,18 @@ public class BinaryStarImpl implements BinaryStar {
         return reactor;
     }
 
+    /**
+     * Set the heartbeat interval used to detect peer outage.
+     *
+     * @param heartbeatInterval The heartbeat interval, in milliseconds
+     */
+    @Override
+    public void setHeartbeatInterval(long heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
+    }
+
     private void updatePeerExpiry() {
-        peerExpiry = System.currentTimeMillis() + BSTAR_HEARTBEAT * 2;
+        peerExpiry = System.currentTimeMillis() + heartbeatInterval * 2;
     }
 
     private void fireHandler(LoopHandler handler, Object... args) {
@@ -294,6 +305,7 @@ public class BinaryStarImpl implements BinaryStar {
     private final LoopHandler SEND_STATE = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
+            log.info("send");
             stateBuf.put(state.ordinal()).send(statePub);
         }
     };
@@ -304,6 +316,7 @@ public class BinaryStarImpl implements BinaryStar {
     private final LoopHandler RECEIVE_STATE = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
+            log.info("recv");
             int ordinal = stateBuf.receive(stateSub);
             assert (ordinal >= 0 && ordinal < Event.values().length);
             updatePeerExpiry();

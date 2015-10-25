@@ -114,4 +114,11 @@ public interface BinaryStar {
      * @return The underlying Reactor
      */
     Reactor getReactor();
+
+    /**
+     * Set the heartbeat interval used to detect peer outage.
+     * 
+     * @param heartbeatInterval The heartbeat interval, in milliseconds
+     */
+    void setHeartbeatInterval(long heartbeatInterval);
 }

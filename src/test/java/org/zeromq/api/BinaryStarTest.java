@@ -46,6 +46,7 @@ public class BinaryStarTest {
             .withMode(BinaryStar.Mode.PRIMARY)
             .withLocalUrl("tcp://*:5555")
             .withRemoteUrl("tcp://localhost:5556")
+            .withHeartbeatInterval(250)
             .withVoterSocket("tcp://*:5557")
             .withVoterHandler(new LoopHandler() {
                 @Override
@@ -76,6 +77,7 @@ public class BinaryStarTest {
             .withMode(BinaryStar.Mode.BACKUP)
             .withLocalUrl("tcp://*:5556")
             .withRemoteUrl("tcp://localhost:5555")
+            .withHeartbeatInterval(250)
             .withVoterSocket("tcp://*:5558")
             .withVoterHandler(new LoopHandler() {
                 @Override
@@ -111,7 +113,7 @@ public class BinaryStarTest {
 
     @Test
     public void testHeartBeat() throws Exception {
-        Thread.sleep(2500);
+        Thread.sleep(550);
 
         assertEquals(1, primaryActive.get());
         assertEquals(0, primaryPassive.get());
@@ -121,12 +123,12 @@ public class BinaryStarTest {
 
     @Test
     public void testFailover() throws Exception {
-        Thread.sleep(2500);
+        Thread.sleep(550);
         context1.terminate();
         context1.close();
-        Thread.sleep(250);
+        Thread.sleep(25);
         startPrimary();
-        Thread.sleep(1250);
+        Thread.sleep(350);
 
         assertEquals(1, primaryActive.get());
         assertEquals(1, primaryPassive.get());
@@ -136,7 +138,7 @@ public class BinaryStarTest {
 
     @Test
     public void testVoter() throws Exception {
-        Thread.sleep(2500);
+        Thread.sleep(550);
         ZInteger buf = new ZInteger();
         for (int i = 0; i < 10; i++) {
             buf.put(i).send(socket1);
@@ -147,8 +149,12 @@ public class BinaryStarTest {
         Thread.sleep(25);
         assertNull(socket2.receive(MessageFlag.DONT_WAIT));
 
-        Thread.sleep(250);
+        Thread.sleep(25);
         assertEquals(10, primaryVoter.get());
         assertEquals(0, backupVoter.get());
+        assertEquals(1, primaryActive.get());
+        assertEquals(0, primaryPassive.get());
+        assertEquals(1, backupPassive.get());
+        assertEquals(0, backupActive.get());
     }
 }

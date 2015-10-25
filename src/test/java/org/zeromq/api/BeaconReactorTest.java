@@ -40,24 +40,11 @@ public class BeaconReactorTest {
         context.close();
     }
 
-    private void startBeaconReactor2() throws IOException {
-        reactor1 = context.buildBeaconReactor()
-            .withPort(1234)
-            .withIgnoreLocalAddress(false)
-            .withBeacon(new UdpBeacon(1, "TEST", UUID.randomUUID(), 1234))
-            .withListener(new BeaconListener() {
-                @Override
-                public void onBeacon(InetAddress sender, UdpBeacon beacon) {
-                    beacon2.incrementAndGet();
-                }
-            })
-            .start();
-    }
-
     private void startBeaconReactor1() throws IOException {
         reactor2 = context.buildBeaconReactor()
             .withPort(1234)
             .withIgnoreLocalAddress(false)
+            .withBroadcastInterval(250)
             .withBeacon(new UdpBeacon(1, "TEST", UUID.randomUUID(), 1234))
             .withListener(new BeaconListener() {
                 @Override
@@ -68,10 +55,26 @@ public class BeaconReactorTest {
             .start();
     }
 
+    private void startBeaconReactor2() throws IOException {
+        reactor1 = context.buildBeaconReactor()
+            .withPort(1234)
+            .withIgnoreLocalAddress(false)
+            .withBroadcastInterval(250)
+            .withBeacon(new UdpBeacon(1, "TEST", UUID.randomUUID(), 1234))
+            .withListener(new BeaconListener() {
+                @Override
+                public void onBeacon(InetAddress sender, UdpBeacon beacon) {
+                    beacon2.incrementAndGet();
+                }
+            })
+            .start();
+    }
+
     private void startBeaconReactor3() throws IOException {
         reactor3 = context.buildBeaconReactor()
             .withPort(1234)
             .withIgnoreLocalAddress(true)
+            .withBroadcastInterval(250)
             .withBeacon(new UdpBeacon(2, "X", UUID.randomUUID(), 1234))
             .withListener(new BeaconListener() {
                 @Override
@@ -84,7 +87,7 @@ public class BeaconReactorTest {
 
     @Test
     public void testBeaconReactor() throws Exception {
-        Thread.sleep(2250);
+        Thread.sleep(550);
 
         assertEquals(4, beacon1.get());
         assertEquals(4, beacon2.get());
@@ -93,7 +96,7 @@ public class BeaconReactorTest {
     @Test
     public void testBeaconReactor_InvalidBeacon() throws Exception {
         startBeaconReactor3();
-        Thread.sleep(2250);
+        Thread.sleep(550);
 
         assertEquals(4, beacon1.get());
         assertEquals(4, beacon2.get());
