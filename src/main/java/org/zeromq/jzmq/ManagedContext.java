@@ -24,6 +24,7 @@ import org.zeromq.api.SocketType;
 import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarBuilder;
+import org.zeromq.jzmq.bstar.BinaryStarSocketBuilder;
 import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.poll.PollerBuilder;
@@ -216,6 +217,11 @@ public class ManagedContext implements Context {
     }
 
     @Override
+    public BinaryStarSocketBuilder buildBinaryStarSocket() {
+        return new BinaryStarSocketBuilder(this);
+    }
+
+    @Override
     public BeaconReactorBuilder buildBeaconReactor() {
         return new BeaconReactorBuilder(this);
     }
@@ -292,7 +298,6 @@ public class ManagedContext implements Context {
                     throw ZMQExceptions.wrap(ex);
                 }
             }
-            context.close();
             log.debug("Background thread {} has shut down", Thread.currentThread().getName());
         }
     }

@@ -6,6 +6,11 @@ package org.zeromq.api;
  */
 public interface BinaryStar {
     /**
+     * We send state information this often. If peer doesn't respond in two heartbeats, it is 'dead'.
+     */
+    long BSTAR_HEARTBEAT = 1000;
+
+    /**
      * Startup modes.
      */
     enum Mode {

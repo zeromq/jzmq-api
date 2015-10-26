@@ -15,11 +15,6 @@ import org.zeromq.jzmq.ManagedContext;
 public class BinaryStarImpl implements BinaryStar {
     private static final Logger log = LoggerFactory.getLogger(BinaryStarImpl.class);
 
-    /**
-     * We send state information this often. If peer doesn't respond in two heartbeats, it is 'dead'.
-     */
-    private static final long BSTAR_HEARTBEAT = 1000;
-
     private final ManagedContext context;
     private final Reactor reactor;
     private final Socket statePub;
@@ -29,7 +24,7 @@ public class BinaryStarImpl implements BinaryStar {
     private final Mode mode;
     private State state;
     private long peerExpiry;
-    private long heartbeatInterval = BSTAR_HEARTBEAT;
+    private long heartbeatInterval;
 
     private LoopHandler activeHandler;
     private Object[] activeArgs;
@@ -305,7 +300,6 @@ public class BinaryStarImpl implements BinaryStar {
     private final LoopHandler SEND_STATE = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            log.info("send");
             stateBuf.put(state.ordinal()).send(statePub);
         }
     };
@@ -316,7 +310,6 @@ public class BinaryStarImpl implements BinaryStar {
     private final LoopHandler RECEIVE_STATE = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            log.info("recv");
             int ordinal = stateBuf.receive(stateSub);
             assert (ordinal >= 0 && ordinal < Event.values().length);
             updatePeerExpiry();
