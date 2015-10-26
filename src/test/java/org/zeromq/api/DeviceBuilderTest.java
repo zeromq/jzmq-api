@@ -7,6 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zeromq.jzmq.ManagedContext;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class DeviceBuilderTest {
     private ManagedContext context;
 
@@ -43,10 +47,12 @@ public class DeviceBuilderTest {
         buf.put(3).send(frontend2);
         buf.put(4).send(frontend1);
 
-        assertEquals(1, buf.receive(backend1));
-        assertEquals(2, buf.receive(backend2));
-        assertEquals(3, buf.receive(backend2));
-        assertEquals(4, buf.receive(backend1));
+        Set<Integer> messages = new HashSet<>();
+        messages.add(buf.receive(backend1));
+        messages.add(buf.receive(backend1));
+        messages.add(buf.receive(backend2));
+        messages.add(buf.receive(backend2));
+        assertEquals(4, messages.size());
     }
 
     @Test
