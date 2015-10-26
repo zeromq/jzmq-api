@@ -86,9 +86,14 @@ public class BeaconReactorImpl implements BeaconReactor {
                     return;
                 }
 
+                // Attempt to ignore local addresses
+                // 
+                // NOTE: This does not seem to work on certain network configurations,
+                // as the loopback address is returned from InetAddress.getLocalHost()
+                // but the sender is a resolved address
                 InetAddress sender = ((InetSocketAddress) socket.getSender()).getAddress();
                 if (ignoreLocalAddress &&
-                        (InetAddress.getLocalHost().getHostAddress().equals(sender.getHostAddress())
+                        (socket.getAddress().getHostAddress().equals(sender.getHostAddress())
                         || sender.isAnyLocalAddress()
                         || sender.isLoopbackAddress())) {
                     return;
@@ -98,6 +103,13 @@ public class BeaconReactorImpl implements BeaconReactor {
                 buffer.rewind();
                 if (!beacon.getProtocol().equals(message.getProtocol())
                         || beacon.getVersion() != message.getVersion()) {
+                    return;
+                }
+
+                // Last ditch effort to ignore our own packets
+                // Only ignores this reactor instance, not others broadcasting on this server
+                if (ignoreLocalAddress
+                        && beacon.getIdentity().equals(message.getIdentity())) {
                     return;
                 }
 
