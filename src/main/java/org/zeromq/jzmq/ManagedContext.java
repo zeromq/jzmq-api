@@ -1,5 +1,6 @@
 package org.zeromq.jzmq;
 
+import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,12 +16,16 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 import org.zeromq.api.Backgroundable;
 import org.zeromq.api.Context;
+import org.zeromq.api.DeviceType;
 import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.api.exception.ZMQExceptions;
+import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarBuilder;
+import org.zeromq.jzmq.bstar.BinaryStarSocketBuilder;
+import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.reactor.ReactorBuilder;
@@ -34,6 +39,8 @@ import org.zeromq.jzmq.sockets.ReqSocketBuilder;
 import org.zeromq.jzmq.sockets.RouterSocketBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 import org.zeromq.jzmq.sockets.SubSocketBuilder;
+import org.zeromq.jzmq.sockets.XPubSocketBuilder;
+import org.zeromq.jzmq.sockets.XSubSocketBuilder;
 
 /**
  * Manage JZMQ Context
@@ -147,6 +154,10 @@ public class ManagedContext implements Context {
                 return new PubSocketBuilder(this);
             case SUB:
                 return new SubSocketBuilder(this);
+            case XPUB:
+                return new XPubSocketBuilder(this);
+            case XSUB:
+                return new XSubSocketBuilder(this);
             case REP:
                 return new RepSocketBuilder(this);
             case REQ:
@@ -191,6 +202,11 @@ public class ManagedContext implements Context {
     }
 
     @Override
+    public Pollable newPollable(SelectableChannel channel, PollerType... options) {
+        return new PollableImpl(channel, options);
+    }
+
+    @Override
     public ReactorBuilder buildReactor() {
         return new ReactorBuilder(this);
     }
@@ -198,6 +214,21 @@ public class ManagedContext implements Context {
     @Override
     public BinaryStarBuilder buildBinaryStar() {
         return new BinaryStarBuilder(this);
+    }
+
+    @Override
+    public BinaryStarSocketBuilder buildBinaryStarSocket() {
+        return new BinaryStarSocketBuilder(this);
+    }
+
+    @Override
+    public BeaconReactorBuilder buildBeaconReactor() {
+        return new BeaconReactorBuilder(this);
+    }
+
+    @Override
+    public DeviceBuilder buildDevice(DeviceType deviceType) {
+        return new DeviceBuilder(this, deviceType);
     }
 
     @Override
@@ -267,7 +298,6 @@ public class ManagedContext implements Context {
                     throw ZMQExceptions.wrap(ex);
                 }
             }
-            context.close();
             log.debug("Background thread {} has shut down", Thread.currentThread().getName());
         }
     }

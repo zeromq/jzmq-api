@@ -10,6 +10,7 @@ import org.zeromq.api.Socket;
 import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.ManagedContext;
 
+import java.nio.channels.SelectableChannel;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -54,14 +55,14 @@ public class PollerImpl implements Poller {
 
         int index = 0;
         for (Map.Entry<Pollable, PollListener> entry : pollables.entrySet()) {
-            Socket socket = entry.getKey().getSocket();
+            Pollable pollable = entry.getKey();
             PollListener listener = entry.getValue();
             if (poller.pollin(index))
-                listener.handleIn(socket);
+                listener.handleIn(pollable);
             if (poller.pollout(index))
-                listener.handleOut(socket);
+                listener.handleOut(pollable);
             if (poller.pollerr(index))
-                listener.handleError(socket);
+                listener.handleError(pollable);
 
             index++;
         }
@@ -94,19 +95,55 @@ public class PollerImpl implements Poller {
     }
 
     @Override
+    public int enable(SelectableChannel channel) {
+        int result = -1;
+        Pollable pollable = pollable(channel);
+        if (pollable != null) {
+            result = register(pollable);
+        }
+
+        return result;
+    }
+
+    @Override
+    public boolean disable(SelectableChannel channel) {
+        Pollable pollable = pollable(channel);
+        if (pollable != null) {
+            poller.unregister(channel);
+        }
+
+        return (pollable != null);
+    }
+
+    @Override
     public int register(Pollable pollable, PollListener listener) {
         pollables.put(pollable, listener);
         return register(pollable);
     }
 
     private int register(Pollable pollable) {
-        return poller.register(pollable.getSocket().getZMQSocket(), sumOptions(pollable));
+        if (pollable.getChannel() != null) {
+            return poller.register(pollable.getChannel(), sumOptions(pollable));
+        } else {
+            return poller.register(pollable.getSocket().getZMQSocket(), sumOptions(pollable));
+        }
     }
 
     private Pollable pollable(Socket socket) {
         Pollable result = null;
         for (Pollable pollable : pollables.keySet()) {
             if (pollable.getSocket() == socket) {
+                result = pollable;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private Pollable pollable(SelectableChannel channel) {
+        Pollable result = null;
+        for (Pollable pollable : pollables.keySet()) {
+            if (pollable.getChannel() == channel) {
                 result = pollable;
                 break;
             }

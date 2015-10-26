@@ -1,12 +1,11 @@
 package org.zeromq.jzmq.reactor;
 
 import org.zeromq.api.LoopHandler;
-import org.zeromq.api.PollListener;
+import org.zeromq.api.PollAdapter;
 import org.zeromq.api.Pollable;
 import org.zeromq.api.Reactor;
-import org.zeromq.api.Socket;
 
-class PollItem implements PollListener {
+class PollItem extends PollAdapter {
     private Reactor reactor;
 
     public Pollable pollable;
@@ -21,21 +20,21 @@ class PollItem implements PollListener {
     }
 
     @Override
-    public void handleIn(Socket socket) {
-        execute(socket);
+    public void handleIn(Pollable pollable) {
+        execute(pollable);
     }
 
     @Override
-    public void handleOut(Socket socket) {
-        execute(socket);
+    public void handleOut(Pollable pollable) {
+        execute(pollable);
     }
 
     @Override
-    public void handleError(Socket socket) {
-        execute(socket);
+    public void handleError(Pollable pollable) {
+        execute(pollable);
     }
 
-    private void execute(Socket socket) {
-        handler.execute(reactor, socket, args);
+    private void execute(Pollable pollable) {
+        handler.execute(reactor, pollable, args);
     }
 }

@@ -36,7 +36,7 @@ public class ReactorTest {
         Reactor reactor = context.buildReactor()
             .withTimer(10, 25, new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     safe.incrementAndGet();
                 }
             })
@@ -51,7 +51,7 @@ public class ReactorTest {
     public void testTimers_1000() throws Exception {
         LoopHandler handler = new LoopHandler() {
             @Override
-            public void execute(Reactor reactor, Socket socket, Object... args) {
+            public void execute(Reactor reactor, Pollable pollable, Object... args) {
                 safe.incrementAndGet();
             }
         };
@@ -71,7 +71,7 @@ public class ReactorTest {
     public void testTimers_100000() throws Exception {
         LoopHandler handler = new LoopHandler() {
             @Override
-            public void execute(Reactor reactor, Socket socket, Object... args) {
+            public void execute(Reactor reactor, Pollable pollable, Object... args) {
                 safe.incrementAndGet();
             }
         };
@@ -92,8 +92,8 @@ public class ReactorTest {
         Reactor reactor = context.buildReactor()
             .withInPollable(in, new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
-                    assertEquals("Hello", new String(socket.receive()));
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
+                    assertEquals("Hello", new String(pollable.getSocket().receive()));
                     safe.incrementAndGet();
                 }
             })
@@ -113,8 +113,8 @@ public class ReactorTest {
         ReactorBuilder builder = context.buildReactor();
         LoopHandler handler = new LoopHandler() {
             @Override
-            public void execute(Reactor reactor, Socket socket, Object... args) {
-                assertEquals("Hello", new String(socket.receive()));
+            public void execute(Reactor reactor, Pollable pollable, Object... args) {
+                assertEquals("Hello", new String(pollable.getSocket().receive()));
                 safe.incrementAndGet();
             }
         };
@@ -141,14 +141,14 @@ public class ReactorTest {
         Reactor reactor = context.buildReactor()
             .withTimer(10, 25, new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     safe.incrementAndGet();
                 }
             })
             .withInPollable(in, new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
-                    assertEquals("Hello", new String(socket.receive()));
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
+                    assertEquals("Hello", new String(pollable.getSocket().receive()));
                     safe.incrementAndGet();
                 }
             })

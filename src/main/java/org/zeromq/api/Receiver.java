@@ -56,10 +56,27 @@ public interface Receiver {
     Message receiveMessage();
 
     /**
+     * Receive the full message (all frames) from the socket.
+     * 
+     * @param flag Flag controlling behavior of the receive operation
+     * @return The full message (all frames) from the socket.
+     */
+    Message receiveMessage(MessageFlag flag);
+
+    /**
      * Receive a routed message (all frames) from the socket.
      * 
      * @return The full message (all frames) from the socket, assuming it has been through a Router socket, and has
      * routing frames associated with it.
      */
     RoutedMessage receiveRoutedMessage();
+
+    /**
+     * Receive a routed message (all frames) from the socket.
+     * 
+     * @param flag Flag controlling behavior of the receive operation
+     * @return The full message (all frames) from the socket, assuming it has been through a Router socket, and has
+     * routing frames associated with it.
+     */
+    RoutedMessage receiveRoutedMessage(MessageFlag flag);
 }

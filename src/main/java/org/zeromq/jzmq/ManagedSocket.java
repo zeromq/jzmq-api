@@ -91,12 +91,16 @@ public class ManagedSocket implements Socket {
         }
     }
 
-
     @Override
     public Message receiveMessage() {
+        return receiveMessage(MessageFlag.NONE);
+    }
+
+    @Override
+    public Message receiveMessage(MessageFlag flag) {
         Message message = null;
         try {
-            message = fillInFrames(new Message());
+            message = fillInFrames(new Message(), flag);
         } catch (ContextTerminatedException | InvalidSocketException ignored) {
         }
         return message;
@@ -104,22 +108,27 @@ public class ManagedSocket implements Socket {
 
     @Override
     public RoutedMessage receiveRoutedMessage() {
+        return receiveRoutedMessage(MessageFlag.NONE);
+    }
+
+    @Override
+    public RoutedMessage receiveRoutedMessage(MessageFlag flag) {
         RoutedMessage message = null;
         try {
-            message = fillInFrames(new RoutedMessage());
+            message = fillInFrames(new RoutedMessage(), flag);
         } catch (ContextTerminatedException | InvalidSocketException ignored) {
         }
         return message;
     }
 
-    private <T extends Message> T fillInFrames(T message) {
-        byte[] bytes = receive();
+    private <T extends Message> T fillInFrames(T message, MessageFlag flag) {
+        byte[] bytes = receive(flag);
         if (bytes == null) {
             return null;
         }
         message.addFrame(new Frame(bytes));
         while (hasMoreToReceive()) {
-            byte[] data = receive();
+            byte[] data = receive(flag);
             message.addFrame(new Frame(data));
         }
         return message;

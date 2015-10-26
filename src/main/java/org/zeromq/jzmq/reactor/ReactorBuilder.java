@@ -7,6 +7,8 @@ import org.zeromq.api.Reactor;
 import org.zeromq.api.Socket;
 import org.zeromq.jzmq.ManagedContext;
 
+import java.nio.channels.SelectableChannel;
+
 public class ReactorBuilder {
     private final ManagedContext context;
     private final ReactorImpl reactor;
@@ -15,6 +17,10 @@ public class ReactorBuilder {
         this.context = context;
         this.reactor = newReactor();
     }
+
+    /*
+     * Socket Pollables.
+     */
 
     public ReactorBuilder withPollable(Pollable pollable, LoopHandler handler, Object... args) {
         reactor.addPollable(pollable, handler, args);
@@ -40,6 +46,34 @@ public class ReactorBuilder {
     public ReactorBuilder withAllPollable(Socket socket, LoopHandler handler, Object... args) {
         return withPollable(context.newPollable(socket, PollerType.POLL_IN, PollerType.POLL_OUT, PollerType.POLL_ERROR), handler, args);
     }
+
+    /*
+     * SelectableChannel Pollables.
+     */
+
+    public ReactorBuilder withInPollable(SelectableChannel channel, LoopHandler handler, Object... args) {
+        return withPollable(context.newPollable(channel, PollerType.POLL_IN), handler, args);
+    }
+
+    public ReactorBuilder withOutPollable(SelectableChannel channel, LoopHandler handler, Object... args) {
+        return withPollable(context.newPollable(channel, PollerType.POLL_OUT), handler, args);
+    }
+
+    public ReactorBuilder withErrorPollable(SelectableChannel channel, LoopHandler handler, Object... args) {
+        return withPollable(context.newPollable(channel, PollerType.POLL_ERROR), handler, args);
+    }
+
+    public ReactorBuilder withInOutPollable(SelectableChannel channel, LoopHandler handler, Object... args) {
+        return withPollable(context.newPollable(channel, PollerType.POLL_IN, PollerType.POLL_OUT), handler, args);
+    }
+
+    public ReactorBuilder withAllPollable(SelectableChannel channel, LoopHandler handler, Object... args) {
+        return withPollable(context.newPollable(channel, PollerType.POLL_IN, PollerType.POLL_OUT, PollerType.POLL_ERROR), handler, args);
+    }
+
+    /*
+     * Timer Pollables.
+     */
 
     public ReactorBuilder withTimer(long initialDelay, int numIterations, LoopHandler handler, Object... args) {
         reactor.addTimer(initialDelay, numIterations, handler, args);

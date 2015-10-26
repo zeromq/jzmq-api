@@ -6,6 +6,11 @@ package org.zeromq.api;
  */
 public interface BinaryStar {
     /**
+     * We send state information this often. If peer doesn't respond in two heartbeats, it is 'dead'.
+     */
+    long BSTAR_HEARTBEAT = 1000;
+
+    /**
      * Startup modes.
      */
     enum Mode {
@@ -114,4 +119,11 @@ public interface BinaryStar {
      * @return The underlying Reactor
      */
     Reactor getReactor();
+
+    /**
+     * Set the heartbeat interval used to detect peer outage.
+     * 
+     * @param heartbeatInterval The heartbeat interval, in milliseconds
+     */
+    void setHeartbeatInterval(long heartbeatInterval);
 }

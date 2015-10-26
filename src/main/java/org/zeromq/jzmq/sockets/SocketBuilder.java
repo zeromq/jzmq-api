@@ -288,7 +288,7 @@ public class SocketBuilder implements Bindable, Connectable {
      * Coerce the SocketBuilder to be Subscribable
      */
     public Subscribable asSubscribable() {
-        return (SubSocketBuilder) this;
+        return (Subscribable) this;
     }
 
     /**

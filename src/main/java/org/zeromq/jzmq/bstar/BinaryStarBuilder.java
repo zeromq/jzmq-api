@@ -12,6 +12,7 @@ public class BinaryStarBuilder {
         public Mode mode;
         public String local;
         public String remote;
+        public long heartbeatInterval = BinaryStar.BSTAR_HEARTBEAT;
         public Socket voter;
 
         public LoopHandler activeHandler;
@@ -47,14 +48,18 @@ public class BinaryStarBuilder {
         return this;
     }
 
+    public BinaryStarBuilder withHeartbeatInterval(long heartbeatInterval) {
+        spec.heartbeatInterval = heartbeatInterval;
+        return this;
+    }
+
     public BinaryStarBuilder withVoterSocket(Socket voter) {
         spec.voter = voter;
         return this;
     }
 
     public BinaryStarBuilder withVoterSocket(String url) {
-        Socket socket = context.buildSocket(SocketType.SUB)
-            .asSubscribable().subscribeAll()
+        Socket socket = context.buildSocket(SocketType.ROUTER)
             .bind(url);
 
         return withVoterSocket(socket);
@@ -87,6 +92,7 @@ public class BinaryStarBuilder {
         binaryStar.setVoterHandler(spec.voterHandler, spec.voterArgs);
         binaryStar.setActiveHandler(spec.activeHandler, spec.activeArgs);
         binaryStar.setPassiveHandler(spec.passiveHandler, spec.passiveArgs);
+        binaryStar.setHeartbeatInterval(spec.heartbeatInterval);
 
         return binaryStar;
     }

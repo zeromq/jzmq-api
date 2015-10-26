@@ -56,7 +56,11 @@ public class ReactorImpl implements Reactor, Runnable {
             if (item.handler == handler) {
                 it.remove();
                 if (poller != null) {
-                    poller.disable(item.pollable.getSocket());
+                    if (item.pollable.getChannel() != null) {
+                        poller.disable(item.pollable.getChannel());
+                    } else {
+                        poller.disable(item.pollable.getSocket());
+                    }
                 }
             }
         }
