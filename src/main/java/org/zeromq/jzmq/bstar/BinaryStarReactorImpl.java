@@ -168,18 +168,14 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
         }
     }
 
-    private boolean handleEvent(Event event) {
-        /*
-         * Binary Star finite state machine (applies event to state).
-         * Returns false if there was an exception, true if event was valid.
-         */
+    private boolean handleEvent(Event event) { 
+         // Binary Star finite state machine (applies event to state).
+         // Returns false if there was an exception, true if event was valid. 
         boolean result = true;
 
-        if (state == State.PRIMARY_CONNECTING) {
-             /*
-              * Primary server is waiting for peer to connect.
-              * Accepts CLIENT_REQUEST events in this state.
-              */
+        if (state == State.PRIMARY_CONNECTING) { 
+              // Primary server is waiting for peer to connect.
+              // Accepts CLIENT_REQUEST events in this state. 
             if (event == Event.PEER_BACKUP) {
                 log.info("Connected to backup (passive), ready as active");
                 state = State.ACTIVE;
@@ -190,97 +186,71 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
                 state = State.PASSIVE;
 
                 fireHandler(passiveHandler, passiveArgs);
-            } else if (event == Event.CLIENT_REQUEST) {
-                 /*
-                  * Allow client requests to turn us into the active if we've
-                  * waited sufficiently long to believe the backup is not
-                  * currently acting as active (i.e., after a failover).
-                  */
+            } else if (event == Event.CLIENT_REQUEST) { 
+                  // Allow client requests to turn us into the active if we've
+                  // waited sufficiently long to believe the backup is not
+                  // currently acting as active (i.e., after a failover). 
                 assert (peerExpiry > 0);
                 if (System.currentTimeMillis() >= peerExpiry) {
                     log.info("Request from client, ready as active");
                     state = State.ACTIVE;
 
                     fireHandler(activeHandler, activeArgs);
-                } else {
-                     /*
-                      * Don't respond to clients yet - it's possible we're
-                      * performing a failback and the backup is currently active.
-                      */
+                } else { 
+                      // Don't respond to clients yet - it's possible we're
+                      // performing a failback and the backup is currently active. 
                     result = false;
                 }
             }
-        } else if (state == State.BACKUP_CONNECTING) {
-             /*
-              * Backup server is waiting for peer to connect.
-              * Does not accept CLIENT_REQUEST events in this state.
-              */
+        } else if (state == State.BACKUP_CONNECTING) { 
+              // Backup server is waiting for peer to connect.
+              // Does not accept CLIENT_REQUEST events in this state. 
             if (event == Event.PEER_ACTIVE) {
                 log.info("Connected to primary (active), ready as passive");
                 state = State.PASSIVE;
 
                 fireHandler(passiveHandler, passiveArgs);
-            } else if (event == Event.CLIENT_REQUEST) {
-                 /*
-                  *  Reject client connections when acting as backup.
-                  */
+            } else if (event == Event.CLIENT_REQUEST) { 
+                  //  Reject client connections when acting as backup. 
                 result = false;
             }
-        } else if (state == State.ACTIVE) {
-             /*
-              * Server is active.
-              * Accepts CLIENT_REQUEST events in this state.
-              */
-            if (event == Event.PEER_ACTIVE) {
-                 /*
-                  * Two actives would mean split-brain.
-                  */
+        } else if (state == State.ACTIVE) { 
+              // Server is active.
+              // Accepts CLIENT_REQUEST events in this state. 
+            if (event == Event.PEER_ACTIVE) { 
+                  // Two actives would mean split-brain. 
                 log.error("Fatal error: Dual actives, aborting...");
                 result = false;
             }
-        } else if (state == State.PASSIVE) {
-             /*
-              * Server is passive.
-              * CLIENT_REQUEST events can trigger failover if peer looks dead.
-              */
-            if (event == Event.PEER_PRIMARY) {
-                 /*
-                  * Peer is restarting - become active, peer will go passive.
-                  */
+        } else if (state == State.PASSIVE) { 
+              // Server is passive.
+              // CLIENT_REQUEST events can trigger failover if peer looks dead. 
+            if (event == Event.PEER_PRIMARY) { 
+                  // Peer is restarting - become active, peer will go passive. 
                 log.info("Primary (passive) is restarting, ready as active");
                 state = State.ACTIVE;
 
                 fireHandler(activeHandler, activeArgs);
-            } else if (event == Event.PEER_BACKUP) {
-                 /*
-                  * Peer is restarting - become active, peer will go passive.
-                  */
+            } else if (event == Event.PEER_BACKUP) { 
+                  // Peer is restarting - become active, peer will go passive. 
                 log.info("Backup (passive) is restarting, ready as active");
                 state = State.ACTIVE;
 
                 fireHandler(activeHandler, activeArgs);
-            } else if (event == Event.PEER_PASSIVE) {
-                 /*
-                  * Two passives would mean cluster would be non-responsive.
-                  */
+            } else if (event == Event.PEER_PASSIVE) { 
+                  // Two passives would mean cluster would be non-responsive. 
                 log.error("Fatal error: Dual passives, aborting...");
                 result = false;
-            } else if (event == Event.CLIENT_REQUEST) {
-                 /*
-                  * Peer becomes active if timeout has passed.
-                  * It's the client request that triggers the failover.
-                  */
+            } else if (event == Event.CLIENT_REQUEST) { 
+                  // Peer becomes active if timeout has passed.
+                  // It's the client request that triggers the failover. 
                 assert (peerExpiry > 0);
-                if (System.currentTimeMillis () >= peerExpiry) {
-                     /*
-                      * If peer is dead, switch to the active state.
-                      */
+                if (System.currentTimeMillis () >= peerExpiry) { 
+                      // If peer is dead, switch to the active state. 
                     log.info("Failover successful, ready as active");
                     state = State.ACTIVE;
-                } else {
-                     /*
-                      * If peer is alive, reject connections.
-                      */
+                } else { 
+                      // If peer is alive, reject connections. 
                     result = false;
                 }
 
