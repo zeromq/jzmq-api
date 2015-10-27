@@ -9,14 +9,14 @@ import org.zeromq.jzmq.ManagedContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BinaryStarTest {
+public class BinaryStarReactorTest {
     private Context context;
     private Socket socket;
 
     private Context context1;
-    private BinaryStar primary;
+    private BinaryStarReactor primary;
     private Context context2;
-    private BinaryStar backup;
+    private BinaryStarReactor backup;
 
     private AtomicInteger primaryVoter = new AtomicInteger();
     private AtomicInteger primaryActive = new AtomicInteger();
@@ -54,8 +54,8 @@ public class BinaryStarTest {
 
     private void startPrimary() {
         context1 = new ManagedContext();
-        primary = context1.buildBinaryStar()
-            .withMode(BinaryStar.Mode.PRIMARY)
+        primary = context1.buildBinaryStarReactor()
+            .withMode(BinaryStarReactor.Mode.PRIMARY)
             .withLocalUrl("tcp://*:5555")
             .withRemoteUrl("tcp://localhost:5556")
             .withHeartbeatInterval(250)
@@ -85,8 +85,8 @@ public class BinaryStarTest {
 
     private void startBackup() {
         context2 = new ManagedContext();
-        backup = context2.buildBinaryStar()
-            .withMode(BinaryStar.Mode.BACKUP)
+        backup = context2.buildBinaryStarReactor()
+            .withMode(BinaryStarReactor.Mode.BACKUP)
             .withLocalUrl("tcp://*:5556")
             .withRemoteUrl("tcp://localhost:5555")
             .withHeartbeatInterval(250)

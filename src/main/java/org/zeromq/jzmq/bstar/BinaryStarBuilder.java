@@ -1,7 +1,7 @@
 package org.zeromq.jzmq.bstar;
 
-import org.zeromq.api.BinaryStar;
-import org.zeromq.api.BinaryStar.Mode;
+import org.zeromq.api.BinaryStarReactor;
+import org.zeromq.api.BinaryStarReactor.Mode;
 import org.zeromq.api.LoopHandler;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
@@ -12,7 +12,7 @@ public class BinaryStarBuilder {
         public Mode mode;
         public String local;
         public String remote;
-        public long heartbeatInterval = BinaryStar.BSTAR_HEARTBEAT;
+        public long heartbeatInterval = BinaryStarReactor.BSTAR_HEARTBEAT;
         public Socket voter;
 
         public LoopHandler activeHandler;
@@ -83,24 +83,24 @@ public class BinaryStarBuilder {
         return this;
     }
 
-    public BinaryStar build() {
+    public BinaryStarReactor build() {
         assert (spec.voter != null);
         assert (spec.voterHandler != null);
 
-        BinaryStar binaryStar = new BinaryStarImpl(context, spec.mode, spec.local, spec.remote);
-        binaryStar.registerVoterSocket(spec.voter);
-        binaryStar.setVoterHandler(spec.voterHandler, spec.voterArgs);
-        binaryStar.setActiveHandler(spec.activeHandler, spec.activeArgs);
-        binaryStar.setPassiveHandler(spec.passiveHandler, spec.passiveArgs);
-        binaryStar.setHeartbeatInterval(spec.heartbeatInterval);
+        BinaryStarReactor reactor = new BinaryStarReactorImpl(context, spec.mode, spec.local, spec.remote);
+        reactor.registerVoterSocket(spec.voter);
+        reactor.setVoterHandler(spec.voterHandler, spec.voterArgs);
+        reactor.setActiveHandler(spec.activeHandler, spec.activeArgs);
+        reactor.setPassiveHandler(spec.passiveHandler, spec.passiveArgs);
+        reactor.setHeartbeatInterval(spec.heartbeatInterval);
 
-        return binaryStar;
+        return reactor;
     }
 
-    public BinaryStar start() {
-        BinaryStar binaryStar = build();
-        binaryStar.start();
+    public BinaryStarReactor start() {
+        BinaryStarReactor reactor = build();
+        reactor.start();
 
-        return binaryStar;
+        return reactor;
     }
 }

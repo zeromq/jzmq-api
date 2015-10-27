@@ -1,13 +1,13 @@
 package org.zeromq.jzmq.bstar;
 
-import org.zeromq.api.BinaryStar;
+import org.zeromq.api.BinaryStarReactor;
 import org.zeromq.api.Socket;
 import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.sockets.ReqSocketBuilder;
 
 public class BinaryStarSocketBuilder extends ReqSocketBuilder {
     public class Spec {
-        public long heartbeatInterval = BinaryStar.BSTAR_HEARTBEAT;
+        public long heartbeatInterval = BinaryStarReactor.BSTAR_HEARTBEAT;
     }
 
     private final Spec spec = new Spec();

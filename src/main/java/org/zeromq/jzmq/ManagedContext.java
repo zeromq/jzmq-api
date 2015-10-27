@@ -212,7 +212,7 @@ public class ManagedContext implements Context {
     }
 
     @Override
-    public BinaryStarBuilder buildBinaryStar() {
+    public BinaryStarBuilder buildBinaryStarReactor() {
         return new BinaryStarBuilder(this);
     }
 

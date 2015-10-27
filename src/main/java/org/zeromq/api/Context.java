@@ -52,18 +52,18 @@ public interface Context extends Closeable {
     ReactorBuilder buildReactor();
 
     /**
-     * Create a new BinaryStar, which will create one half of an HA-pair
+     * Create a new BinaryStarReactor, which will create one half of an HA-pair
      * with event-driven polling of a client Socket.
      * 
-     * @return A builder for constructing a BinaryStar
+     * @return A builder for constructing a BinaryStarReactor
      */
-    BinaryStarBuilder buildBinaryStar();
+    BinaryStarBuilder buildBinaryStarReactor();
 
     /**
      * Create a ØMQ Socket, backed by a background agent that is connecting
-     * to a BinaryStar HA-pair.
+     * to a BinaryStarReactor HA-pair.
      *
-     * @return A builder for constructing connecting a BinaryStar client Socket
+     * @return A builder for constructing connecting a BinaryStarReactor client Socket
      */
     BinaryStarSocketBuilder buildBinaryStarSocket();
 

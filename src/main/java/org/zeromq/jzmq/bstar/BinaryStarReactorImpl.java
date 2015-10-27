@@ -2,7 +2,7 @@ package org.zeromq.jzmq.bstar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.zeromq.api.BinaryStar;
+import org.zeromq.api.BinaryStarReactor;
 import org.zeromq.api.LoopHandler;
 import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
@@ -12,8 +12,8 @@ import org.zeromq.api.SocketType;
 import org.zeromq.api.ZInteger;
 import org.zeromq.jzmq.ManagedContext;
 
-public class BinaryStarImpl implements BinaryStar {
-    private static final Logger log = LoggerFactory.getLogger(BinaryStarImpl.class);
+public class BinaryStarReactorImpl implements BinaryStarReactor {
+    private static final Logger log = LoggerFactory.getLogger(BinaryStarReactorImpl.class);
 
     private final ManagedContext context;
     private final Reactor reactor;
@@ -36,7 +36,7 @@ public class BinaryStarImpl implements BinaryStar {
     private Object[] passiveArgs;
 
     /**
-     * This is the constructor for our {@link BinaryStarImpl} class. We have to tell it
+     * This is the constructor for our {@link BinaryStarReactorImpl} class. We have to tell it
      * whether we're primary or backup server, as well as our local and
      * remote endpoints to bind and connect to.
      * 
@@ -44,7 +44,7 @@ public class BinaryStarImpl implements BinaryStar {
      * @param local The local socket endpoint for publishing events
      * @param remote The remote socket endpoint for subscribing to events
      */
-    public BinaryStarImpl(ManagedContext context, Mode mode, String local, String remote) {
+    public BinaryStarReactorImpl(ManagedContext context, Mode mode, String local, String remote) {
         // Initialize the Binary Star
         this.context = context;
         this.mode = mode;
@@ -91,7 +91,7 @@ public class BinaryStarImpl implements BinaryStar {
      * This method registers a client voter socket. Messages received
      * on this socket provide the CLIENT_REQUEST events for the Binary Star
      * FSM and are passed to the provided application handler. We require
-     * exactly one voter per {@link BinaryStarImpl} instance.
+     * exactly one voter per {@link BinaryStarReactorImpl} instance.
      *
      * @param socket The client socket
      */

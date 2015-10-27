@@ -4,7 +4,7 @@ package org.zeromq.api;
  * Reactor implementing the Binary Star pattern, used to construct HA-pairs
  * that can forward messages to an application in an event-driven manner.
  */
-public interface BinaryStar {
+public interface BinaryStarReactor {
     /**
      * We send state information this often. If peer doesn't respond in two heartbeats, it is 'dead'.
      */

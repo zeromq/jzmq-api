@@ -5,7 +5,7 @@ import org.zeromq.api.Pollable;
 import org.zeromq.api.Reactor;
 import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.bstar.BinaryStarImpl;
+import org.zeromq.jzmq.bstar.BinaryStarReactorImpl;
 
 import java.util.Arrays;
 
@@ -30,7 +30,7 @@ public class PrimaryStar {
         }
 
         ManagedContext context = new ManagedContext();
-        BinaryStarImpl binaryStar = new BinaryStarImpl(context, BinaryStarImpl.Mode.PRIMARY, local, remote);
+        BinaryStarReactorImpl binaryStar = new BinaryStarReactorImpl(context, BinaryStarReactorImpl.Mode.PRIMARY, local, remote);
         binaryStar.registerVoterSocket(context.buildSocket(SocketType.PULL).bind(voter));
         binaryStar.setVoterHandler(new MyHandler(), "primary-voter");
         binaryStar.setActiveHandler(new MyHandler(), "primary-active");
