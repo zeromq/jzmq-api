@@ -35,7 +35,7 @@ public class SocketBuilder implements Bindable, Connectable {
         public byte[] identity;
         public Backgroundable backgroundable;
         public Object[] backgroundableArgs;
-    };
+    }
 
     public SocketBuilder(ManagedContext context, SocketType socketType) {
         this.socketSpec = new SocketSpec();
@@ -288,7 +288,7 @@ public class SocketBuilder implements Bindable, Connectable {
      * Coerce the SocketBuilder to be Subscribable
      */
     public Subscribable asSubscribable() {
-        return (SubSocketBuilder) this;
+        return (Subscribable) this;
     }
 
     /**

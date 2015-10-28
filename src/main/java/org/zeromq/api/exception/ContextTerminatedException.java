@@ -24,7 +24,6 @@ public class ContextTerminatedException extends ZMQRuntimeException {
     /**
      * Constructor, with ZMQException cause.
      * 
-     * @param message The error message
      * @param cause The underlying cause
      */
     public ContextTerminatedException(ZMQException cause) {

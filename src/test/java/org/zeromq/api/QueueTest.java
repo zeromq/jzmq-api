@@ -17,6 +17,7 @@ public class QueueTest {
 
     @After
     public void tearDown() throws Exception {
+        context.terminate();
         context.close();
     }
 
@@ -38,8 +39,6 @@ public class QueueTest {
         worker.send("goodbye".getBytes());
         byte[] response2 = client.receive();
         assertArrayEquals("goodbye".getBytes(), response2);
-
-        context.close();
     }
 
 }

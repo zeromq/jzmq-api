@@ -43,6 +43,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public byte[] receive() {
+        checkClosed();
         try {
             return socket.recv(0);
         } catch (ZMQException ex) {
@@ -52,6 +53,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public byte[] receive(MessageFlag flag) {
+        checkClosed();
         try {
             return socket.recv(flag.getFlag());
         } catch (ZMQException ex) {
@@ -61,6 +63,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public int receive(byte[] buf, int offset, int len, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.recv(buf, offset, len, flag.getFlag());
         } catch (ZMQException ex) {
@@ -70,6 +73,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public int receiveByteBuffer(ByteBuffer buf, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.recvByteBuffer(buf, flag.getFlag());
         } catch (ZMQException ex) {
@@ -79,6 +83,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean hasMoreToReceive() {
+        checkClosed();
         try {
             return socket.hasReceiveMore();
         } catch (ZMQException ex) {
@@ -86,37 +91,44 @@ public class ManagedSocket implements Socket {
         }
     }
 
-
     @Override
     public Message receiveMessage() {
+        return receiveMessage(MessageFlag.NONE);
+    }
+
+    @Override
+    public Message receiveMessage(MessageFlag flag) {
         Message message = null;
         try {
-            message = fillInFrames(new Message());
-        } catch (ContextTerminatedException ex) {
-        } catch (InvalidSocketException ex) {
+            message = fillInFrames(new Message(), flag);
+        } catch (ContextTerminatedException | InvalidSocketException ignored) {
         }
         return message;
     }
 
     @Override
     public RoutedMessage receiveRoutedMessage() {
+        return receiveRoutedMessage(MessageFlag.NONE);
+    }
+
+    @Override
+    public RoutedMessage receiveRoutedMessage(MessageFlag flag) {
         RoutedMessage message = null;
         try {
-            message = fillInFrames(new RoutedMessage());
-        } catch (ContextTerminatedException ex) {
-        } catch (InvalidSocketException ex) {
+            message = fillInFrames(new RoutedMessage(), flag);
+        } catch (ContextTerminatedException | InvalidSocketException ignored) {
         }
         return message;
     }
 
-    private <T extends Message> T fillInFrames(T message) {
-        byte[] bytes = receive();
+    private <T extends Message> T fillInFrames(T message, MessageFlag flag) {
+        byte[] bytes = receive(flag);
         if (bytes == null) {
             return null;
         }
         message.addFrame(new Frame(bytes));
         while (hasMoreToReceive()) {
-            byte[] data = receive();
+            byte[] data = receive(flag);
             message.addFrame(new Frame(data));
         }
         return message;
@@ -151,6 +163,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean send(byte[] buf, int offset, int length, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.send(buf, offset, length, flag.getFlag());
         } catch (ZMQException ex) {
@@ -160,6 +173,7 @@ public class ManagedSocket implements Socket {
 
     @Override
     public boolean sendByteBuffer(ByteBuffer buf, MessageFlag flag) {
+        checkClosed();
         try {
             return socket.sendByteBuffer(buf, flag.getFlag()) >= 0;
         } catch (ZMQException ex) {
@@ -170,7 +184,7 @@ public class ManagedSocket implements Socket {
     @Override
     public void close() {
         if (isClosed.compareAndSet(false, true)) {
-            managedContext.destroySocket(this);
+            socket.close();
         }
     }
 
@@ -182,5 +196,11 @@ public class ManagedSocket implements Socket {
     @Override
     public TransportType getTransportType() {
         return null;
+    }
+
+    private void checkClosed() {
+        if (isClosed.get()) {
+            throw new InvalidSocketException("Socket closed");
+        }
     }
 }

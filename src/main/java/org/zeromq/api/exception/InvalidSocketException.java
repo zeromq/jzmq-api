@@ -1,5 +1,6 @@
 package org.zeromq.api.exception;
 
+import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 
 /**
@@ -24,10 +25,18 @@ public class InvalidSocketException extends ZMQRuntimeException {
     /**
      * Constructor, with ZMQException cause.
      * 
-     * @param message The error message
      * @param cause The underlying cause
      */
     public InvalidSocketException(ZMQException cause) {
         super(cause);
+    }
+
+    /**
+     * Constructor, with message.
+     * 
+     * @param message The error message
+     */
+    public InvalidSocketException(String message) {
+        super(message, (int) ZMQ.Error.ENOTSOCK.getCode());
     }
 }

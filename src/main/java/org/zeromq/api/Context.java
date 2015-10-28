@@ -1,9 +1,15 @@
 package org.zeromq.api;
 
+import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
+import org.zeromq.jzmq.bstar.BinaryStarBuilder;
+import org.zeromq.jzmq.bstar.BinaryStarSocketBuilder;
+import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollerBuilder;
+import org.zeromq.jzmq.reactor.ReactorBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 
 import java.io.Closeable;
+import java.nio.channels.SelectableChannel;
 
 /**
  * A ØMQ context is thread safe and may be shared among as many application threads as necessary, without any additional
@@ -14,7 +20,7 @@ public interface Context extends Closeable {
      * Create a ØMQ Socket of type SocketType
      * 
      * @param type socket type
-     * @return builder object
+     * @return A builder for constructing and connecting ØMQ Sockets
      */
     SocketBuilder buildSocket(SocketType type);
 
@@ -31,10 +37,52 @@ public interface Context extends Closeable {
     /**
      * Create a new Poller, which will allow callback-based polling of Sockets.
      * 
+     * @return A builder for constructing ØMQ Pollers
      * @see Pollable
      * @see PollerType
      */
     PollerBuilder buildPoller();
+
+    /**
+     * Create a new Reactor, which will allow event-driven and timer-based
+     * polling of Sockets.
+     * 
+     * @return A builder for constructing a Reactor
+     */
+    ReactorBuilder buildReactor();
+
+    /**
+     * Create a new BinaryStarReactor, which will create one half of an HA-pair
+     * with event-driven polling of a client Socket.
+     * 
+     * @return A builder for constructing a BinaryStarReactor
+     */
+    BinaryStarBuilder buildBinaryStarReactor();
+
+    /**
+     * Create a ØMQ Socket, backed by a background agent that is connecting
+     * to a BinaryStarReactor HA-pair.
+     *
+     * @return A builder for constructing connecting a BinaryStarReactor client Socket
+     */
+    BinaryStarSocketBuilder buildBinaryStarSocket();
+
+    /**
+     * Create a new BeaconReactor, which will send and receive UDP beacons
+     * on a broadcast address, with event-driven handling of received beacons.
+     * 
+     * @return A builder for constructing a BeaconReactor
+     */
+    BeaconReactorBuilder buildBeaconReactor();
+
+    /**
+     * Create a ØMQ Device of type DeviceType, which will bridge two networks
+     * together using patterns for specific SocketTypes.
+     *
+     * @param deviceType The device type, specifying the pattern to use
+     * @return A builder for constructing ØMQ Devices
+     */
+    DeviceBuilder buildDevice(DeviceType deviceType);
 
     /**
      * Create a new Pollable from the socket, with the requested options.
@@ -44,6 +92,15 @@ public interface Context extends Closeable {
      * @return A new Pollable, for use with a Poller.
      */
     Pollable newPollable(Socket socket, PollerType... options);
+
+    /**
+     * Create a new Pollable from the socket, with the requested options.
+     *
+     * @param channel A channel to wrap for polling
+     * @param options Polling options (IN, OUT, ERROR)
+     * @return A new Pollable, for use with a Poller.
+     */
+    Pollable newPollable(SelectableChannel channel, PollerType... options);
 
     /**
      * Create a ZMQ proxy and start it up.  Returns when the context is closed.
@@ -56,6 +113,14 @@ public interface Context extends Closeable {
     /**
      * Create a ZMQ proxy and start it up on another thread that exits when the context
      * is closed.
+     *
+     * @param frontEnd The front-end socket which will be proxied to/from the back-end
+     * @param backEnd The back-end socket which will be proxied to/from the front-end
+     */
+    void forward(Socket frontEnd, Socket backEnd);
+
+    /**
+     * Alias of {@link #forward}.
      *
      * @param frontEnd The front-end socket which will be proxied to/from the back-end
      * @param backEnd The back-end socket which will be proxied to/from the front-end
@@ -95,4 +160,10 @@ public interface Context extends Closeable {
      * Close the context and any open sockets.
      */
     void close();
+
+    /**
+     * Asynchronously terminate the context without closing any open sockets,
+     * forcing pollers and waiters to abort.
+     */
+    void terminate();
 }

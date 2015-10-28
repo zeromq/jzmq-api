@@ -1,11 +1,13 @@
 package org.zeromq.jzmq;
 
+import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -14,13 +16,19 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 import org.zeromq.api.Backgroundable;
 import org.zeromq.api.Context;
+import org.zeromq.api.DeviceType;
 import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
 import org.zeromq.api.exception.ZMQExceptions;
+import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
+import org.zeromq.jzmq.bstar.BinaryStarBuilder;
+import org.zeromq.jzmq.bstar.BinaryStarSocketBuilder;
+import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.poll.PollerBuilder;
+import org.zeromq.jzmq.reactor.ReactorBuilder;
 import org.zeromq.jzmq.sockets.DealerSocketBuilder;
 import org.zeromq.jzmq.sockets.PairSocketBuilder;
 import org.zeromq.jzmq.sockets.PubSocketBuilder;
@@ -31,6 +39,8 @@ import org.zeromq.jzmq.sockets.ReqSocketBuilder;
 import org.zeromq.jzmq.sockets.RouterSocketBuilder;
 import org.zeromq.jzmq.sockets.SocketBuilder;
 import org.zeromq.jzmq.sockets.SubSocketBuilder;
+import org.zeromq.jzmq.sockets.XPubSocketBuilder;
+import org.zeromq.jzmq.sockets.XSubSocketBuilder;
 
 /**
  * Manage JZMQ Context
@@ -40,7 +50,7 @@ public class ManagedContext implements Context {
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    private final boolean termContext;
+    private boolean termContext;
     private final ZMQ.Context context;
     private final Set<Socket> sockets;
     private final List<Backgroundable> backgroundables;
@@ -79,12 +89,11 @@ public class ManagedContext implements Context {
     public void destroySocket(Socket socket) {
         if (sockets.contains(socket)) {
             try {
-                socket.getZMQSocket().close();
+                socket.close();
             } catch (Exception ignore) {
                 log.warn("Exception caught while closing underlying socket.", ignore);
             }
             log.debug("closed socket");
-            sockets.remove(socket);
         }
     }
 
@@ -110,6 +119,24 @@ public class ManagedContext implements Context {
         }
     }
 
+    @Override
+    public void terminate() {
+        if (termContext) {
+            // Terminate context on another thread
+            TermThread thread = new TermThread(this);
+            thread.start();
+            try {
+                // Wait until thread has started, and a bit more
+                thread.await();
+                Thread.sleep(15);
+            } catch (InterruptedException ignored) {
+            }
+
+            // Don't double-terminate context
+            termContext = false;
+        }
+    }
+
     // I'd really like this to be private but I don't want all the builders in here
     // If we only deal with the Context interface, callers won't see this
     void addSocket(Socket socket) {
@@ -127,6 +154,10 @@ public class ManagedContext implements Context {
                 return new PubSocketBuilder(this);
             case SUB:
                 return new SubSocketBuilder(this);
+            case XPUB:
+                return new XPubSocketBuilder(this);
+            case XSUB:
+                return new XSubSocketBuilder(this);
             case REP:
                 return new RepSocketBuilder(this);
             case REQ:
@@ -171,13 +202,48 @@ public class ManagedContext implements Context {
     }
 
     @Override
+    public Pollable newPollable(SelectableChannel channel, PollerType... options) {
+        return new PollableImpl(channel, options);
+    }
+
+    @Override
+    public ReactorBuilder buildReactor() {
+        return new ReactorBuilder(this);
+    }
+
+    @Override
+    public BinaryStarBuilder buildBinaryStarReactor() {
+        return new BinaryStarBuilder(this);
+    }
+
+    @Override
+    public BinaryStarSocketBuilder buildBinaryStarSocket() {
+        return new BinaryStarSocketBuilder(this);
+    }
+
+    @Override
+    public BeaconReactorBuilder buildBeaconReactor() {
+        return new BeaconReactorBuilder(this);
+    }
+
+    @Override
+    public DeviceBuilder buildDevice(DeviceType deviceType) {
+        return new DeviceBuilder(this, deviceType);
+    }
+
+    @Override
     public void proxy(Socket frontEnd, Socket backEnd) {
         ZMQ.proxy(frontEnd.getZMQSocket(), backEnd.getZMQSocket(), null);
     }
 
     @Override
-    public void queue(Socket frontEnd, Socket backEnd) {
+    public void forward(Socket frontEnd, Socket backEnd) {
         new ProxyThread(this, frontEnd, backEnd).start();
+    }
+
+    @Override
+    public void queue(Socket frontEnd, Socket backEnd) {
+        forward(frontEnd, backEnd);
     }
 
     public void addBackgroundable(Backgroundable backgroundable) {
@@ -260,4 +326,22 @@ public class ManagedContext implements Context {
         }
     }
 
+    private static class TermThread extends Thread {
+        private final ManagedContext context;
+        private CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        public TermThread(ManagedContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            countDownLatch.countDown();
+            context.getZMQContext().term();
+        }
+
+        public void await() throws InterruptedException {
+            countDownLatch.await();
+        }
+    }
 }
