@@ -1,7 +1,7 @@
 package org.zeromq.api;
 
 import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
-import org.zeromq.jzmq.bstar.BinaryStarBuilder;
+import org.zeromq.jzmq.bstar.BinaryStarReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarSocketBuilder;
 import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollerBuilder;
@@ -57,7 +57,7 @@ public interface Context extends Closeable {
      * 
      * @return A builder for constructing a BinaryStarReactor
      */
-    BinaryStarBuilder buildBinaryStarReactor();
+    BinaryStarReactorBuilder buildBinaryStarReactor();
 
     /**
      * Create a ØMQ Socket, backed by a background agent that is connecting
