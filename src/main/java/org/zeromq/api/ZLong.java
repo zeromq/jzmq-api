@@ -20,7 +20,35 @@ public class ZLong {
      * @param val The default value
      */
     public ZLong(long val) {
-        setValue(val);
+        put(val);
+    }
+
+    /**
+     * Constrct a buffer with a default value.
+     * 
+     * @param frame A frame of data
+     */
+    public ZLong(byte[] frame) {
+        put(frame, 0);
+    }
+
+    /**
+     * Constrct a buffer with a default value.
+     *
+     * @param frame A frame of data
+     * @param offset Offset within the given array
+     */
+    public ZLong(byte[] frame, int offset) {
+        put(frame, offset);
+    }
+
+    /**
+     * Constrct a buffer with a default value.
+     *
+     * @param frame A frame of data
+     */
+    public ZLong(Frame frame) {
+        put(frame.getData(), 0);
     }
 
     /**
@@ -44,23 +72,27 @@ public class ZLong {
     }
 
     /**
-     * Alias for {@link #setValue(long)}. Useful for method chaining.
+     * Set a value on the buffer.
      * 
      * @param val The long value
      * @return This object, with the value set
      */
     public ZLong put(long val) {
-        setValue(val);
+        Bits.putLong(buf, val);
         return this;
     }
 
     /**
      * Set a value on the buffer.
      * 
-     * @param val The long value
+     * @param frame A frame of data
+     * @param offset Offset within the given array
+     * @return This object, with the value set
      */
-    public void setValue(long val) {
-        Bits.putLong(buf, val);
+    public ZLong put(byte[] frame, int offset) {
+        assert (frame.length >= 8);
+        System.arraycopy(frame, offset, buf, 0, 8);
+        return this;
     }
 
     /**
