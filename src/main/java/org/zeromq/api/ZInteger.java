@@ -20,7 +20,35 @@ public class ZInteger {
      * @param val The default value
      */
     public ZInteger(int val) {
-        setValue(val);
+        put(val);
+    }
+
+    /**
+     * Constrct a buffer with a default value.
+     *
+     * @param frame A frame of data
+     */
+    public ZInteger(byte[] frame) {
+        put(frame, 0);
+    }
+
+    /**
+     * Constrct a buffer with a default value.
+     *
+     * @param frame A frame of data
+     * @param offset Offset within the given array
+     */
+    public ZInteger(byte[] frame, int offset) {
+        put(frame, offset);
+    }
+
+    /**
+     * Constrct a buffer with a default value.
+     *
+     * @param frame A frame of data
+     */
+    public ZInteger(Frame frame) {
+        put(frame.getData(), 0);
     }
 
     /**
@@ -44,23 +72,27 @@ public class ZInteger {
     }
 
     /**
-     * Alias for {@link #setValue(int)}. Useful for method chaining.
+     * Set a value on the buffer.
      * 
      * @param val The integer value
      * @return This object, with the value set
      */
     public ZInteger put(int val) {
-        setValue(val);
+        Bits.putInt(buf, val);
         return this;
     }
 
     /**
      * Set a value on the buffer.
-     * 
-     * @param val The integer value
+     *
+     * @param frame A frame of data
+     * @param offset Offset within the given array
+     * @return This object, with the value set
      */
-    public void setValue(int val) {
-        Bits.putInt(buf, val);
+    public ZInteger put(byte[] frame, int offset) {
+        assert (frame.length >= 4);
+        System.arraycopy(frame, offset, buf, 0, 4);
+        return this;
     }
 
     /**

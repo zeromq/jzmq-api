@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zeromq.jzmq.ManagedContext;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
