@@ -40,17 +40,16 @@ public class DeviceBuilderTest {
         Socket backend2 = context.buildSocket(SocketType.PULL)
             .connect("inproc://streamer-backend");
 
-        ZInteger buf = new ZInteger();
-        buf.put(1).send(frontend1);
-        buf.put(2).send(frontend2);
-        buf.put(3).send(frontend2);
-        buf.put(4).send(frontend1);
+        frontend1.send(new Message(1));
+        frontend2.send(new Message(2));
+        frontend2.send(new Message(3));
+        frontend1.send(new Message(4));
 
         Set<Integer> messages = new HashSet<>();
-        messages.add(buf.receive(backend1));
-        messages.add(buf.receive(backend1));
-        messages.add(buf.receive(backend2));
-        messages.add(buf.receive(backend2));
+        messages.add(backend1.receiveMessage().intValue());
+        messages.add(backend1.receiveMessage().intValue());
+        messages.add(backend2.receiveMessage().intValue());
+        messages.add(backend2.receiveMessage().intValue());
         assertEquals(4, messages.size());
     }
 
@@ -76,20 +75,19 @@ public class DeviceBuilderTest {
         // Give slow joiner some time
         Thread.sleep(25);
 
-        ZInteger buf = new ZInteger();
-        buf.put(1).send(frontend1);
-        buf.put(2).send(frontend2);
-        buf.put(3).send(frontend2);
-        buf.put(4).send(frontend2);
+        frontend1.send(new Message(1));
+        frontend2.send(new Message(2));
+        frontend2.send(new Message(3));
+        frontend2.send(new Message(4));
 
-        assertEquals(1, buf.receive(backend1));
-        assertEquals(1, buf.receive(backend2));
-        assertEquals(2, buf.receive(backend1));
-        assertEquals(2, buf.receive(backend2));
-        assertEquals(3, buf.receive(backend1));
-        assertEquals(3, buf.receive(backend2));
-        assertEquals(4, buf.receive(backend1));
-        assertEquals(4, buf.receive(backend2));
+        assertEquals(1, backend1.receiveMessage().intValue());
+        assertEquals(1, backend2.receiveMessage().intValue());
+        assertEquals(2, backend1.receiveMessage().intValue());
+        assertEquals(2, backend2.receiveMessage().intValue());
+        assertEquals(3, backend1.receiveMessage().intValue());
+        assertEquals(3, backend2.receiveMessage().intValue());
+        assertEquals(4, backend1.receiveMessage().intValue());
+        assertEquals(4, backend2.receiveMessage().intValue());
     }
 
     @Test
@@ -109,23 +107,22 @@ public class DeviceBuilderTest {
         Socket backend2 = context.buildSocket(SocketType.REP)
             .connect("inproc://queue-backend");
 
-        ZInteger buf = new ZInteger();
-        buf.put(1).send(frontend1);
-        buf.put(2).send(frontend2);
-        assertEquals(1, buf.receive(backend1));
-        assertEquals(2, buf.receive(backend2));
-        buf.put(3).send(backend1);
-        buf.put(4).send(backend2);
-        assertEquals(3, buf.receive(frontend1));
-        assertEquals(4, buf.receive(frontend2));
+        frontend1.send(new Message(1));
+        frontend2.send(new Message(2));
+        assertEquals(1, backend1.receiveMessage().intValue());
+        assertEquals(2, backend2.receiveMessage().intValue());
+        backend1.send(new Message(3));
+        backend2.send(new Message(4));
+        assertEquals(3, frontend1.receiveMessage().intValue());
+        assertEquals(4, frontend2.receiveMessage().intValue());
 
-        buf.put(5).send(frontend1);
-        buf.put(6).send(frontend2);
-        assertEquals(5, buf.receive(backend1));
-        assertEquals(6, buf.receive(backend2));
-        buf.put(7).send(backend1);
-        buf.put(8).send(backend2);
-        assertEquals(7, buf.receive(frontend1));
-        assertEquals(8, buf.receive(frontend2));
+        frontend1.send(new Message(5));
+        frontend2.send(new Message(6));
+        assertEquals(5, backend1.receiveMessage().intValue());
+        assertEquals(6, backend2.receiveMessage().intValue());
+        backend1.send(new Message(7));
+        backend2.send(new Message(8));
+        assertEquals(7, frontend1.receiveMessage().intValue());
+        assertEquals(8, frontend2.receiveMessage().intValue());
     }
 }

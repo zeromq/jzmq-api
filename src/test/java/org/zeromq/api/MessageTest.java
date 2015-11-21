@@ -108,7 +108,7 @@ public class MessageTest {
 
     @Test
     public void testPutLong_100() {
-        Frame frame = Frame.wrap(100);
+        Frame frame = Frame.wrap(100L);
 
         byte[] buf = frame.getData();
         assertEquals(0, buf[0]);
