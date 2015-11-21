@@ -4,12 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.api.BinaryStarReactor;
 import org.zeromq.api.LoopHandler;
+import org.zeromq.api.Message;
 import org.zeromq.api.Pollable;
 import org.zeromq.api.PollerType;
 import org.zeromq.api.Reactor;
 import org.zeromq.api.Socket;
 import org.zeromq.api.SocketType;
-import org.zeromq.api.ZInteger;
 import org.zeromq.jzmq.ManagedContext;
 
 public class BinaryStarReactorImpl implements BinaryStarReactor {
@@ -19,7 +19,6 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
     private final Reactor reactor;
     private final Socket statePub;
     private final Socket stateSub;
-    private final ZInteger stateBuf = new ZInteger();
 
     private final Mode mode;
     private State state;
@@ -270,7 +269,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
     private final LoopHandler SEND_STATE = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            stateBuf.put(state.ordinal()).send(statePub);
+            statePub.send(new Message(state.ordinal()));
         }
     };
 
@@ -280,7 +279,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
     private final LoopHandler RECEIVE_STATE = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            int ordinal = stateBuf.receive(stateSub);
+            int ordinal = stateSub.receiveMessage().intValue();
             assert (ordinal >= 0 && ordinal < Event.values().length);
             updatePeerExpiry();
 

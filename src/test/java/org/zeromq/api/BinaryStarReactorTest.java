@@ -148,9 +148,8 @@ public class BinaryStarReactorTest {
     public void testVoter() throws Exception {
         Thread.sleep(550);
 
-        ZInteger buf = new ZInteger();
         for (int i = 0; i < 10; i++) {
-            buf.put(i).send(socket);
+            socket.send(new Message(i));
             socket.receive();
         }
 
@@ -166,13 +165,12 @@ public class BinaryStarReactorTest {
     public void testVoterFailover() throws Exception {
         Thread.sleep(550);
 
-        ZInteger buf = new ZInteger();
-        buf.put(1).send(socket);
+        socket.send(new Message(1));
         socket.receiveMessage();
 
         stopPrimary();
 
-        buf.put(1).send(socket);
+        socket.send(new Message(1));
         socket.receiveMessage();
 
         assertEquals(1, primaryVoter.get());
