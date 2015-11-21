@@ -1,9 +1,9 @@
 package org.zeromq.api;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +52,24 @@ public class Message implements Iterable<Message.Frame> {
 
     /**
      * Construct a message with a single frame.
+     *
+     * @param firstFrame The first frame in the new message
+     */
+    public Message(int firstFrame) {
+        this(Frame.wrap(firstFrame));
+    }
+
+    /**
+     * Construct a message with a single frame.
+     *
+     * @param firstFrame The first frame in the new message
+     */
+    public Message(long firstFrame) {
+        this(Frame.wrap(firstFrame));
+    }
+
+    /**
+     * Construct a message with a single frame.
      * 
      * @param firstFrame The first frame in the new message
      */
@@ -78,7 +96,7 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     public List<Frame> getFrames() {
-        return new ArrayList<Frame>(frames);
+        return new ArrayList<>(frames);
     }
 
     /**
@@ -146,7 +164,7 @@ public class Message implements Iterable<Message.Frame> {
      * Add frames to the end of the list, in reverse order, such that the
      * elements are in the same order as in the original message.
      * 
-     * @param payload The frames to be added
+     * @param frames The frames to be added
      */
     public void pushFrames(List<Frame> frames) {
         ListIterator<Frame> itr = frames.listIterator();
@@ -166,6 +184,24 @@ public class Message implements Iterable<Message.Frame> {
         while (itr.hasNext()) {
             frames.push(itr.next());
         }
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to an {@code int}.
+     * 
+     * @return The next frame, as an integer
+     */
+    public int intValue() {
+        return popFrame().getInt();
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to a {@code long}.
+     *
+     * @return The next frame, as a long
+     */
+    public long longValue() {
+        return popFrame().getLong();
     }
 
     /**
@@ -235,7 +271,7 @@ public class Message implements Iterable<Message.Frame> {
      * class are immutable.
      */
     public static class Frame {
-        private final byte[] data;
+        private final ByteBuffer buffer;
 
         /**
          * Construct a frame with the given String, using the configured
@@ -254,7 +290,25 @@ public class Message implements Iterable<Message.Frame> {
          * @param data The data
          */
         public Frame(byte[] data) {
-            this.data = data;
+            this(data == null ? null : ByteBuffer.wrap(data));
+        }
+
+        /**
+         * Construct an empty frame with the given capacity.
+         * 
+         * @param capacity The capacity of the underlying buffer
+         */
+        public Frame(int capacity) {
+            this(ByteBuffer.allocate(capacity));
+        }
+
+        /**
+         * Construct a frame with the given buffer.
+         *
+         * @param buffer The underlying buffer
+         */
+        public Frame(ByteBuffer buffer) {
+            this.buffer = buffer;
         }
 
         /**
@@ -263,7 +317,21 @@ public class Message implements Iterable<Message.Frame> {
          * @return The frame's data
          */
         public byte[] getData() {
-            return data;
+            byte[] buf = buffer.array();
+            if (buffer.position() > 0 && buffer.position() != buffer.capacity()) {
+                buf = new byte[buffer.position()];
+                System.arraycopy(buffer.array(), 0, buf, 0, buffer.position());
+            }
+            return buf;
+        }
+
+        /**
+         * Returns the underlying buffer.
+         * 
+         * @return The underlying buffer
+         */
+        public ByteBuffer getBuffer() {
+            return buffer;
         }
 
         /**
@@ -272,7 +340,7 @@ public class Message implements Iterable<Message.Frame> {
          * @return The frame's size
          */
         public int size() {
-            return data.length;
+            return buffer.capacity();
         }
 
         /**
@@ -282,7 +350,56 @@ public class Message implements Iterable<Message.Frame> {
          * @see Message#CHARSET
          */
         public String getString() {
-            return new String(data, CHARSET);
+            return new String(buffer.array(), CHARSET);
+        }
+
+        public byte getByte() {
+            return buffer.get();
+        }
+
+        public Frame putByte(byte value) {
+            buffer.put(value);
+            return this;
+        }
+
+        public short getShort() {
+            return buffer.getShort();
+        }
+
+        public Frame putShort(short value) {
+            buffer.putShort(value);
+            return this;
+        }
+
+        public int getInt() {
+            return buffer.getInt();
+        }
+
+        public Frame putInt(int value) {
+            buffer.putInt(value);
+            return this;
+        }
+
+        public long getLong() {
+            return buffer.getLong();
+        }
+
+        public Frame putLong(long value) {
+            buffer.putLong(value);
+            return this;
+        }
+
+        public String getChars() {
+            int len = buffer.getShort();
+            byte[] buf = new byte[len];
+            buffer.get(buf);
+            return new String(buf, CHARSET);
+        }
+
+        public Frame putChars(String value) {
+            buffer.putShort((short) value.length());
+            buffer.put(value.getBytes(CHARSET));
+            return this;
         }
 
         @Override
@@ -292,14 +409,14 @@ public class Message implements Iterable<Message.Frame> {
 
             Frame frame = (Frame) o;
 
-            if (!Arrays.equals(data, frame.data)) return false;
+            if (!buffer.equals(frame.buffer)) return false;
 
             return true;
         }
 
         @Override
         public int hashCode() {
-            return (data != null) ? Arrays.hashCode(data) : 0;
+            return buffer.hashCode();
         }
 
         /**
@@ -307,15 +424,30 @@ public class Message implements Iterable<Message.Frame> {
          */
         @Override
         public String toString() {
-            if (data == null) {
+            if (buffer == null) {
                 return "Frame{data=null}";
             }
-            return "Frame{data=" + new String(data, CHARSET) + '}';
+            return "Frame{data=" + getString() + '}';
         }
 
         public boolean isBlank() {
-            return (data.length == 0);
+            return (buffer.capacity() == 0);
+        }
+
+        public static Frame wrap(byte value) {
+            return new Frame(1).putByte(value);
+        }
+
+        public static Frame wrap(short value) {
+            return new Frame(2).putShort(value);
+        }
+
+        public static Frame wrap(int value) {
+            return new Frame(4).putInt(value);
+        }
+
+        public static Frame wrap(long value) {
+            return new Frame(8).putLong(value);
         }
     }
-
 }

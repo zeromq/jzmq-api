@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNull;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.junit.After;
@@ -31,7 +32,7 @@ public class MessageTest {
     public void testAddFrame() throws Exception {
         Message testClass = new Message();
         testClass.addFrame(new Frame(new byte[]{5, 6, 7}));
-        List<Message.Frame> frames = testClass.getFrames();
+        List<Frame> frames = testClass.getFrames();
         assertEquals(1, frames.size());
         assertArrayEquals(new byte[]{5, 6, 7}, frames.get(0).getData());
     }
@@ -40,7 +41,7 @@ public class MessageTest {
     public void testBlankFrame() throws Exception {
         Message testClass = new Message();
         testClass.addEmptyFrame();
-        List<Message.Frame> frames = testClass.getFrames();
+        List<Frame> frames = testClass.getFrames();
         assertEquals(1, frames.size());
         assertArrayEquals(new byte[0], frames.get(0).getData());
     }
@@ -50,7 +51,7 @@ public class MessageTest {
         Message testClass = new Message();
         testClass.addEmptyFrame();
         testClass.addFrame(new Frame("Hello"));
-        List<Message.Frame> frames = testClass.getFrames();
+        List<Frame> frames = testClass.getFrames();
         assertEquals(2, frames.size());
         assertArrayEquals(new byte[0], frames.get(0).getData());
         assertArrayEquals("Hello".getBytes(), frames.get(1).getData());
@@ -65,6 +66,117 @@ public class MessageTest {
 
         Message newMessage = new Message(initial);
         assertEquals(initial.getFrames(), newMessage.getFrames());
+    }
+
+    @Test
+    public void testPutInt_100() {
+        Frame frame = Frame.wrap(100);
+
+        byte[] buf = frame.getData();
+        assertEquals(0, buf[0]);
+        assertEquals(0, buf[1]);
+        assertEquals(0, buf[2]);
+        assertEquals(100, buf[3]);
+    }
+
+    @Test
+    public void testGetInt_100() {
+        byte[] buf = {0, 0, 0, 100};
+        Frame frame = new Frame(buf);
+
+        assertEquals(100, frame.getInt());
+    }
+
+    @Test
+    public void testPutInt_0x77777777() {
+        Frame frame = Frame.wrap(0x77777777);
+
+        byte[] buf = frame.getData();
+        assertEquals(0x77, buf[0]);
+        assertEquals(0x77, buf[1]);
+        assertEquals(0x77, buf[2]);
+        assertEquals(0x77, buf[3]);
+    }
+
+    @Test
+    public void testGetInt_0x77777777() {
+        byte[] buf = {0x77, 0x77, 0x77, 0x77};
+        Frame frame = new Frame(buf);
+
+        assertEquals(0x77777777, frame.getInt());
+    }
+
+    @Test
+    public void testPutLong_100() {
+        Frame frame = Frame.wrap(100);
+
+        byte[] buf = frame.getData();
+        assertEquals(0, buf[0]);
+        assertEquals(0, buf[1]);
+        assertEquals(0, buf[2]);
+        assertEquals(0, buf[3]);
+        assertEquals(0, buf[4]);
+        assertEquals(0, buf[5]);
+        assertEquals(0, buf[6]);
+        assertEquals(100L, buf[7]);
+    }
+
+    @Test
+    public void testGetLong_100() {
+        byte[] buf = {0, 0, 0, 0, 0, 0, 0, 100};
+        Frame frame = new Frame(buf);
+
+        assertEquals(100, frame.getLong());
+    }
+
+    @Test
+    public void testPutLong_0x77777777() {
+        Frame frame = Frame.wrap(0x7777777777777777L);
+
+        byte[] buf = frame.getData();
+        assertEquals(0x77, buf[0]);
+        assertEquals(0x77, buf[1]);
+        assertEquals(0x77, buf[2]);
+        assertEquals(0x77, buf[3]);
+        assertEquals(0x77, buf[4]);
+        assertEquals(0x77, buf[5]);
+        assertEquals(0x77, buf[6]);
+        assertEquals(0x77, buf[7]);
+    }
+
+    @Test
+    public void testGetLong_0x77777777() {
+        byte[] buf = {0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77};
+        Frame frame = new Frame(buf);
+
+        assertEquals(0x7777777777777777L, frame.getLong());
+    }
+
+    @Test
+    public void testPutChars() {
+        String string = "Hello, world!";
+        Frame frame = new Frame(100);
+        frame.putChars(string);
+
+        ByteBuffer buffer = frame.getBuffer();
+        buffer.rewind();
+        assertEquals(string.length(), buffer.getShort());
+
+        byte[] buf = new byte[string.length()];
+        buffer.get(buf);
+        assertEquals(string, new String(buf, Message.CHARSET));
+    }
+
+    @Test
+    public void testGetChars() {
+        String string = "Hello, world!";
+        ByteBuffer buffer = ByteBuffer.allocate(string.length() + 2);
+        buffer.putShort((short) string.length());
+        buffer.put(string.getBytes(Message.CHARSET));
+        buffer.rewind();
+
+        Frame frame = new Frame(buffer);
+        assertEquals(string, frame.getChars());
     }
 
     @Test
