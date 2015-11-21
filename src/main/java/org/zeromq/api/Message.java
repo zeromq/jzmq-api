@@ -206,6 +206,8 @@ public class Message implements Iterable<Message.Frame> {
 
     /**
      * An alias for {@link #isEmpty()}.
+     *
+     * @return true if the message is empty, false otherwise
      */
     public boolean isMissing() {
         return isEmpty();
@@ -244,6 +246,8 @@ public class Message implements Iterable<Message.Frame> {
      * <p>
      * This should only be used for debugging and tracing, inefficient in
      * handling large messages.
+     * 
+     * @return A StringBuilder with the message in human readable format
      */
     protected StringBuilder dump(StringBuilder sb) {
         for (Frame frame : frames) {

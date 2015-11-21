@@ -39,6 +39,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
      * whether we're primary or backup server, as well as our local and
      * remote endpoints to bind and connect to.
      * 
+     * @param context The ManagedContext
      * @param mode The connection mode, either primary or backup
      * @param local The local socket endpoint for publishing events
      * @param remote The remote socket endpoint for subscribing to events

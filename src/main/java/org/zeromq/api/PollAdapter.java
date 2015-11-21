@@ -2,6 +2,9 @@ package org.zeromq.api;
 
 import java.nio.channels.SelectableChannel;
 
+/**
+ * An abstract class for implementing a {@link PollListener}.
+ */
 public class PollAdapter implements PollListener {
     @Override
     public void handleIn(Pollable pollable) {

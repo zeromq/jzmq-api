@@ -28,7 +28,7 @@ public class RoutedMessage extends Message {
     /**
      * Takes routes with no frames.
      * 
-     * @param An initial list of routes
+     * @param routes An initial list of routes
      */
     public RoutedMessage(List<Route> routes) {
         for (Route route : routes) {
@@ -92,6 +92,8 @@ public class RoutedMessage extends Message {
 
     /**
      * Mutates this Message, to remove the top-most Route, which is then returned.
+     * 
+     * @return The unwrapped Route
      */
     public Route unwrap() {
         if (getRoutes().isEmpty()) {
