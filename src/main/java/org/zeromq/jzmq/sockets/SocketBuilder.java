@@ -122,9 +122,10 @@ public class SocketBuilder implements Bindable, Connectable {
     }
 
     /**
+     * Set the send high watermark.
      * 
-     * @param sendHWM
-     * @return
+     * @param sendHWM The send high watermark
+     * @return builder object
      */
     public SocketBuilder withSendHighWatermark(long sendHWM) {
         getSocketSpec().sendHighwatermark = sendHWM;
@@ -132,7 +133,7 @@ public class SocketBuilder implements Bindable, Connectable {
     }
 
     /**
-     * Get the send high watermark
+     * Get the send high watermark.
      * 
      * @return send high watermark
      */
@@ -159,7 +160,7 @@ public class SocketBuilder implements Bindable, Connectable {
     }
 
     /**
-     * Returns the receive high water mark
+     * Returns the receive high water mark.
      * 
      * @return receive high water mark
      */
@@ -285,14 +286,18 @@ public class SocketBuilder implements Bindable, Connectable {
     }
 
     /**
-     * Coerce the SocketBuilder to be Subscribable
+     * Coerce the SocketBuilder to be Subscribable.
+     * 
+     * @return This builder object as a Subscribable
      */
     public Subscribable asSubscribable() {
         return (Subscribable) this;
     }
 
     /**
-     * Coerce the SocketBuilder to be Routable
+     * Coerce the SocketBuilder to be Routable.
+     * 
+     * @return This builder object as a Routable
      */
     public Routable asRoutable() {
         return (RouterSocketBuilder) this;

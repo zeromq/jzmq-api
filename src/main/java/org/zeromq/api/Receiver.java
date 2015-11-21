@@ -26,7 +26,7 @@ public interface Receiver {
      * 
      * @param buf The byte buffer
      * @param offset The buffer offset
-     * @param length The buffer length
+     * @param len The buffer length
      * @param flag Flag controlling behavior of the receive operation
      * @return The number of bytes read, -1 on error
      */

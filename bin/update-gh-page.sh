@@ -1,10 +1,10 @@
 #!/bin/bash
 
-git co gh-pages
+git checkout gh-pages
 rm -r javadocs
 cp -r target/apidocs javadocs
 git add -u javadocs
 git add javadocs
 git commit -m "Updating javadocs"
 git push origin gh-pages
-git co master
+git checkout master
