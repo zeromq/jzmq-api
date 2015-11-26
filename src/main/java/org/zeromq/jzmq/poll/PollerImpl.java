@@ -11,19 +11,22 @@ import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.ManagedContext;
 
 import java.nio.channels.SelectableChannel;
+import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PollerImpl implements Poller {
-    private final Map<Pollable, PollListener> pollables;
     private final ZMQ.Poller poller;
+    private final List<Pollable> pollables = new ArrayList<>();
+    private final List<PollListener> listeners = new ArrayList<>();
 
-    public PollerImpl(ManagedContext context, Map<Pollable, PollListener> pollables) {
+    public PollerImpl(ManagedContext context, Map<Pollable, PollListener> pollableMap) {
         this.poller = context.newZmqPoller(pollables.size());
-        this.pollables = new LinkedHashMap<>(pollables);
-        for (Pollable pollable : pollables.keySet()) {
-            register(pollable);
+        for (Map.Entry<Pollable, PollListener> entry : pollableMap.entrySet()) {
+            pollables.add(entry.getKey());
+            listeners.add(entry.getValue());
+            register(entry.getKey());
         }
     }
 
@@ -38,9 +41,8 @@ public class PollerImpl implements Poller {
 
     @Override
     public void poll(long timeoutMillis) {
-        int numberOfObjects;
         try {
-            numberOfObjects = poller.poll(timeoutMillis);
+            int numberOfObjects = poller.poll(timeoutMillis);
             if (numberOfObjects == 0) {
                 return;
             }
@@ -53,18 +55,17 @@ public class PollerImpl implements Poller {
             throw ZMQExceptions.wrap(ex);
         }
 
-        int index = 0;
-        for (Map.Entry<Pollable, PollListener> entry : pollables.entrySet()) {
-            Pollable pollable = entry.getKey();
-            PollListener listener = entry.getValue();
-            if (poller.pollin(index))
-                listener.handleIn(pollable);
-            if (poller.pollout(index))
-                listener.handleOut(pollable);
-            if (poller.pollerr(index))
-                listener.handleError(pollable);
-
-            index++;
+        for (int index = 0; index < pollables.size(); index++) {
+            Pollable pollable = pollables.get(index);
+            PollListener listener = listeners.get(index);
+            if (pollable != null) {
+                if (poller.pollin(index))
+                    listener.handleIn(pollable);
+                if (poller.pollout(index))
+                    listener.handleOut(pollable);
+                if (poller.pollerr(index))
+                    listener.handleError(pollable);
+            }
         }
     }
 
@@ -75,63 +76,80 @@ public class PollerImpl implements Poller {
 
     @Override
     public int enable(Socket socket) {
-        int result = -1;
-        Pollable pollable = pollable(socket);
-        if (pollable != null) {
-            result = register(pollable);
-        }
-
-        return result;
+        return register(pollable(socket));
     }
 
     @Override
     public boolean disable(Socket socket) {
-        Pollable pollable = pollable(socket);
-        if (pollable != null) {
-            poller.unregister(socket.getZMQSocket());
-        }
-
-        return (pollable != null);
+        return unregister(pollable(socket));
     }
 
     @Override
     public int enable(SelectableChannel channel) {
-        int result = -1;
+        return register(pollable(channel));
+    }
+
+    @Override
+    public boolean disable(SelectableChannel channel) {
+        return unregister(pollable(channel));
+    }
+
+    @Override
+    public int register(Pollable pollable, PollListener listener) {
+        // find a free slot, or add a new one
+        int index = pollables.indexOf(null);
+        if (index < 0) {
+            pollables.add(pollable);
+            listeners.add(listener);
+        } else {
+            pollables.set(index, pollable);
+            listeners.set(index, listener);
+        }
+
+        return register(pollable);
+    }
+
+    @Override
+    public boolean unregister(Socket socket) {
+        Pollable pollable = pollable(socket);
+        return unregister(pollable)
+            && removePollable(pollable);
+    }
+
+    @Override
+    public boolean unregister(SelectableChannel channel) {
         Pollable pollable = pollable(channel);
+        return unregister(pollable)
+            && removePollable(pollable);
+    }
+    private int register(Pollable pollable) {
+        int result = -1;
         if (pollable != null) {
-            result = register(pollable);
+            if (pollable.getChannel() != null) {
+                result = poller.register(pollable.getChannel(), sumOptions(pollable));
+            } else {
+                result = poller.register(pollable.getSocket().getZMQSocket(), sumOptions(pollable));
+            }
         }
 
         return result;
     }
 
-    @Override
-    public boolean disable(SelectableChannel channel) {
-        Pollable pollable = pollable(channel);
+    private boolean unregister(Pollable pollable) {
         if (pollable != null) {
-            poller.unregister(channel);
+            if (pollable.getChannel() != null) {
+                poller.unregister(pollable.getChannel());
+            } else {
+                poller.unregister(pollable.getSocket().getZMQSocket());
+            }
         }
 
         return (pollable != null);
     }
 
-    @Override
-    public int register(Pollable pollable, PollListener listener) {
-        pollables.put(pollable, listener);
-        return register(pollable);
-    }
-
-    private int register(Pollable pollable) {
-        if (pollable.getChannel() != null) {
-            return poller.register(pollable.getChannel(), sumOptions(pollable));
-        } else {
-            return poller.register(pollable.getSocket().getZMQSocket(), sumOptions(pollable));
-        }
-    }
-
     private Pollable pollable(Socket socket) {
         Pollable result = null;
-        for (Pollable pollable : pollables.keySet()) {
+        for (Pollable pollable : pollables) {
             if (pollable.getSocket() == socket) {
                 result = pollable;
                 break;
@@ -142,12 +160,23 @@ public class PollerImpl implements Poller {
 
     private Pollable pollable(SelectableChannel channel) {
         Pollable result = null;
-        for (Pollable pollable : pollables.keySet()) {
+        for (Pollable pollable : pollables) {
             if (pollable.getChannel() == channel) {
                 result = pollable;
                 break;
             }
         }
         return result;
+    }
+
+
+    private boolean removePollable(Pollable pollable) {
+        if (pollable != null) {
+            int index = pollables.indexOf(pollable);
+            pollables.set(index, null);
+            listeners.set(index, null);
+        }
+
+        return (pollable != null);
     }
 }
