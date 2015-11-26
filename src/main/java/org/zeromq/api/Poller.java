@@ -54,12 +54,28 @@ public interface Poller {
     boolean disable(SelectableChannel channel);
 
     /**
-     * Enable a socket in the poller after it has been disabled.
+     * Register a new poll item.
      *
      * @param pollable The pollable containing the socket and polling options
      * @param listener The listener that handles events for the given pollable
      * @return The new index of the socket in the poller, for reference
      */
     int register(Pollable pollable, PollListener listener);
+
+    /**
+     * Unregister a socket from the poller.
+     *
+     * @param socket The socket registered with the poller to be unregistered
+     * @return true if the socket was unregistered, false otherwise
+     */
+    boolean unregister(Socket socket);
+
+    /**
+     * Unregister a channel from the poller.
+     *
+     * @param channel The channel registered with the poller to be unregistered
+     * @return true if the socket was disabled, false otherwise
+     */
+    boolean unregister(SelectableChannel channel);
 
 }

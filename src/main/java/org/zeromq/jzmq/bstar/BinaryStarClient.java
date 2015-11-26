@@ -8,6 +8,7 @@ import org.zeromq.api.Message;
 import org.zeromq.api.MessageFlag;
 import org.zeromq.api.PollAdapter;
 import org.zeromq.api.Poller;
+import org.zeromq.api.PollerType;
 import org.zeromq.api.Socket;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,7 +42,9 @@ class BinaryStarClient implements Backgroundable {
     public void run(Context context, Socket pipe, Object... args) {
         Socket socket = null;
         Message message = null;
-        Poller poller = null;
+        Poller poller = context.buildPoller()
+            .withInPollable(pipe, new PollAdapter())
+            .build();
 
         boolean primary = true;
         State state = State.CONNECTING;
@@ -49,16 +52,13 @@ class BinaryStarClient implements Backgroundable {
             if (state == State.CONNECTING) {
                 if (socket != null) {
                     // Old socket is confused; close it and open a new one
-                    poller.disable(socket);
+                    poller.unregister(socket);
                     socket.close();
                     primary = !primary;
                 }
 
                 socket = createSocket(primary);
-                poller = context.buildPoller()
-                    .withInPollable(pipe, new PollAdapter())
-                    .withInPollable(socket, new PollAdapter())
-                    .build();
+                poller.register(context.newPollable(socket, PollerType.POLL_IN), new PollAdapter());
 
                 if (message != null) {
                     // Send request again, on new socket
@@ -104,7 +104,7 @@ class BinaryStarClient implements Backgroundable {
     private Socket createSocket(boolean primary) {
         String url = primary ? url1 : url2;
         log.info("Connecting to server at {}", url);
-        return socketBuilder.connect(primary ? url1 : url2);
+        return socketBuilder.connect(url);
     }
 
     @Override
