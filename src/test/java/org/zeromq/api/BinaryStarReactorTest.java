@@ -60,23 +60,23 @@ public class BinaryStarReactorTest {
             .withRemoteUrl("tcp://localhost:5556")
             .withHeartbeatInterval(250)
             .withVoterSocket("tcp://*:5557")
-            .withVoterHandler(new LoopAdapter() {
+            .withVoterHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     primaryVoter.incrementAndGet();
-                    socket.send(socket.receiveMessage());
+                    pollable.getSocket().send(pollable.getSocket().receiveMessage());
                     
                 }
             })
-            .withActiveHandler(new LoopAdapter() {
+            .withActiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     primaryActive.incrementAndGet();
                 }
             })
-            .withPassiveHandler(new LoopAdapter() {
+            .withPassiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     primaryPassive.incrementAndGet();
                 }
             })
@@ -91,22 +91,22 @@ public class BinaryStarReactorTest {
             .withRemoteUrl("tcp://localhost:5555")
             .withHeartbeatInterval(250)
             .withVoterSocket("tcp://*:5558")
-            .withVoterHandler(new LoopAdapter() {
+            .withVoterHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     backupVoter.incrementAndGet();
-                    socket.send(socket.receiveMessage());
+                    pollable.getSocket().send(pollable.getSocket().receiveMessage());
                 }
             })
-            .withActiveHandler(new LoopAdapter() {
+            .withActiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     backupActive.incrementAndGet();
                 }
             })
-            .withPassiveHandler(new LoopAdapter() {
+            .withPassiveHandler(new LoopHandler() {
                 @Override
-                public void execute(Reactor reactor, Socket socket, Object... args) {
+                public void execute(Reactor reactor, Pollable pollable, Object... args) {
                     backupPassive.incrementAndGet();
                 }
             })
