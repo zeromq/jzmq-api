@@ -4,6 +4,7 @@ org.zeromq.api.exception
 org.zeromq.jzmq
 org.zeromq.jzmq.beacon
 org.zeromq.jzmq.bstar
+org.zeromq.jzmq.clone
 org.zeromq.jzmq.device
 org.zeromq.jzmq.examples
 org.zeromq.jzmq.poll
