@@ -24,7 +24,7 @@ public class Message implements Iterable<Message.Frame> {
     /** A handy reference to an empty {@link Frame}. */
     public static final Frame EMPTY_FRAME = new Frame(EMPTY_FRAME_DATA);
 
-    private final Deque<Frame> frames = new ArrayDeque<Frame>();
+    private final Deque<Frame> frames = new ArrayDeque<>();
 
     /**
      * Construct an empty message.
@@ -143,6 +143,60 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
+     * Remove a frame from the beginning of the list.
+     *
+     * @return The first frame
+     */
+    public String popString() {
+        return popFrame().getString();
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to an {@code int}.
+     *
+     * @return The next frame, as an integer
+     */
+    public int popInt() {
+        return popFrame().getInt();
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to a {@code long}.
+     *
+     * @return The next frame, as a long
+     */
+    public long popLong() {
+        return popFrame().getLong();
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to a {@code short}.
+     *
+     * @return The next frame, as a short
+     */
+    public short popShort() {
+        return popFrame().getShort();
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to a {@code byte}.
+     *
+     * @return The next frame, as a byte
+     */
+    public byte popByte() {
+        return popFrame().getByte();
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to a {@code long}.
+     *
+     * @return The next frame, as a long
+     */
+    public ByteBuffer popBuffer() {
+        return popFrame().getBuffer();
+    }
+
+    /**
      * Add the frames to the end of the list.
      * 
      * @param frames The frames to be added
@@ -184,24 +238,6 @@ public class Message implements Iterable<Message.Frame> {
         while (itr.hasNext()) {
             frames.push(itr.next());
         }
-    }
-
-    /**
-     * Remove a frame from the beginning of the list and convert to an {@code int}.
-     * 
-     * @return The next frame, as an integer
-     */
-    public int intValue() {
-        return popFrame().getInt();
-    }
-
-    /**
-     * Remove a frame from the beginning of the list and convert to a {@code long}.
-     *
-     * @return The next frame, as a long
-     */
-    public long longValue() {
-        return popFrame().getLong();
     }
 
     /**
