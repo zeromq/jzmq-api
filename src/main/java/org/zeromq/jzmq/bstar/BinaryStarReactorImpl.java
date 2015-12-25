@@ -280,7 +280,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
     private final LoopHandler RECEIVE_STATE = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            int ordinal = stateSub.receiveMessage().intValue();
+            int ordinal = stateSub.receiveMessage().popInt();
             assert (ordinal >= 0 && ordinal < Event.values().length);
             updatePeerExpiry();
 
