@@ -8,6 +8,7 @@ import org.zeromq.api.Socket;
 import org.zeromq.jzmq.ManagedContext;
 
 import java.nio.channels.SelectableChannel;
+import java.util.concurrent.TimeUnit;
 
 public class ReactorBuilder {
     private final ManagedContext context;
@@ -84,8 +85,16 @@ public class ReactorBuilder {
         return withTimer(initialDelay, 1, handler, args);
     }
 
+    public ReactorBuilder withTimerOnce(long initialDelay, TimeUnit unit, LoopHandler handler, Object... args) {
+        return withTimer(unit.toMillis(initialDelay), 1, handler, args);
+    }
+
     public ReactorBuilder withTimerRepeating(long initialDelay, LoopHandler handler, Object... args) {
         return withTimer(initialDelay, -1, handler, args);
+    }
+
+    public ReactorBuilder withTimerRepeating(long initialDelay, TimeUnit unit, LoopHandler handler, Object... args) {
+        return withTimer(unit.toMillis(initialDelay), -1, handler, args);
     }
 
     public Reactor build() {
