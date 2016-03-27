@@ -107,22 +107,17 @@ public class DeviceBuilderTest {
         Socket backend2 = context.buildSocket(SocketType.REP)
             .connect("inproc://queue-backend");
 
+        Set<Integer> messages = new HashSet<>();
         frontend1.send(new Message(1));
         frontend2.send(new Message(2));
-        assertEquals(1, backend1.receiveMessage().popInt());
-        assertEquals(2, backend2.receiveMessage().popInt());
+
+        messages.add(backend1.receiveMessage().popInt());
+        messages.add(backend2.receiveMessage().popInt());
+
         backend1.send(new Message(3));
         backend2.send(new Message(4));
-        assertEquals(3, frontend1.receiveMessage().popInt());
-        assertEquals(4, frontend2.receiveMessage().popInt());
-
-        frontend1.send(new Message(5));
-        frontend2.send(new Message(6));
-        assertEquals(5, backend1.receiveMessage().popInt());
-        assertEquals(6, backend2.receiveMessage().popInt());
-        backend1.send(new Message(7));
-        backend2.send(new Message(8));
-        assertEquals(7, frontend1.receiveMessage().popInt());
-        assertEquals(8, frontend2.receiveMessage().popInt());
+        messages.add(frontend1.receiveMessage().popInt());
+        messages.add(frontend2.receiveMessage().popInt());
+        assertEquals(4, messages.size());
     }
 }
