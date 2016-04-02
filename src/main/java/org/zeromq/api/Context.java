@@ -103,7 +103,7 @@ public interface Context extends Closeable {
     Pollable newPollable(SelectableChannel channel, PollerType... options);
 
     /**
-     * Create a ZMQ proxy and start it up.  Returns when the context is closed.
+     * Create a ØMQ proxy and start it up.  Returns when the context is closed.
      * 
      * @param frontEnd The front-end socket which will be proxied to/from the back-end
      * @param backEnd The back-end socket which will be proxied to/from the front-end
@@ -111,8 +111,8 @@ public interface Context extends Closeable {
     void proxy(Socket frontEnd, Socket backEnd);
 
     /**
-     * Create a ZMQ proxy and start it up on another thread that exits when the context
-     * is closed.
+     * Create a ØMQ proxy and start it up on another thread that exits when the
+     * context is closed.
      *
      * @param frontEnd The front-end socket which will be proxied to/from the back-end
      * @param backEnd The back-end socket which will be proxied to/from the front-end
