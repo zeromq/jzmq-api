@@ -144,7 +144,7 @@ public class PollerImpl implements Poller {
             }
         }
 
-        return (pollable != null);
+        return pollable != null;
     }
 
     private Pollable pollable(Socket socket) {
@@ -177,6 +177,6 @@ public class PollerImpl implements Poller {
             listeners.set(index, null);
         }
 
-        return (pollable != null);
+        return pollable != null;
     }
 }

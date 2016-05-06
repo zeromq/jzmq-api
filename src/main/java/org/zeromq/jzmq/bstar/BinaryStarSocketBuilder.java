@@ -27,7 +27,7 @@ public class BinaryStarSocketBuilder extends ReqSocketBuilder {
         if (additionalUrls.length == 0) {
             socket = super.connect(url, additionalUrls);
         } else {
-            assert (additionalUrls.length == 1);
+            assert additionalUrls.length == 1;
             socket = fork(url, additionalUrls[0]);
         }
 
