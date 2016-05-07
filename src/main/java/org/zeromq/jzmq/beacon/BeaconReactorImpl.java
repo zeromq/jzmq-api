@@ -29,39 +29,6 @@ public class BeaconReactorImpl implements BeaconReactor {
     private long broadcastInterval = DEFAULT_BROADCAST_INTERVAL;
     private boolean ignoreLocalAddress = false;
 
-    public BeaconReactorImpl(ManagedContext context, int broadcastPort, UdpBeacon beacon) throws IOException {
-        this.context = context;
-        this.beacon = beacon;
-        this.socket = new UdpSocket(broadcastPort);
-        this.reactor = context.buildReactor()
-            .build();
-    }
-
-    @Override
-    public void start() {
-        assert (listener != null);
-        reactor.addTimer(broadcastInterval, -1, SEND_BEACON);
-        reactor.addPollable(context.newPollable(socket.getChannel(), PollerType.POLL_IN), RECEIVE_BEACON);
-        reactor.start();
-    }
-
-    @Override
-    public void stop() {
-        reactor.stop();
-    }
-
-    public void setListener(BeaconListener listener) {
-        this.listener = listener;
-    }
-
-    public void setBroadcastInterval(long broadcastInterval) {
-        this.broadcastInterval = broadcastInterval;
-    }
-
-    public void setIgnoreLocalAddress(boolean ignoreLocalAddress) {
-        this.ignoreLocalAddress = ignoreLocalAddress;
-    }
-
     private final LoopHandler SEND_BEACON = new LoopHandler() {
         @Override
         public void execute(Reactor reactor, Pollable pollable, Object... args) {
@@ -119,4 +86,37 @@ public class BeaconReactorImpl implements BeaconReactor {
             }
         }
     };
+    
+    public BeaconReactorImpl(ManagedContext context, int broadcastPort, UdpBeacon beacon) throws IOException {
+        this.context = context;
+        this.beacon = beacon;
+        this.socket = new UdpSocket(broadcastPort);
+        this.reactor = context.buildReactor()
+            .build();
+    }
+    
+    @Override
+    public void start() {
+        assert listener != null;
+        reactor.addTimer(broadcastInterval, -1, SEND_BEACON);
+        reactor.addPollable(context.newPollable(socket.getChannel(), PollerType.POLL_IN), RECEIVE_BEACON);
+        reactor.start();
+    }
+
+    @Override
+    public void stop() {
+        reactor.stop();
+    }
+
+    public void setListener(BeaconListener listener) {
+        this.listener = listener;
+    }
+
+    public void setBroadcastInterval(long broadcastInterval) {
+        this.broadcastInterval = broadcastInterval;
+    }
+
+    public void setIgnoreLocalAddress(boolean ignoreLocalAddress) {
+        this.ignoreLocalAddress = ignoreLocalAddress;
+    }  
 }

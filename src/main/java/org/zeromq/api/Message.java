@@ -19,7 +19,7 @@ public class Message implements Iterable<Message.Frame> {
             System.getProperty("zmq.default.charset", "UTF-8"));
 
     /** An empty byte array. */
-    public static final byte[] EMPTY_FRAME_DATA = new byte[0];
+    private static final byte[] EMPTY_FRAME_DATA = new byte[0];
 
     /** A handy reference to an empty {@link Frame}. */
     public static final Frame EMPTY_FRAME = new Frame(EMPTY_FRAME_DATA);
@@ -255,7 +255,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return true if the message is empty, false otherwise
      */
     public boolean isEmpty() {
-        return (frames.size() == 0);
+        return frames.isEmpty();
     }
 
     /**
@@ -471,7 +471,7 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         public boolean isBlank() {
-            return (buffer.capacity() == 0);
+            return buffer.capacity() == 0;
         }
 
         public static Frame wrap(byte value) {

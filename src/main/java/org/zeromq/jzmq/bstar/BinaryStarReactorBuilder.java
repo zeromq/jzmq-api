@@ -84,8 +84,8 @@ public class BinaryStarReactorBuilder {
     }
 
     public BinaryStarReactor build() {
-        assert (spec.voter != null);
-        assert (spec.voterHandler != null);
+        assert spec.voter != null;
+        assert spec.voterHandler != null;
 
         BinaryStarReactor reactor = new BinaryStarReactorImpl(context, spec.mode, spec.local, spec.remote);
         reactor.registerVoterSocket(spec.voter);

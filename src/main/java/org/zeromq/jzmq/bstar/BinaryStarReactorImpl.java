@@ -33,7 +33,53 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
 
     private LoopHandler passiveHandler;
     private Object[] passiveArgs;
+  
+    /**
+     * Publish our state to peer.
+     */
+    private final LoopHandler SEND_STATE = new LoopHandler() {
+        @Override
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
+            statePub.send(new Message(state.ordinal()));
+        }
+    };
 
+    /**
+     * Receive state from peer, execute finite state machine
+     */
+    private final LoopHandler RECEIVE_STATE = new LoopHandler() {
+        @Override
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
+            int ordinal = stateSub.receiveMessage().popInt();
+            assert ordinal >= 0 && ordinal < Event.values().length;
+            updatePeerExpiry();
+
+            Event event = Event.values()[ordinal];
+            if (!handleEvent(event)) {
+                log.warn("Received fatal error: Restarting...");
+                state = (mode == Mode.PRIMARY)
+                    ? State.PRIMARY_CONNECTING
+                    : State.BACKUP_CONNECTING;
+            }
+        }
+    };
+
+    /**
+     * Application wants to speak to us, see if it's possible.
+     */
+    private final LoopHandler VOTER_READY = new LoopHandler() {
+        @Override
+        public void execute(Reactor reactor, Pollable pollable, Object... args) {
+            // If server can accept input now, call applicable handler
+            if (handleEvent(Event.CLIENT_REQUEST)) {
+                voterHandler.execute(reactor, pollable, voterArgs);
+            } else {
+                // Destroy waiting message, no-one to read it
+                pollable.getSocket().receiveMessage();
+            }
+        }
+    };
+    
     /**
      * This is the constructor for our {@link BinaryStarReactorImpl} class. We have to tell it
      * whether we're primary or backup server, as well as our local and
@@ -71,7 +117,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
      */
     @Override
     public void start() {
-        assert (voterHandler != null);
+        assert voterHandler != null;
 
         updatePeerExpiry();
         reactor.addTimer(heartbeatInterval, -1, SEND_STATE, this);
@@ -190,7 +236,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
                   // Allow client requests to turn us into the active if we've
                   // waited sufficiently long to believe the backup is not
                   // currently acting as active (i.e., after a failover). 
-                assert (peerExpiry > 0);
+                assert peerExpiry > 0;
                 if (System.currentTimeMillis() >= peerExpiry) {
                     log.info("Request from client, ready as active");
                     state = State.ACTIVE;
@@ -244,7 +290,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
             } else if (event == Event.CLIENT_REQUEST) { 
                   // Peer becomes active if timeout has passed.
                   // It's the client request that triggers the failover. 
-                assert (peerExpiry > 0);
+                assert peerExpiry > 0;
                 if (System.currentTimeMillis () >= peerExpiry) { 
                       // If peer is dead, switch to the active state. 
                     log.info("Failover successful, ready as active");
@@ -263,50 +309,4 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
 
         return result;
     }
-
-    /**
-     * Publish our state to peer.
-     */
-    private final LoopHandler SEND_STATE = new LoopHandler() {
-        @Override
-        public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            statePub.send(new Message(state.ordinal()));
-        }
-    };
-
-    /**
-     * Receive state from peer, execute finite state machine
-     */
-    private final LoopHandler RECEIVE_STATE = new LoopHandler() {
-        @Override
-        public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            int ordinal = stateSub.receiveMessage().popInt();
-            assert (ordinal >= 0 && ordinal < Event.values().length);
-            updatePeerExpiry();
-
-            Event event = Event.values()[ordinal];
-            if (!handleEvent(event)) {
-                log.warn("Received fatal error: Restarting...");
-                state = (mode == Mode.PRIMARY)
-                    ? State.PRIMARY_CONNECTING
-                    : State.BACKUP_CONNECTING;
-            }
-        }
-    };
-
-    /**
-     * Application wants to speak to us, see if it's possible.
-     */
-    private final LoopHandler VOTER_READY = new LoopHandler() {
-        @Override
-        public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            // If server can accept input now, call applicable handler
-            if (handleEvent(Event.CLIENT_REQUEST)) {
-                voterHandler.execute(reactor, pollable, voterArgs);
-            } else {
-                // Destroy waiting message, no-one to read it
-                pollable.getSocket().receiveMessage();
-            }
-        }
-    };
 }

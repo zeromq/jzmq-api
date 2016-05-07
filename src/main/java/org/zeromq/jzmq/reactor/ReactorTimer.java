@@ -1,5 +1,7 @@
 package org.zeromq.jzmq.reactor;
 
+import java.util.Arrays;
+import java.util.Objects;
 import org.zeromq.api.LoopHandler;
 import org.zeromq.api.Reactor;
 
@@ -42,4 +44,42 @@ class ReactorTimer implements Comparable<ReactorTimer> {
 
         return result;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ReactorTimer other = (ReactorTimer) obj;
+        if (this.initialDelay != other.initialDelay) {
+            return false;
+        }
+        if (this.numIterations != other.numIterations) {
+            return false;
+        }
+        if (this.nextFireTime != other.nextFireTime) {
+            return false;
+        }
+        if (!Objects.equals(this.handler, other.handler)) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.args, other.args)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

@@ -49,7 +49,7 @@ public class BeaconReactorBuilder {
     }
 
     public BeaconReactor build() throws IOException {
-        assert (spec.listener != null);
+        assert spec.listener != null;
 
         BeaconReactorImpl reactor = new BeaconReactorImpl(context, spec.port, spec.beacon);
         reactor.setIgnoreLocalAddress(spec.ignoreLocalAddress);
