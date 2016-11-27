@@ -53,7 +53,7 @@ public class SocketTest {
         shadow.buildSocket(SocketType.REP)
                 .withBackgroundable(new Backgroundable() {
                     @Override
-                    public void run(Context context, Socket socket, Object... args) {
+                    public void run(Context context, Socket socket) {
                         assertEquals("hello", new String(socket.receive()));
                         socket.send("hello, world".getBytes());
                         try {

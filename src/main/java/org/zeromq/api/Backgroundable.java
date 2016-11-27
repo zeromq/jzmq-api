@@ -9,9 +9,8 @@ public interface Backgroundable {
      * 
      * @param context The parent context
      * @param socket The socket used for communication
-     * @param args Optional arguments
      */
-    void run(Context context, Socket socket, Object... args);
+    void run(Context context, Socket socket);
 
     /**
      * Called just prior to the socket being closed.

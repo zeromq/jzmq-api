@@ -34,7 +34,6 @@ public class SocketBuilder implements Bindable, Connectable {
         public TransportType transportType;
         public byte[] identity;
         public Backgroundable backgroundable;
-        public Object[] backgroundableArgs;
     }
 
     public SocketBuilder(ManagedContext context, SocketType socketType) {
@@ -188,9 +187,8 @@ public class SocketBuilder implements Bindable, Connectable {
         return this;
     }
 
-    public SocketBuilder withBackgroundable(Backgroundable backgroundable, Object... args) {
+    public SocketBuilder withBackgroundable(Backgroundable backgroundable) {
         getSocketSpec().backgroundable = backgroundable;
-        getSocketSpec().backgroundableArgs = args;
         return this;
     }
 
@@ -280,7 +278,7 @@ public class SocketBuilder implements Bindable, Connectable {
     protected Socket newManagedSocket(ZMQ.Socket socket) {
         ManagedSocket managedSocket = new ManagedSocket(context, socket);
         if (getSocketSpec().backgroundable != null) {
-            context.fork(managedSocket, getSocketSpec().backgroundable, getSocketSpec().backgroundableArgs);
+            context.fork(managedSocket, getSocketSpec().backgroundable);
         }
         return managedSocket;
     }

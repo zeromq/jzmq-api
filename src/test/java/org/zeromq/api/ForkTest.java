@@ -26,7 +26,7 @@ public class ForkTest {
     public void testFork() throws Exception {
         Socket pipe = context.fork(new Backgroundable() {
             @Override
-            public void run(Context context, Socket pipe, Object... args) {
+            public void run(Context context, Socket pipe) {
                 pipe.send("hello".getBytes());
                 assertEquals("hi", new String(pipe.receive()));
             }
@@ -54,7 +54,7 @@ public class ForkTest {
         context.buildSocket(SocketType.REP)
             .withBackgroundable(new Backgroundable() {
                 @Override
-                public void run(Context context, Socket socket, Object... args) {
+                public void run(Context context, Socket socket) {
                     assertEquals("hello", new String(socket.receive()));
                     socket.send("hello, world".getBytes());
                 }

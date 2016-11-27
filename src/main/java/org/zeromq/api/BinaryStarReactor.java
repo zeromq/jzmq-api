@@ -93,25 +93,22 @@ public interface BinaryStarReactor {
      * Register a voter handler to be called each time the application receives a message.
      *
      * @param handler The handler for client events
-     * @param args Arguments passed to the handler
      */
-    void setVoterHandler(LoopHandler handler, Object... args);
+    void setVoterHandler(LoopHandler handler);
 
     /**
      * Register a handler to be called each time there's a state change.
      *
      * @param handler The handler for state change events
-     * @param args Arguments passed to the handler
      */
-    void setActiveHandler(LoopHandler handler, Object... args);
+    void setActiveHandler(LoopHandler handler);
 
     /**
      * Register a handler to be called each time there's a state change.
      *
      * @param handler The handler for state change events
-     * @param args Arguments passed to the handler
      */
-    void setPassiveHandler(LoopHandler handler, Object... args);
+    void setPassiveHandler(LoopHandler handler);
 
     /**
      * Get the underlying {@link Reactor}.

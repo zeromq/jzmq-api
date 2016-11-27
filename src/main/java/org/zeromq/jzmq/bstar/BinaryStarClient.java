@@ -39,7 +39,7 @@ class BinaryStarClient implements Backgroundable {
     }
 
     @Override
-    public void run(Context context, Socket pipe, Object... args) {
+    public void run(Context context, Socket pipe) {
         Socket socket = null;
         Message message = null;
         Poller poller = context.buildPoller()
@@ -94,9 +94,17 @@ class BinaryStarClient implements Backgroundable {
             } else {
                 // Wait for a message from client socket
                 poller.poll();
-                message = pipe.receiveMessage();
 
-                state = State.FORWARDING;
+                // Return any additional replies we receive
+                Message reply = socket.receiveMessage(MessageFlag.DONT_WAIT);
+                if (reply != null) {
+                    pipe.send(reply);
+                } else {
+                    message = pipe.receiveMessage();
+                    if (message != null) {
+                        state = State.FORWARDING;
+                    }
+                }
             }
         }
     }

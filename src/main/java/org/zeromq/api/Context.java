@@ -131,19 +131,17 @@ public interface Context extends Closeable {
      * Run a background thread with an inproc PAIR socket for communication.
      * 
      * @param backgroundable The task to be performed on the background thread
-     * @param args Optional arguments for the task
      * @return The inproc PAIR socket for communicating with the background thread
      */
-    Socket fork(Backgroundable backgroundable, Object... args);
+    Socket fork(Backgroundable backgroundable);
 
     /**
      * Run a background thread using the given socket for communication.
      * 
      * @param socket The socket owned by the background thread
      * @param backgroundable The task to be performed on the background thread
-     * @param args Optional arguments for the task
      */
-    void fork(Socket socket, Backgroundable backgroundable, Object... args);
+    void fork(Socket socket, Backgroundable backgroundable);
 
     /**
      * Create a new Context with the same underlying ØMQ context, with an empty

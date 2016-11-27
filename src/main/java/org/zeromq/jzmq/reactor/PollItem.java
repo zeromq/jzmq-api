@@ -12,11 +12,10 @@ class PollItem extends PollAdapter {
     public LoopHandler handler;
     public Object[] args;
 
-    public PollItem(Reactor reactor, Pollable pollable, LoopHandler handler, Object... args) {
+    public PollItem(Reactor reactor, Pollable pollable, LoopHandler handler) {
         this.reactor = reactor;
         this.pollable = pollable;
         this.handler = handler;
-        this.args = args;
     }
 
     @Override
@@ -35,6 +34,6 @@ class PollItem extends PollAdapter {
     }
 
     private void execute(Pollable pollable) {
-        handler.execute(reactor, pollable, args);
+        handler.execute(reactor, pollable);
     }
 }

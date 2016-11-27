@@ -10,7 +10,7 @@ public interface Bindable {
      * @param url the url to bind to
      * @return the socket
      */
-    public Socket bind(String url);
+    Socket bind(String url);
 
     /**
      * Bind to a url.
@@ -19,5 +19,5 @@ public interface Bindable {
      * @param additionalUrls additional urls to bind to
      * @return the socket
      */
-    public Socket bind(String url, String... additionalUrls);
+    Socket bind(String url, String... additionalUrls);
 }

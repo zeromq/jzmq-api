@@ -34,15 +34,15 @@ public class ReactorImpl implements Reactor, Runnable {
     }
 
     @Override
-    public void addPollable(Pollable pollable, LoopHandler handler, Object... args) {
-        PollItem pollItem = new PollItem(this, pollable, handler, args);
+    public void addPollable(Pollable pollable, LoopHandler handler) {
+        PollItem pollItem = new PollItem(this, pollable, handler);
         pollItems.add(pollItem);
         poller.register(pollable, pollItem);
     }
 
     @Override
-    public void addTimer(long initialDelay, int numIterations, LoopHandler handler, Object... args) {
-        ReactorTimer timer = new ReactorTimer(initialDelay, numIterations, handler, args);
+    public void addTimer(long initialDelay, int numIterations, LoopHandler handler) {
+        ReactorTimer timer = new ReactorTimer(initialDelay, numIterations, handler);
         timer.recalculate(System.currentTimeMillis());
 
         timers.add(timer);
@@ -81,7 +81,6 @@ public class ReactorImpl implements Reactor, Runnable {
     @Override
     public void stop() {
         running.set(false);
-        thread.interrupt();
         try {
             thread.join();
         } catch (InterruptedException ignored) {

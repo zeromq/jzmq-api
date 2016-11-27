@@ -54,6 +54,7 @@ public class ContextFactory {
                 @Override
                 public void run() {
                     log.debug("closing singleton context...");
+                    INSTANCE.terminate();
                     INSTANCE.close();
                 }
             });

@@ -38,7 +38,7 @@ public class Message implements Iterable<Message.Frame> {
      * @param firstFrame The first frame in the new message
      */
     public Message(String firstFrame) {
-        this(new Frame(firstFrame));
+        addString(firstFrame);
     }
 
     /**
@@ -47,7 +47,7 @@ public class Message implements Iterable<Message.Frame> {
      * @param firstFrame The first frame in the new message
      */
     public Message(byte[] firstFrame) {
-        this(new Frame(firstFrame));
+        addBytes(firstFrame);
     }
 
     /**
@@ -56,7 +56,7 @@ public class Message implements Iterable<Message.Frame> {
      * @param firstFrame The first frame in the new message
      */
     public Message(int firstFrame) {
-        this(Frame.wrap(firstFrame));
+        addInt(firstFrame);
     }
 
     /**
@@ -65,7 +65,7 @@ public class Message implements Iterable<Message.Frame> {
      * @param firstFrame The first frame in the new message
      */
     public Message(long firstFrame) {
-        this(Frame.wrap(firstFrame));
+        addLong(firstFrame);
     }
 
     /**
@@ -95,6 +95,11 @@ public class Message implements Iterable<Message.Frame> {
         addFrames(message);
     }
 
+    /**
+     * Return a copy of the list of frames contained in this message.
+     * 
+     * @return The frames of this message
+     */
     public List<Frame> getFrames() {
         return new ArrayList<>(frames);
     }
@@ -103,16 +108,21 @@ public class Message implements Iterable<Message.Frame> {
      * Add a frame to the end of the list.
      * 
      * @param frame The frame to be added
+     * @return This message, for method chaining
      */
-    public void addFrame(Frame frame) {
+    public Message addFrame(Frame frame) {
         frames.add(frame);
+        return this;
     }
 
     /**
      * Add an empty frame to the end of the list.
+     * 
+     * @return This message, for method chaining
      */
-    public void addEmptyFrame() {
+    public Message addEmptyFrame() {
         frames.add(EMPTY_FRAME);
+        return this;
     }
 
     /**
@@ -128,9 +138,11 @@ public class Message implements Iterable<Message.Frame> {
      * Add a frame to the beginning of the list.
      * 
      * @param frame The frame to be added
+     * @return This message, for method chaining
      */
-    public void pushFrame(Frame frame) {
+    public Message pushFrame(Frame frame) {
         frames.push(frame);
+        return this;
     }
 
     /**
@@ -143,75 +155,219 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
+     * Add a frame containing a String value to the end of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addString(String frame) {
+        return addFrame(new Frame(frame));
+    }
+
+    /**
+     * Add a frame containing a String value to the beginning of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushString(String frame) {
+        return pushFrame(new Frame(frame));
+    }
+
+    /**
      * Remove a frame from the beginning of the list.
      *
-     * @return The first frame
+     * @return The first frame, as a String
      */
     public String popString() {
         return popFrame().getString();
     }
 
     /**
+     * Add a frame containing an int value to the end of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addInt(int frame) {
+        return addFrame(Frame.wrap(frame));
+    }
+
+    /**
+     * Add a frame containing an int value to the beginning of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushInt(int frame) {
+        return pushFrame(Frame.wrap(frame));
+    }
+
+    /**
      * Remove a frame from the beginning of the list and convert to an {@code int}.
      *
-     * @return The next frame, as an integer
+     * @return The first frame, as an integer
      */
     public int popInt() {
         return popFrame().getInt();
     }
 
     /**
+     * Add a frame containing a long value to the end of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addLong(long frame) {
+        return addFrame(Frame.wrap(frame));
+    }
+
+    /**
+     * Add a frame containing a long value to the beginning of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushLong(long frame) {
+        return pushFrame(Frame.wrap(frame));
+    }
+
+    /**
      * Remove a frame from the beginning of the list and convert to a {@code long}.
      *
-     * @return The next frame, as a long
+     * @return The first frame, as a long
      */
     public long popLong() {
         return popFrame().getLong();
     }
 
     /**
+     * Add a frame containing a short value to the end of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addShort(short frame) {
+        return addFrame(Frame.wrap(frame));
+    }
+
+    /**
+     * Add a frame containing a short value to the beginning of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushShort(short frame) {
+        return pushFrame(Frame.wrap(frame));
+    }
+
+    /**
      * Remove a frame from the beginning of the list and convert to a {@code short}.
      *
-     * @return The next frame, as a short
+     * @return The first frame, as a short
      */
     public short popShort() {
         return popFrame().getShort();
     }
 
     /**
+     * Add a frame containing a byte to the end of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addByte(byte frame) {
+        return addFrame(Frame.wrap(frame));
+    }
+
+    /**
+     * Add a frame containing a byte to the beginning of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushByte(byte frame) {
+        return pushFrame(Frame.wrap(frame));
+    }
+
+    /**
      * Remove a frame from the beginning of the list and convert to a {@code byte}.
      *
-     * @return The next frame, as a byte
+     * @return The first frame, as a byte
      */
     public byte popByte() {
         return popFrame().getByte();
     }
 
     /**
-     * Remove a frame from the beginning of the list and convert to a {@code long}.
+     * Add a frame to the end of the list.
      *
-     * @return The next frame, as a long
+     * @param frame The frame to be added
+     * @return This message, for method chaining
      */
-    public ByteBuffer popBuffer() {
-        return popFrame().getBuffer();
+    public Message addBuffer(ByteBuffer frame) {
+        return addFrame(new Frame(frame));
+    }
+
+    /**
+     * Add a frame to the beginning of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushBuffer(ByteBuffer frame) {
+        return pushFrame(new Frame(frame));
+    }
+
+    /**
+     * Add a frame to the end of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addBytes(byte[] frame) {
+        return addFrame(new Frame(frame));
+    }
+
+    /**
+     * Add a frame to the beginning of the list.
+     *
+     * @param frame The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushBytes(byte[] frame) {
+        return pushFrame(new Frame(frame));
+    }
+
+    /**
+     * Remove a frame from the beginning of the list and convert to a {@code byte[]}.
+     * 
+     * @return The first frame, as a byte array
+     */
+    public byte[] popBytes() {
+        return popFrame().getData();
     }
 
     /**
      * Add the frames to the end of the list.
      * 
      * @param frames The frames to be added
+     * @return This message, for method chaining
      */
-    public void addFrames(List<Frame> frames) {
+    public Message addFrames(List<Frame> frames) {
         this.frames.addAll(frames);
+        return this;
     }
 
     /**
      * Add all frames from the given message to the end of the list.
      * 
      * @param payload The original message, containing frames to be added
+     * @return This message, for method chaining
      */
-    public void addFrames(Message payload) {
+    public Message addFrames(Message payload) {
         frames.addAll(payload.frames);
+        return this;
     }
 
     /**
@@ -219,12 +375,15 @@ public class Message implements Iterable<Message.Frame> {
      * elements are in the same order as in the original message.
      * 
      * @param frames The frames to be added
+     * @return This message, for method chaining
      */
-    public void pushFrames(List<Frame> frames) {
-        ListIterator<Frame> itr = frames.listIterator();
+    public Message pushFrames(List<Frame> frames) {
+        ListIterator<Frame> itr = frames.listIterator(frames.size());
         while (itr.hasPrevious()) {
             this.frames.push(itr.previous());
         }
+
+        return this;
     }
 
     /**
@@ -232,12 +391,15 @@ public class Message implements Iterable<Message.Frame> {
      * the elements are in the same order as in the original message.
      * 
      * @param payload The original message, containing frames to be added
+     * @return This message, for method chaining
      */
-    public void pushFrames(Message payload) {
+    public Message pushFrames(Message payload) {
         Iterator<Frame> itr = payload.frames.descendingIterator();
         while (itr.hasNext()) {
             frames.push(itr.next());
         }
+
+        return this;
     }
 
     /**
@@ -308,7 +470,7 @@ public class Message implements Iterable<Message.Frame> {
 
     /**
      * Represents a single frame of data within a message. Instances of this
-     * class are immutable.
+     * class are immutable, except via the underlying {@link ByteBuffer}.
      */
     public static class Frame {
         private final ByteBuffer buffer;
@@ -333,21 +495,11 @@ public class Message implements Iterable<Message.Frame> {
             this(data == null ? null : ByteBuffer.wrap(data));
         }
 
-        /**
-         * Construct an empty frame with the given capacity.
-         * 
-         * @param capacity The capacity of the underlying buffer
-         */
-        public Frame(int capacity) {
-            this(ByteBuffer.allocate(capacity));
-        }
+        private Frame(ByteBuffer buffer) {
+            if (buffer == null) {
+                throw new NullPointerException("Data cannot be null");
+            }
 
-        /**
-         * Construct a frame with the given buffer.
-         *
-         * @param buffer The underlying buffer
-         */
-        public Frame(ByteBuffer buffer) {
             this.buffer = buffer;
         }
 
@@ -357,21 +509,12 @@ public class Message implements Iterable<Message.Frame> {
          * @return The frame's data
          */
         public byte[] getData() {
-            byte[] buf = buffer.array();
+            byte[] buf = buffer.array(); // violates immutability, but improves speed for the common case
             if (buffer.position() > 0 && buffer.position() != buffer.capacity()) {
                 buf = new byte[buffer.position()];
                 System.arraycopy(buffer.array(), 0, buf, 0, buffer.position());
             }
             return buf;
-        }
-
-        /**
-         * Returns the underlying buffer.
-         * 
-         * @return The underlying buffer
-         */
-        public ByteBuffer getBuffer() {
-            return buffer;
         }
 
         /**
@@ -393,42 +536,48 @@ public class Message implements Iterable<Message.Frame> {
             return new String(buffer.array(), CHARSET);
         }
 
+        /**
+         * Returns the next {@code byte} of data from the buffer.
+         * 
+         * @return The next byte of data
+         */
         public byte getByte() {
             return buffer.get();
         }
 
-        public Frame putByte(byte value) {
-            buffer.put(value);
-            return this;
-        }
-
+        /**
+         * Returns the next 2 bytes of data, as a {@code short}.
+         * 
+         * @return The next 2 bytes, as a short
+         */
         public short getShort() {
             return buffer.getShort();
         }
 
-        public Frame putShort(short value) {
-            buffer.putShort(value);
-            return this;
-        }
-
+        /**
+         * Returns the next 4 bytes of data, as a {@code int}.
+         * 
+         * @return The next 4 bytes, as an int
+         */
         public int getInt() {
             return buffer.getInt();
         }
 
-        public Frame putInt(int value) {
-            buffer.putInt(value);
-            return this;
-        }
-
+        /**
+         * Returns the next 8 bytes of data, as a {@code long}.
+         * 
+         * @return The next 8 bytes, as a long
+         */
         public long getLong() {
             return buffer.getLong();
         }
 
-        public Frame putLong(long value) {
-            buffer.putLong(value);
-            return this;
-        }
-
+        /**
+         * Returns a String value encoded into the buffer as a short and bytes
+         * using the default character set.
+         * 
+         * @return A String value
+         */
         public String getChars() {
             int len = buffer.getShort();
             byte[] buf = new byte[len];
@@ -436,22 +585,12 @@ public class Message implements Iterable<Message.Frame> {
             return new String(buf, CHARSET);
         }
 
-        public Frame putChars(String value) {
-            buffer.putShort((short) value.length());
-            buffer.put(value.getBytes(CHARSET));
-            return this;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
             Frame frame = (Frame) o;
-
-            if (!buffer.equals(frame.buffer)) return false;
-
-            return true;
+            return buffer.equals(frame.buffer);
         }
 
         @Override
@@ -464,30 +603,126 @@ public class Message implements Iterable<Message.Frame> {
          */
         @Override
         public String toString() {
-            if (buffer == null) {
-                return "Frame{data=null}";
-            }
             return "Frame{data=" + getString() + '}';
         }
 
+        /**
+         * Returns true if the buffer contains no data.
+         * 
+         * @return true if the frame contains no data, false otherwise
+         */
         public boolean isBlank() {
             return buffer.capacity() == 0;
         }
 
         public static Frame wrap(byte value) {
-            return new Frame(1).putByte(value);
+            return new FrameBuilder(1).putByte(value).build();
         }
 
         public static Frame wrap(short value) {
-            return new Frame(2).putShort(value);
+            return new FrameBuilder(2).putShort(value).build();
         }
 
         public static Frame wrap(int value) {
-            return new Frame(4).putInt(value);
+            return new FrameBuilder(4).putInt(value).build();
         }
 
         public static Frame wrap(long value) {
-            return new Frame(8).putLong(value);
+            return new FrameBuilder(8).putLong(value).build();
+        }
+    }
+
+    /**
+     * Builder for constructing efficient binary representations of multi-value
+     * data frames using a dynamically sized buffer.
+     */
+    public static class FrameBuilder {
+        private ByteBuffer buffer;
+
+        public FrameBuilder(int capacity) {
+            this.buffer = ByteBuffer.allocate(capacity);
+        }
+
+        public FrameBuilder() {
+            this.buffer = ByteBuffer.allocate(32);
+        }
+
+        /**
+         * Put a {@code byte} of data into the buffer.
+         *
+         * @param value A byte of data
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putByte(byte value) {
+            checkCapacity(1);
+            buffer.put(value);
+            return this;
+        }
+
+        /**
+         * Put a {@code short} into the buffer.
+         *
+         * @param value A short value
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putShort(short value) {
+            checkCapacity(2);
+            buffer.putShort(value);
+            return this;
+        }
+
+        /**
+         * Put a {@code int} into the buffer.
+         *
+         * @param value An int value
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putInt(int value) {
+            checkCapacity(4);
+            buffer.putInt(value);
+            return this;
+        }
+
+        /**
+         * Put a {@code long} into the buffer.
+         *
+         * @param value A long value
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putLong(long value) {
+            checkCapacity(8);
+            buffer.putLong(value);
+            return this;
+        }
+
+        /**
+         * Put an encoded String value into the buffer as a short and bytes
+         * using the default character set.
+         *
+         * @param value A String value
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putChars(String value) {
+            byte[] bytes = value.getBytes(CHARSET);
+            checkCapacity(bytes.length + 2);
+            buffer.putShort((short) bytes.length);
+            buffer.put(bytes);
+            return this;
+        }
+
+        /**
+         * Build a frame containing the data in the underlying buffer.
+         *
+         * @return The new frame
+         */
+        public Frame build() {
+            return new Frame(buffer);
+        }
+
+        private void checkCapacity(int neededBytes) {
+            if (buffer.capacity() - buffer.position() < neededBytes) {
+                buffer = ByteBuffer.allocate(buffer.capacity() * 2).put(buffer.array());
+            }
         }
     }
 }

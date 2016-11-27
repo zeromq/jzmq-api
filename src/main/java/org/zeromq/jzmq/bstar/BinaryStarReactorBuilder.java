@@ -16,13 +16,8 @@ public class BinaryStarReactorBuilder {
         public Socket voter;
 
         public LoopHandler activeHandler;
-        public Object[] activeArgs;
-
         public LoopHandler voterHandler;
-        public Object[] voterArgs;
-
         public LoopHandler passiveHandler;
-        public Object[] passiveArgs;
     }
 
     private ManagedContext context;
@@ -65,21 +60,18 @@ public class BinaryStarReactorBuilder {
         return withVoterSocket(socket);
     }
 
-    public BinaryStarReactorBuilder withActiveHandler(LoopHandler activeHandler, Object... activeArgs) {
+    public BinaryStarReactorBuilder withActiveHandler(LoopHandler activeHandler) {
         spec.activeHandler = activeHandler;
-        spec.activeArgs = activeArgs;
         return this;
     }
 
-    public BinaryStarReactorBuilder withVoterHandler(LoopHandler voterHandler, Object... voterArgs) {
+    public BinaryStarReactorBuilder withVoterHandler(LoopHandler voterHandler) {
         spec.voterHandler = voterHandler;
-        spec.voterArgs = voterArgs;
         return this;
     }
 
-    public BinaryStarReactorBuilder withPassiveHandler(LoopHandler passiveHandler, Object... passiveArgs) {
+    public BinaryStarReactorBuilder withPassiveHandler(LoopHandler passiveHandler) {
         spec.passiveHandler = passiveHandler;
-        spec.passiveArgs = passiveArgs;
         return this;
     }
 
@@ -89,9 +81,9 @@ public class BinaryStarReactorBuilder {
 
         BinaryStarReactor reactor = new BinaryStarReactorImpl(context, spec.mode, spec.local, spec.remote);
         reactor.registerVoterSocket(spec.voter);
-        reactor.setVoterHandler(spec.voterHandler, spec.voterArgs);
-        reactor.setActiveHandler(spec.activeHandler, spec.activeArgs);
-        reactor.setPassiveHandler(spec.passiveHandler, spec.passiveArgs);
+        reactor.setVoterHandler(spec.voterHandler);
+        reactor.setActiveHandler(spec.activeHandler);
+        reactor.setPassiveHandler(spec.passiveHandler);
         reactor.setHeartbeatInterval(spec.heartbeatInterval);
 
         return reactor;

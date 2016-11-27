@@ -257,10 +257,9 @@ public class Sockets {
      * Run a background thread with an inproc PAIR socket for communication.
      * 
      * @param backgroundable The task to be performed on the background thread
-     * @param args Optional arguments for the task
      * @return The inproc PAIR socket for communicating with the background thread
      */
-    public static Socket fork(Backgroundable backgroundable, Object... args) {
-        return ContextFactory.context().fork(backgroundable, args);
+    public static Socket fork(Backgroundable backgroundable) {
+        return ContextFactory.context().fork(backgroundable);
     }
 }
