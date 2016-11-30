@@ -1,6 +1,6 @@
 package org.zeromq.api;
 
-import org.zeromq.jzmq.sockets.SocketBuilder;
+import org.zeromq.jzmq.sockets.SubSocketBuilder;
 
 /**
  * A socket builder for a subscriber socket.
@@ -12,12 +12,12 @@ public interface Subscribable {
      * @param data The channel prefix, as bytes
      * @return This builder object
      */
-    SocketBuilder subscribe(byte[] data);
+    SubSocketBuilder subscribe(byte[] data);
 
     /**
      * Subscribe to all messages.
      * 
      * @return This builder object
      */
-    SocketBuilder subscribeAll();
+    SubSocketBuilder subscribeAll();
 }
