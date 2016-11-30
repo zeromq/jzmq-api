@@ -10,7 +10,7 @@ public interface Connectable {
      * @param url the url to connect to
      * @return the socket
      */
-    public Socket connect(String url);
+    Socket connect(String url);
 
     /**
      * Connect to a url.
@@ -19,5 +19,5 @@ public interface Connectable {
      * @param additionalUrls additional urls to connect to
      * @return the socket
      */
-    public Socket connect(String url, String... additionalUrls);
+    Socket connect(String url, String... additionalUrls);
 }

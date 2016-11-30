@@ -3,9 +3,9 @@ package org.zeromq.jzmq.bstar;
 import org.zeromq.api.BinaryStarReactor;
 import org.zeromq.api.Socket;
 import org.zeromq.jzmq.ManagedContext;
-import org.zeromq.jzmq.sockets.ReqSocketBuilder;
+import org.zeromq.jzmq.sockets.DealerSocketBuilder;
 
-public class BinaryStarSocketBuilder extends ReqSocketBuilder {
+public class BinaryStarSocketBuilder extends DealerSocketBuilder {
     public class Spec {
         public long heartbeatInterval = BinaryStarReactor.BSTAR_HEARTBEAT;
     }

@@ -13,7 +13,7 @@ import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
 
 public class BinaryStarReactorImpl implements BinaryStarReactor {
-    private static final Logger log = LoggerFactory.getLogger(BinaryStarReactorImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(BinaryStarReactor.class);
 
     private final ManagedContext context;
     private final Reactor reactor;
@@ -26,60 +26,9 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
     private long heartbeatInterval;
 
     private LoopHandler activeHandler;
-    private Object[] activeArgs;
-
     private LoopHandler voterHandler;
-    private Object[] voterArgs;
-
     private LoopHandler passiveHandler;
-    private Object[] passiveArgs;
-  
-    /**
-     * Publish our state to peer.
-     */
-    private final LoopHandler SEND_STATE = new LoopHandler() {
-        @Override
-        public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            statePub.send(new Message(state.ordinal()));
-        }
-    };
 
-    /**
-     * Receive state from peer, execute finite state machine
-     */
-    private final LoopHandler RECEIVE_STATE = new LoopHandler() {
-        @Override
-        public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            int ordinal = stateSub.receiveMessage().popInt();
-            assert ordinal >= 0 && ordinal < Event.values().length;
-            updatePeerExpiry();
-
-            Event event = Event.values()[ordinal];
-            if (!handleEvent(event)) {
-                log.warn("Received fatal error: Restarting...");
-                state = (mode == Mode.PRIMARY)
-                    ? State.PRIMARY_CONNECTING
-                    : State.BACKUP_CONNECTING;
-            }
-        }
-    };
-
-    /**
-     * Application wants to speak to us, see if it's possible.
-     */
-    private final LoopHandler VOTER_READY = new LoopHandler() {
-        @Override
-        public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            // If server can accept input now, call applicable handler
-            if (handleEvent(Event.CLIENT_REQUEST)) {
-                voterHandler.execute(reactor, pollable, voterArgs);
-            } else {
-                // Destroy waiting message, no-one to read it
-                pollable.getSocket().receiveMessage();
-            }
-        }
-    };
-    
     /**
      * This is the constructor for our {@link BinaryStarReactorImpl} class. We have to tell it
      * whether we're primary or backup server, as well as our local and
@@ -120,8 +69,8 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
         assert voterHandler != null;
 
         updatePeerExpiry();
-        reactor.addTimer(heartbeatInterval, -1, SEND_STATE, this);
-        reactor.addPollable(context.newPollable(stateSub, PollerType.POLL_IN), RECEIVE_STATE, this);
+        reactor.addTimer(heartbeatInterval, -1, new SendState());
+        reactor.addPollable(context.newPollable(stateSub, PollerType.POLL_IN), new ReceiveState());
         reactor.start();
     }
 
@@ -144,43 +93,37 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
     @Override
     public void registerVoterSocket(Socket socket) {
         log.debug("Registering voter socket");
-        reactor.addPollable(context.newPollable(socket, PollerType.POLL_IN), VOTER_READY, this);
+        reactor.addPollable(context.newPollable(socket, PollerType.POLL_IN), new VoterReady());
     }
 
     /**
      * Register handlers to be called each time there's a state change.
      * 
      * @param handler The handler for client events
-     * @param args Arguments passed to the handler
      */
     @Override
-    public void setVoterHandler(LoopHandler handler, Object... args) {
+    public void setVoterHandler(LoopHandler handler) {
         this.voterHandler = handler;
-        this.voterArgs = args;
     }
 
     /**
      * Register handlers to be called each time there's a state change.
      *
      * @param handler The handler for state change events
-     * @param args Arguments passed to the handler
      */
     @Override
-    public void setActiveHandler(LoopHandler handler, Object... args) {
+    public void setActiveHandler(LoopHandler handler) {
         this.activeHandler = handler;
-        this.activeArgs = args;
     }
 
     /**
      * Register handlers to be called each time there's a state change.
      *
      * @param handler The handler for state change events
-     * @param args Arguments passed to the handler
      */
     @Override
-    public void setPassiveHandler(LoopHandler handler, Object... args) {
+    public void setPassiveHandler(LoopHandler handler) {
         this.passiveHandler = handler;
-        this.passiveArgs = args;
     }
 
     /**
@@ -208,9 +151,9 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
         peerExpiry = System.currentTimeMillis() + heartbeatInterval * 2;
     }
 
-    private void fireHandler(LoopHandler handler, Object... args) {
+    private void fireHandler(LoopHandler handler) {
         if (handler != null) {
-            handler.execute(reactor, null, args);
+            handler.execute(reactor, null);
         }
     }
 
@@ -226,12 +169,12 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
                 log.info("Connected to backup (passive), ready as active");
                 state = State.ACTIVE;
 
-                fireHandler(activeHandler, activeArgs);
+                fireHandler(activeHandler);
             } else if (event == Event.PEER_ACTIVE) {
                 log.info("Connected to backup (active), ready as passive");
                 state = State.PASSIVE;
 
-                fireHandler(passiveHandler, passiveArgs);
+                fireHandler(passiveHandler);
             } else if (event == Event.CLIENT_REQUEST) { 
                   // Allow client requests to turn us into the active if we've
                   // waited sufficiently long to believe the backup is not
@@ -241,7 +184,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
                     log.info("Request from client, ready as active");
                     state = State.ACTIVE;
 
-                    fireHandler(activeHandler, activeArgs);
+                    fireHandler(activeHandler);
                 } else { 
                       // Don't respond to clients yet - it's possible we're
                       // performing a failback and the backup is currently active. 
@@ -255,7 +198,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
                 log.info("Connected to primary (active), ready as passive");
                 state = State.PASSIVE;
 
-                fireHandler(passiveHandler, passiveArgs);
+                fireHandler(passiveHandler);
             } else if (event == Event.CLIENT_REQUEST) { 
                   //  Reject client connections when acting as backup. 
                 result = false;
@@ -276,13 +219,13 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
                 log.info("Primary (passive) is restarting, ready as active");
                 state = State.ACTIVE;
 
-                fireHandler(activeHandler, activeArgs);
+                fireHandler(activeHandler);
             } else if (event == Event.PEER_BACKUP) { 
                   // Peer is restarting - become active, peer will go passive. 
                 log.info("Backup (passive) is restarting, ready as active");
                 state = State.ACTIVE;
 
-                fireHandler(activeHandler, activeArgs);
+                fireHandler(activeHandler);
             } else if (event == Event.PEER_PASSIVE) { 
                   // Two passives would mean cluster would be non-responsive. 
                 log.error("Fatal error: Dual passives, aborting...");
@@ -302,11 +245,57 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
 
                 // Call state change handler if necessary
                 if (state == State.ACTIVE) {
-                    fireHandler(activeHandler, activeArgs);
+                    fireHandler(activeHandler);
                 }
             }
         }
 
         return result;
+    }
+
+    /**
+     * Publish our state to peer.
+     */
+    private final class SendState implements LoopHandler {
+        @Override
+        public void execute(Reactor reactor, Pollable pollable) {
+            statePub.send(new Message(String.valueOf(state.ordinal())));
+        }
+    }
+
+    /**
+     * Receive state from peer, execute finite state machine
+     */
+    private final class ReceiveState implements LoopHandler {
+        @Override
+        public void execute(Reactor reactor, Pollable pollable) {
+            int ordinal = Integer.parseInt(stateSub.receiveMessage().popString());
+            assert (ordinal >= 0 && ordinal < Event.values().length);
+            updatePeerExpiry();
+
+            Event event = Event.values()[ordinal];
+            if (!handleEvent(event)) {
+                log.warn("Received fatal error: Restarting...");
+                state = (mode == Mode.PRIMARY)
+                    ? State.PRIMARY_CONNECTING
+                    : State.BACKUP_CONNECTING;
+            }
+        }
+    }
+
+    /**
+     * Application wants to speak to us, see if it's possible.
+     */
+    private final class VoterReady implements LoopHandler {
+        @Override
+        public void execute(Reactor reactor, Pollable pollable) {
+            // If server can accept input now, call applicable handler
+            if (handleEvent(Event.CLIENT_REQUEST)) {
+                voterHandler.execute(reactor, pollable);
+            } else {
+                // Destroy waiting message, no-one to read it
+                pollable.getSocket().receiveMessage();
+            }
+        }
     }
 }

@@ -7,8 +7,6 @@ import org.zeromq.api.SocketType;
 import org.zeromq.jzmq.ManagedContext;
 import org.zeromq.jzmq.bstar.BinaryStarReactorImpl;
 
-import java.util.Arrays;
-
 public class PrimaryStar {
     /**
      * @param args
@@ -32,9 +30,9 @@ public class PrimaryStar {
         ManagedContext context = new ManagedContext();
         BinaryStarReactorImpl binaryStar = new BinaryStarReactorImpl(context, BinaryStarReactorImpl.Mode.PRIMARY, local, remote);
         binaryStar.registerVoterSocket(context.buildSocket(SocketType.PULL).bind(voter));
-        binaryStar.setVoterHandler(new MyHandler(), "primary-voter");
-        binaryStar.setActiveHandler(new MyHandler(), "primary-active");
-        binaryStar.setPassiveHandler(new MyHandler(), "primary-passive");
+        binaryStar.setVoterHandler(new MyHandler("primary-voter"));
+        binaryStar.setActiveHandler(new MyHandler("primary-active"));
+        binaryStar.setPassiveHandler(new MyHandler("primary-passive"));
         binaryStar.start();
 
         try {
@@ -47,9 +45,15 @@ public class PrimaryStar {
     }
 
     public static class MyHandler implements LoopHandler {
+        private String label;
+
+        public MyHandler(String label) {
+            this.label = label;
+        }
+
         @Override
-        public void execute(Reactor reactor, Pollable pollable, Object... args) {
-            System.out.println(Arrays.asList(args).toString());
+        public void execute(Reactor reactor, Pollable pollable) {
+            System.out.println(label);
         }
     }
 }

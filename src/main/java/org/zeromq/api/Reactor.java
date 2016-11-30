@@ -22,9 +22,8 @@ public interface Reactor {
      * 
      * @param pollable The Pollable with the socket to poll
      * @param handler The loop handler
-     * @param args Optional arguments
      */
-    void addPollable(Pollable pollable, LoopHandler handler, Object... args);
+    void addPollable(Pollable pollable, LoopHandler handler);
 
     /**
      * Add a new ReactorTimer to this Reactor.
@@ -35,9 +34,8 @@ public interface Reactor {
      * @param initialDelay The initial delay, in milliseconds
      * @param numIterations The number of iterations, after which this timer stop
      * @param handler The loop handler
-     * @param args Optional arguments
      */
-    void addTimer(long initialDelay, int numIterations, LoopHandler handler, Object... args);
+    void addTimer(long initialDelay, int numIterations, LoopHandler handler);
 
     /**
      * Cancel an existing Pollable or ReactorTimer and remove the corresponding
