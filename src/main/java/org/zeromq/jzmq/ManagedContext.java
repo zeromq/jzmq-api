@@ -25,6 +25,8 @@ import org.zeromq.api.exception.ZMQExceptions;
 import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarSocketBuilder;
+import org.zeromq.jzmq.clone.CloneClientBuilder;
+import org.zeromq.jzmq.clone.CloneServerBuilder;
 import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollableImpl;
 import org.zeromq.jzmq.poll.PollerBuilder;
@@ -221,6 +223,16 @@ public class ManagedContext implements Context {
     @Override
     public BinaryStarSocketBuilder buildBinaryStarSocket() {
         return new BinaryStarSocketBuilder(this);
+    }
+
+    @Override
+    public CloneServerBuilder buildCloneServer() {
+        return new CloneServerBuilder(this);
+    }
+
+    @Override
+    public CloneClientBuilder buildCloneClient() {
+        return new CloneClientBuilder(this);
     }
 
     @Override

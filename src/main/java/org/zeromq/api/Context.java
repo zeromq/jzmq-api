@@ -3,6 +3,8 @@ package org.zeromq.api;
 import org.zeromq.jzmq.beacon.BeaconReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarReactorBuilder;
 import org.zeromq.jzmq.bstar.BinaryStarSocketBuilder;
+import org.zeromq.jzmq.clone.CloneClientBuilder;
+import org.zeromq.jzmq.clone.CloneServerBuilder;
 import org.zeromq.jzmq.device.DeviceBuilder;
 import org.zeromq.jzmq.poll.PollerBuilder;
 import org.zeromq.jzmq.reactor.ReactorBuilder;
@@ -66,6 +68,22 @@ public interface Context extends Closeable {
      * @return A builder for constructing connecting a BinaryStarReactor client Socket
      */
     BinaryStarSocketBuilder buildBinaryStarSocket();
+
+    /**
+     * Create a new CloneServer, which will create one half of an HA-pair
+     * for distributing key/value data to clients.
+     * 
+     * @return A builder for constructing a CloneServer
+     */
+    CloneServerBuilder buildCloneServer();
+
+    /**
+     * Create a new CloneClient, connected to an HA-pair, for publishing key/value data
+     * to anonymous peers.
+     *
+     * @return A builder for constructing a CloneClient
+     */
+    CloneClientBuilder buildCloneClient();
 
     /**
      * Create a new BeaconReactor, which will send and receive UDP beacons
