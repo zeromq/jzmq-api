@@ -720,8 +720,10 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         private void checkCapacity(int neededBytes) {
-            if (buffer.capacity() - buffer.position() < neededBytes) {
-                buffer = ByteBuffer.allocate(buffer.capacity() * 2).put(buffer.array());
+            int capacity = buffer.capacity();
+            int position = buffer.position();
+            if (capacity - position < neededBytes) {
+                buffer = ByteBuffer.allocate(Math.max(capacity * 2, capacity + neededBytes)).put(buffer.array());
             }
         }
     }
