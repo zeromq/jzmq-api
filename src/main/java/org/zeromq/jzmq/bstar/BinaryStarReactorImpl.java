@@ -270,7 +270,7 @@ public class BinaryStarReactorImpl implements BinaryStarReactor {
         @Override
         public void execute(Reactor reactor, Pollable pollable) {
             int ordinal = Integer.parseInt(stateSub.receiveMessage().popString());
-            assert (ordinal >= 0 && ordinal < Event.values().length);
+            assert ordinal >= 0 && ordinal < Event.values().length;
             updatePeerExpiry();
 
             Event event = Event.values()[ordinal];

@@ -39,7 +39,7 @@ public class BeaconReactorImpl implements BeaconReactor {
 
     @Override
     public void start() {
-        assert (listener != null);
+        assert listener != null;
         reactor.addTimer(broadcastInterval, -1, new SendBeacon());
         reactor.addPollable(context.newPollable(socket.getChannel(), PollerType.POLL_IN), new ReceiveBeacon());
         reactor.start();
