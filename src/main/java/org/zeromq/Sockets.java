@@ -224,6 +224,8 @@ public class Sockets {
      * bridge two networks together.
      * 
      * @param deviceType The device type, specifying the pattern to use
+     * @param frontendUrl The front-end socket which will be proxied to/from the back-end
+     * @param backendUrl The back-end socket which will be proxied to/from the front-end
      */
     public static void start(DeviceType deviceType, String frontendUrl, String backendUrl) {
         ContextFactory.context().buildDevice(deviceType)

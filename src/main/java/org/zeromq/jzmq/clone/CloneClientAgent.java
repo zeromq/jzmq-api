@@ -81,7 +81,7 @@ public class CloneClientAgent implements Backgroundable {
             subscriber = context.buildSocket(SocketType.SUB)
                 .asSubscribable()
                 .subscribe(subtree.getBytes(Message.CHARSET))
-                .subscribe("HUGZ".getBytes(Message.CHARSET))
+                .subscribe(HUGZ.getBytes(Message.CHARSET))
                 .connect(primary.getSubscriber(), backup.getSubscriber());
             publisher = context.buildSocket(SocketType.PUB)
                 .connect(primary.getPublisher(), backup.getPublisher());
