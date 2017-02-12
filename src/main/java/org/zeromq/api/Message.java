@@ -579,10 +579,19 @@ public class Message implements Iterable<Message.Frame> {
          * @return A String value
          */
         public String getChars() {
+            return new String(getBytes(), CHARSET);
+        }
+
+        /**
+         * Returns a byte array encoded into the buffer as a short and bytes.
+         *
+         * @return A byte array
+         */
+        public byte[] getBytes() {
             int len = buffer.getShort();
             byte[] buf = new byte[len];
             buffer.get(buf);
-            return new String(buf, CHARSET);
+            return buf;
         }
 
         @Override
@@ -639,12 +648,12 @@ public class Message implements Iterable<Message.Frame> {
     public static class FrameBuilder {
         private ByteBuffer buffer;
 
-        public FrameBuilder(int capacity) {
-            this.buffer = ByteBuffer.allocate(capacity);
+        public FrameBuilder() {
+            this(32);
         }
 
-        public FrameBuilder() {
-            this.buffer = ByteBuffer.allocate(32);
+        public FrameBuilder(int capacity) {
+            this.buffer = ByteBuffer.allocate(capacity);
         }
 
         /**
@@ -703,10 +712,31 @@ public class Message implements Iterable<Message.Frame> {
          * @return This builder, for method chaining
          */
         public FrameBuilder putChars(String value) {
-            byte[] bytes = value.getBytes(CHARSET);
-            checkCapacity(bytes.length + 2);
-            buffer.putShort((short) bytes.length);
-            buffer.put(bytes);
+            return putBytes(value.getBytes(CHARSET));
+        }
+
+        /**
+         * Put an array of bytes into the buffer as a short and bytes.
+         *
+         * @param bytes An array of bytes
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putBytes(byte[] bytes) {
+            return putBytes(bytes, 0, bytes.length);
+        }
+
+        /**
+         * Put an array of bytes into the buffer as a short and bytes.
+         *
+         * @param bytes An array of bytes
+         * @param offset The offset within the array
+         * @param length The number of bytes to be read
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putBytes(byte[] bytes, int offset, int length) {
+            checkCapacity(length + 2);
+            buffer.putShort((short) length);
+            buffer.put(bytes, offset, length);
             return this;
         }
 
