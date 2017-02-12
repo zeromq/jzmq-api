@@ -753,7 +753,7 @@ public class Message implements Iterable<Message.Frame> {
             int capacity = buffer.capacity();
             int position = buffer.position();
             if (capacity - position < neededBytes) {
-                buffer = ByteBuffer.allocate(Math.max(capacity * 2, capacity + neededBytes)).put(buffer.array());
+                buffer = ByteBuffer.allocate(Math.max(capacity * 2, capacity + neededBytes)).put(buffer.array(), 0, position);
             }
         }
     }
