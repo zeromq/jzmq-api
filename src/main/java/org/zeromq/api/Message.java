@@ -5,9 +5,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Message containing frames for sending data via a socket.
@@ -106,7 +108,7 @@ public class Message implements Iterable<Message.Frame> {
 
     /**
      * Add a frame to the end of the list.
-     * 
+     *
      * @param frame The frame to be added
      * @return This message, for method chaining
      */
@@ -181,6 +183,93 @@ public class Message implements Iterable<Message.Frame> {
      */
     public String popString() {
         return popFrame().getString();
+    }
+
+    /**
+     * Add a frame containing a List of String values to the end of the list.
+     *
+     * @param strings The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addStrings(List<String> strings) {
+        return addFrame(new FrameBuilder().putStrings(strings).build());
+    }
+
+    /**
+     * Add a frame containing a List of String values to the beginning of the list.
+     *
+     * @param strings The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushStrings(List<String> strings) {
+        return pushFrame(new FrameBuilder().putStrings(strings).build());
+    }
+
+    /**
+     * Remove a frame from the beginning of the list.
+     *
+     * @return The first frame, as a list of Strings
+     */
+    public List<String> popStrings() {
+        return popFrame().getStrings();
+    }
+
+    /**
+     * Add a frame containing a List of String values to the end of the list.
+     *
+     * @param strings The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addClobs(List<String> strings) {
+        return addFrame(new FrameBuilder().putClobs(strings).build());
+    }
+
+    /**
+     * Add a frame containing a List of String values to the beginning of the list.
+     *
+     * @param strings The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushClobs(List<String> strings) {
+        return pushFrame(new FrameBuilder().putClobs(strings).build());
+    }
+
+    /**
+     * Remove a frame from the beginning of the list.
+     *
+     * @return The first frame, as a list of Strings
+     */
+    public List<String> popClobs() {
+        return popFrame().getClobs();
+    }
+
+    /**
+     * Add a frame containing a Map of String pairs to the end of the list.
+     *
+     * @param map The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message addMap(Map<String, String> map) {
+        return addFrame(new FrameBuilder().putMap(map).build());
+    }
+
+    /**
+     * Add a frame containing a Map of String pairs to the beginning of the list.
+     *
+     * @param map The frame to be added
+     * @return This message, for method chaining
+     */
+    public Message pushMap(Map<String, String> map) {
+        return pushFrame(new FrameBuilder().putMap(map).build());
+    }
+
+    /**
+     * Remove a frame from the beginning of the list.
+     *
+     * @return The first frame, as a Map
+     */
+    public Map<String, String> popMap() {
+        return popFrame().getMap();
     }
 
     /**
@@ -573,9 +662,23 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
+         * Returns a byte array encoded into the buffer as a byte and bytes.
+         *
+         * @return A byte array
+         */
+        public byte[] getBytes() {
+            int len = buffer.get();
+            byte[] buf = new byte[len];
+            buffer.get(buf);
+            return buf;
+        }
+
+        /**
          * Returns a String value encoded into the buffer as a short and bytes
          * using the default character set.
-         * 
+         * <p>
+         * TODO: Rename to {@link #getString()}?
+         *
          * @return A String value
          */
         public String getChars() {
@@ -583,15 +686,76 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Returns a byte array encoded into the buffer as a short and bytes.
+         * Returns a list String values encoded into the buffer as a short and
+         * a sequence of strings using the default character set.
+         *
+         * @return A list of strings
+         * @see #getChars()
+         */
+        public List<String> getStrings() {
+            int size = getInt();
+            List<String> strings = new ArrayList<>(size);
+            while (size-- > 0) {
+                strings.add(getChars());
+            }
+
+            return strings;
+        }
+
+        /**
+         * Returns a byte array encoded into the buffer as an int and bytes.
          *
          * @return A byte array
          */
-        public byte[] getBytes() {
-            int len = buffer.getShort();
+        public byte[] getBlob() {
+            int len = buffer.getInt();
             byte[] buf = new byte[len];
             buffer.get(buf);
             return buf;
+        }
+
+        /**
+         * Returns a String value encoded into the buffer as a short and bytes
+         * using the default character set.
+         *
+         * @return A String value
+         */
+        public String getClob() {
+            return new String(getBlob(), CHARSET);
+        }
+
+        /**
+         * Returns a list String values encoded into the buffer as a short and
+         * a sequence of strings using the default character set.
+         *
+         * @return A list of strings
+         * @see #getChars()
+         */
+        public List<String> getClobs() {
+            int size = getInt();
+            List<String> strings = new ArrayList<>(size);
+            while (size-- > 0) {
+                strings.add(getClob());
+            }
+
+            return strings;
+        }
+
+        /**
+         * Returns a list String values encoded into the buffer as an int and
+         * a sequence of pairs of strings using the default character set.
+         *
+         * @return A list of strings
+         * @see #getChars()
+         */
+        public Map<String, String> getMap() {
+            int size = getInt();
+            Map<String, String> map = new HashMap<>(size, 1.0f);
+            while (size-- > 0) {
+                map.put(getChars(), getClob());
+            }
+
+            return map;
         }
 
         @Override
@@ -705,18 +869,7 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Put an encoded String value into the buffer as a short and bytes
-         * using the default character set.
-         *
-         * @param value A String value
-         * @return This builder, for method chaining
-         */
-        public FrameBuilder putChars(String value) {
-            return putBytes(value.getBytes(CHARSET));
-        }
-
-        /**
-         * Put an array of bytes into the buffer as a short and bytes.
+         * Put an array of bytes into the buffer as a byte and bytes.
          *
          * @param bytes An array of bytes
          * @return This builder, for method chaining
@@ -726,7 +879,7 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Put an array of bytes into the buffer as a short and bytes.
+         * Put an array of bytes into the buffer as a byte and bytes.
          *
          * @param bytes An array of bytes
          * @param offset The offset within the array
@@ -734,9 +887,95 @@ public class Message implements Iterable<Message.Frame> {
          * @return This builder, for method chaining
          */
         public FrameBuilder putBytes(byte[] bytes, int offset, int length) {
-            checkCapacity(length + 2);
-            buffer.putShort((short) length);
+            checkCapacity(length + 1);
+            buffer.put((byte) length);
             buffer.put(bytes, offset, length);
+            return this;
+        }
+
+        /**
+         * Put an encoded String value into the buffer as a byte and bytes
+         * using the default character set.
+         *
+         * @param value A String value
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putString(String value) {
+            return putBytes(value.getBytes(CHARSET));
+        }
+
+        /**
+         * Put a list of encoded String values into the buffer as an int and strings
+         * using the default character set.
+         *
+         * @param strings A List of String values
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putStrings(List<String> strings) {
+            putInt(strings.size());
+            for (String value : strings) {
+                putString(value);
+            }
+            return this;
+        }
+
+        /**
+         * Put an array of bytes into the buffer as an int and bytes.
+         *
+         * @param bytes An array of bytes
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putBlob(byte[] bytes) {
+            return putBlob(bytes, 0, bytes.length);
+        }
+
+        /**
+         * Put an array of bytes into the buffer as an int and bytes.
+         *
+         * @param bytes An array of bytes
+         * @param offset The offset within the array
+         * @param length The number of bytes to be read
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putBlob(byte[] bytes, int offset, int length) {
+            checkCapacity(length + 4);
+            buffer.putInt(length);
+            buffer.put(bytes, offset, length);
+            return this;
+        }
+
+        /**
+         * Put an encoded String value into the buffer as an int and bytes
+         * using the default character set.
+         *
+         * @param value A String value
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putClob(String value) {
+            return putBlob(value.getBytes(CHARSET));
+        }
+
+        /**
+         * Put a list of encoded String values into the buffer as an int and strings
+         * using the default character set.
+         *
+         * @param strings A List of String values
+         * @return This builder, for method chaining
+         */
+        public FrameBuilder putClobs(List<String> strings) {
+            putInt(strings.size());
+            for (String value : strings) {
+                putClob(value);
+            }
+            return this;
+        }
+
+        public FrameBuilder putMap(Map<String, String> map) {
+            putInt(map.size());
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                putString(entry.getKey());
+                putClob(entry.getValue());
+            }
             return this;
         }
 

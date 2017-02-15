@@ -155,7 +155,7 @@ public class MessageTest {
     @Test
     public void testPutChars() {
         String string = "Hello, world!";
-        Frame frame = new Message.FrameBuilder(10).putChars(string).putChars(string).build();
+        Frame frame = new Message.FrameBuilder(10).putString(string).putString(string).build();
 
         ByteBuffer buffer = ByteBuffer.wrap(frame.getData());
         buffer.rewind();
