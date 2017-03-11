@@ -30,7 +30,7 @@ public class BinaryStarReactorTest {
         context = new ManagedContext();
         socket = context.buildBinaryStarSocket()
             .withHeartbeatInterval(250)
-            .connect("tcp://localhost:5557", "tcp://localhost:5558");
+            .connect("tcp://localhost:9997", "tcp://localhost:9998");
 
         startPrimary();
         startBackup();
@@ -56,10 +56,10 @@ public class BinaryStarReactorTest {
         context1 = new ManagedContext();
         primary = context1.buildBinaryStarReactor()
             .withMode(BinaryStarReactor.Mode.PRIMARY)
-            .withLocalUrl("tcp://*:5555")
-            .withRemoteUrl("tcp://localhost:5556")
+            .withLocalUrl("tcp://*:9995")
+            .withRemoteUrl("tcp://localhost:9996")
             .withHeartbeatInterval(250)
-            .withVoterSocket("tcp://*:5557")
+            .withVoterSocket("tcp://*:9997")
             .withVoterHandler(new LoopHandler() {
                 @Override
                 public void execute(Reactor reactor, Pollable pollable) {
@@ -86,10 +86,10 @@ public class BinaryStarReactorTest {
         context2 = new ManagedContext();
         backup = context2.buildBinaryStarReactor()
             .withMode(BinaryStarReactor.Mode.BACKUP)
-            .withLocalUrl("tcp://*:5556")
-            .withRemoteUrl("tcp://localhost:5555")
+            .withLocalUrl("tcp://*:9996")
+            .withRemoteUrl("tcp://localhost:9995")
             .withHeartbeatInterval(250)
-            .withVoterSocket("tcp://*:5558")
+            .withVoterSocket("tcp://*:9998")
             .withVoterHandler(new LoopHandler() {
                 @Override
                 public void execute(Reactor reactor, Pollable pollable) {
