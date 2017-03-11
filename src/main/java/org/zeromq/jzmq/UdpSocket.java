@@ -36,6 +36,7 @@ public class UdpSocket {
      * Constructor.
      *
      * @param port The local port to bind to
+     * @throws IOException If an I/O error occurs opening the socket connection
      */
     public UdpSocket(int port) throws IOException {
         this.port = port;

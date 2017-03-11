@@ -41,7 +41,7 @@ public class CloneServerTest {
             .build();
 
         primary.start();
-        Thread.sleep(50);
+        Thread.sleep(250);
         backup.start();
         Thread.sleep(1000);
 
@@ -63,7 +63,7 @@ public class CloneServerTest {
             .withSubtree("/client/")
             .build();
 
-        Thread.sleep(50);
+        Thread.sleep(250);
     }
 
     @After

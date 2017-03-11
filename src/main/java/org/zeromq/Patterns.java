@@ -108,6 +108,7 @@ public class Patterns {
      * 
      * @param primaryAddress The primary server's url to connect to
      * @param backupAddress The backup server's url to connect to
+     * @param subtree The prefix (subtree) to subscribe to
      * @return A new CloneClient
      */
     public static CloneClient newCloneClient(String primaryAddress, String backupAddress, String subtree) {

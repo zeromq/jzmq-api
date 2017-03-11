@@ -5,12 +5,12 @@ package org.zeromq.api;
  */
 public interface Reactor {
     /**
-     * Start the reactor
+     * Start the reactor.
      */
     void start();
 
     /**
-     * Start the reactor
+     * Stop the reactor.
      */
     void stop();
 

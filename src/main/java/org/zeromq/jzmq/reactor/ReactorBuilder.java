@@ -16,7 +16,7 @@ public class ReactorBuilder {
 
     public ReactorBuilder(ManagedContext context) {
         this.context = context;
-        this.reactor = newReactor();
+        this.reactor = new ReactorImpl(context);
     }
 
     /*
@@ -102,14 +102,10 @@ public class ReactorBuilder {
     }
 
     public void start() {
-        newReactor().start();
+        reactor.start();
     }
 
     public void run() {
-        newReactor().run();
-    }
-
-    private ReactorImpl newReactor() {
-        return new ReactorImpl(context);
+        reactor.run();
     }
 }

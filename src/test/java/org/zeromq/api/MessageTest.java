@@ -155,13 +155,17 @@ public class MessageTest {
     @Test
     public void testPutChars() {
         String string = "Hello, world!";
-        Frame frame = new Message.FrameBuilder(100).putChars(string).build();
+        Frame frame = new Message.FrameBuilder(10).putString(string).putString(string).build();
 
         ByteBuffer buffer = ByteBuffer.wrap(frame.getData());
         buffer.rewind();
-        assertEquals(string.length(), buffer.getShort());
+        assertEquals(string.length(), buffer.get());
 
         byte[] buf = new byte[string.length()];
+        buffer.get(buf);
+        assertEquals(string, new String(buf, Message.CHARSET));
+
+        assertEquals(string.length(), buffer.get());
         buffer.get(buf);
         assertEquals(string, new String(buf, Message.CHARSET));
     }
@@ -170,7 +174,7 @@ public class MessageTest {
     public void testGetChars() {
         String string = "Hello, world!";
         ByteBuffer buffer = ByteBuffer.allocate(string.length() + 2);
-        buffer.putShort((short) string.length());
+        buffer.put((byte) string.length());
         buffer.put(string.getBytes(Message.CHARSET));
         buffer.rewind();
 
