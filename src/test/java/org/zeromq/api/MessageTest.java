@@ -50,7 +50,7 @@ public class MessageTest {
     public void testMixedFrames() throws Exception {
         Message testClass = new Message();
         testClass.addEmptyFrame();
-        testClass.addFrame(new Frame("Hello"));
+        testClass.addFrame(Frame.of("Hello"));
         List<Frame> frames = testClass.getFrames();
         assertEquals(2, frames.size());
         assertArrayEquals(new byte[0], frames.get(0).getData());
@@ -60,9 +60,9 @@ public class MessageTest {
     @Test
     public void testCopyConstructor() throws Exception {
         Message initial = new Message();
-        initial.addFrame(new Frame("hello"));
+        initial.addFrame(Frame.of("hello"));
         initial.addEmptyFrame();
-        initial.addFrame(new Frame("goodbye"));
+        initial.addFrame(Frame.of("goodbye"));
 
         Message newMessage = new Message(initial);
         assertEquals(initial.getFrames(), newMessage.getFrames());

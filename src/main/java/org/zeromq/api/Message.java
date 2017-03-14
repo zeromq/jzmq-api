@@ -40,34 +40,34 @@ public class Message implements Iterable<Message.Frame> {
      * @param firstFrame The first frame in the new message
      */
     public Message(String firstFrame) {
-        addString(firstFrame);
+        this(Frame.of(firstFrame));
     }
 
     /**
-     * Construct a message with a single byte[] frame.
+     * Construct a message with a single {@code byte[]} frame.
      * 
      * @param firstFrame The first frame in the new message
      */
     public Message(byte[] firstFrame) {
-        addBytes(firstFrame);
+        this(Frame.of(firstFrame));
     }
 
     /**
-     * Construct a message with a single frame.
+     * Construct a message with a single {@code int} frame.
      *
      * @param firstFrame The first frame in the new message
      */
     public Message(int firstFrame) {
-        addInt(firstFrame);
+        this(Frame.of(firstFrame));
     }
 
     /**
-     * Construct a message with a single frame.
+     * Construct a message with a single {@code long} frame.
      *
      * @param firstFrame The first frame in the new message
      */
     public Message(long firstFrame) {
-        addLong(firstFrame);
+        this(Frame.of(firstFrame));
     }
 
     /**
@@ -163,7 +163,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message addString(String frame) {
-        return addFrame(new Frame(frame));
+        return addFrame(Frame.of(frame));
     }
 
     /**
@@ -173,7 +173,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message pushString(String frame) {
-        return pushFrame(new Frame(frame));
+        return pushFrame(Frame.of(frame));
     }
 
     /**
@@ -192,7 +192,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message addStrings(List<String> strings) {
-        return addFrame(new FrameBuilder().putStrings(strings).build());
+        return addFrame(Frame.of(strings));
     }
 
     /**
@@ -202,7 +202,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message pushStrings(List<String> strings) {
-        return pushFrame(new FrameBuilder().putStrings(strings).build());
+        return pushFrame(Frame.of(strings));
     }
 
     /**
@@ -250,7 +250,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message addMap(Map<String, String> map) {
-        return addFrame(new FrameBuilder().putMap(map).build());
+        return addFrame(Frame.of(map));
     }
 
     /**
@@ -260,7 +260,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message pushMap(Map<String, String> map) {
-        return pushFrame(new FrameBuilder().putMap(map).build());
+        return pushFrame(Frame.of(map));
     }
 
     /**
@@ -395,7 +395,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message addBuffer(ByteBuffer frame) {
-        return addFrame(new Frame(frame));
+        return addFrame(Frame.of(frame));
     }
 
     /**
@@ -405,7 +405,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message pushBuffer(ByteBuffer frame) {
-        return pushFrame(new Frame(frame));
+        return pushFrame(Frame.of(frame));
     }
 
     /**
@@ -415,7 +415,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message addBytes(byte[] frame) {
-        return addFrame(new Frame(frame));
+        return addFrame(Frame.of(frame));
     }
 
     /**
@@ -425,7 +425,7 @@ public class Message implements Iterable<Message.Frame> {
      * @return This Message, for method chaining
      */
     public Message pushBytes(byte[] frame) {
-        return pushFrame(new Frame(frame));
+        return pushFrame(Frame.of(frame));
     }
 
     /**
@@ -821,6 +821,10 @@ public class Message implements Iterable<Message.Frame> {
 
         public static Frame of(Map<String, String> values) {
             return new FrameBuilder().putMap(values).build();
+        }
+
+        public static Frame of(ByteBuffer buffer) {
+            return new Frame(buffer);
         }
     }
 

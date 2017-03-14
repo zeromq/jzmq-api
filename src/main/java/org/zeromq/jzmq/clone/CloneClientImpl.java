@@ -2,6 +2,7 @@ package org.zeromq.jzmq.clone;
 
 import org.zeromq.api.CloneClient;
 import org.zeromq.api.Message;
+import org.zeromq.api.Message.Frame;
 import org.zeromq.api.Socket;
 import org.zeromq.jzmq.ManagedContext;
 
@@ -9,11 +10,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CloneClientImpl implements CloneClient {
-    private static final Message.Frame SUBTREE = new Message.Frame("SUBTREE");
-    private static final Message.Frame CONNECT = new Message.Frame("CONNECT");
-    private static final Message.Frame SET = new Message.Frame("SET");
-    private static final Message.Frame GET = new Message.Frame("GET");
-    private static final Message.Frame GETALL = new Message.Frame("GETALL");
+    private static final Frame SUBTREE = Frame.of("SUBTREE");
+    private static final Frame CONNECT = Frame.of("CONNECT");
+    private static final Frame SET     = Frame.of("SET");
+    private static final Frame GET     = Frame.of("GET");
+    private static final Frame GETALL  = Frame.of("GETALL");
 
     private final Socket pipe;
 

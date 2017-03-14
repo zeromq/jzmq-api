@@ -63,7 +63,7 @@ public class RoutedMessageTest {
     @Test
     public void testGetRoutes_noRoutes() throws Exception {
         RoutedMessage testClass = new RoutedMessage();
-        testClass.addFrame(new Frame("payload"));
+        testClass.addFrame(Frame.of("payload"));
 
         List<RoutedMessage.Route> result = testClass.getRoutes();
         assertTrue(result.isEmpty());
@@ -72,7 +72,7 @@ public class RoutedMessageTest {
     @Test
     public void testUnwrap_noRoutes() throws Exception {
         RoutedMessage testClass = new RoutedMessage();
-        testClass.addFrame(new Frame("payload"));
+        testClass.addFrame(Frame.of("payload"));
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("Cannot unwrap an unrouted message.");
