@@ -70,7 +70,7 @@ public class MessageTest {
 
     @Test
     public void testPutInt_100() {
-        Frame frame = Frame.wrap(100);
+        Frame frame = Frame.of(100);
 
         byte[] buf = frame.getData();
         assertEquals(0, buf[0]);
@@ -89,7 +89,7 @@ public class MessageTest {
 
     @Test
     public void testPutInt_0x77777777() {
-        Frame frame = Frame.wrap(0x77777777);
+        Frame frame = Frame.of(0x77777777);
 
         byte[] buf = frame.getData();
         assertEquals(0x77, buf[0]);
@@ -108,7 +108,7 @@ public class MessageTest {
 
     @Test
     public void testPutLong_100() {
-        Frame frame = Frame.wrap(100L);
+        Frame frame = Frame.of(100L);
 
         byte[] buf = frame.getData();
         assertEquals(0, buf[0]);
@@ -131,7 +131,7 @@ public class MessageTest {
 
     @Test
     public void testPutLong_0x77777777() {
-        Frame frame = Frame.wrap(0x7777777777777777L);
+        Frame frame = Frame.of(0x7777777777777777L);
 
         byte[] buf = frame.getData();
         assertEquals(0x77, buf[0]);
@@ -171,7 +171,7 @@ public class MessageTest {
     }
 
     @Test
-    public void testGetChars() {
+    public void testGetString() {
         String string = "Hello, world!";
         ByteBuffer buffer = ByteBuffer.allocate(string.length() + 2);
         buffer.put((byte) string.length());
@@ -179,7 +179,7 @@ public class MessageTest {
         buffer.rewind();
 
         Frame frame = new Frame(buffer.array());
-        assertEquals(string, frame.getChars());
+        assertEquals(string, frame.getString());
     }
 
     @Test

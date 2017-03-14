@@ -110,7 +110,7 @@ public class Message implements Iterable<Message.Frame> {
      * Add a frame to the end of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addFrame(Frame frame) {
         frames.add(frame);
@@ -120,7 +120,7 @@ public class Message implements Iterable<Message.Frame> {
     /**
      * Add an empty frame to the end of the list.
      * 
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addEmptyFrame() {
         frames.add(EMPTY_FRAME);
@@ -140,7 +140,7 @@ public class Message implements Iterable<Message.Frame> {
      * Add a frame to the beginning of the list.
      * 
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushFrame(Frame frame) {
         frames.push(frame);
@@ -159,8 +159,8 @@ public class Message implements Iterable<Message.Frame> {
     /**
      * Add a frame containing a String value to the end of the list.
      *
-     * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @param frame The frame to be added, as a String
+     * @return This Message, for method chaining
      */
     public Message addString(String frame) {
         return addFrame(new Frame(frame));
@@ -169,27 +169,27 @@ public class Message implements Iterable<Message.Frame> {
     /**
      * Add a frame containing a String value to the beginning of the list.
      *
-     * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @param frame The frame to be added, as a String
+     * @return This Message, for method chaining
      */
     public Message pushString(String frame) {
         return pushFrame(new Frame(frame));
     }
 
     /**
-     * Remove a frame from the beginning of the list.
+     * Remove a frame containing a String value from the beginning of the list.
      *
      * @return The first frame, as a String
      */
     public String popString() {
-        return popFrame().getString();
+        return popFrame().toString();
     }
 
     /**
      * Add a frame containing a List of String values to the end of the list.
      *
-     * @param strings The frame to be added
-     * @return This message, for method chaining
+     * @param strings The frame to be added, as a List of Strings
+     * @return This Message, for method chaining
      */
     public Message addStrings(List<String> strings) {
         return addFrame(new FrameBuilder().putStrings(strings).build());
@@ -198,15 +198,15 @@ public class Message implements Iterable<Message.Frame> {
     /**
      * Add a frame containing a List of String values to the beginning of the list.
      *
-     * @param strings The frame to be added
-     * @return This message, for method chaining
+     * @param strings The frame to be added, as a List of Strings
+     * @return This Message, for method chaining
      */
     public Message pushStrings(List<String> strings) {
         return pushFrame(new FrameBuilder().putStrings(strings).build());
     }
 
     /**
-     * Remove a frame from the beginning of the list.
+     * Remove a frame containing a List of String values from the beginning of the list.
      *
      * @return The first frame, as a list of Strings
      */
@@ -217,8 +217,8 @@ public class Message implements Iterable<Message.Frame> {
     /**
      * Add a frame containing a List of String values to the end of the list.
      *
-     * @param strings The frame to be added
-     * @return This message, for method chaining
+     * @param strings The frame to be added, as a List of Strings
+     * @return This Message, for method chaining
      */
     public Message addClobs(List<String> strings) {
         return addFrame(new FrameBuilder().putClobs(strings).build());
@@ -227,15 +227,15 @@ public class Message implements Iterable<Message.Frame> {
     /**
      * Add a frame containing a List of String values to the beginning of the list.
      *
-     * @param strings The frame to be added
-     * @return This message, for method chaining
+     * @param strings The frame to be added, as a List of Strings
+     * @return This Message, for method chaining
      */
     public Message pushClobs(List<String> strings) {
         return pushFrame(new FrameBuilder().putClobs(strings).build());
     }
 
     /**
-     * Remove a frame from the beginning of the list.
+     * Remove a frame containing a List of String values from the beginning of the list.
      *
      * @return The first frame, as a list of Strings
      */
@@ -246,8 +246,8 @@ public class Message implements Iterable<Message.Frame> {
     /**
      * Add a frame containing a Map of String pairs to the end of the list.
      *
-     * @param map The frame to be added
-     * @return This message, for method chaining
+     * @param map The frame to be added, as a Map
+     * @return This Message, for method chaining
      */
     public Message addMap(Map<String, String> map) {
         return addFrame(new FrameBuilder().putMap(map).build());
@@ -257,14 +257,14 @@ public class Message implements Iterable<Message.Frame> {
      * Add a frame containing a Map of String pairs to the beginning of the list.
      *
      * @param map The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushMap(Map<String, String> map) {
         return pushFrame(new FrameBuilder().putMap(map).build());
     }
 
     /**
-     * Remove a frame from the beginning of the list.
+     * Remove a frame containing a Map of String pairs from the beginning of the list.
      *
      * @return The first frame, as a Map
      */
@@ -273,23 +273,23 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add a frame containing an int value to the end of the list.
+     * Add a frame containing an {@code int} value to the end of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addInt(int frame) {
-        return addFrame(Frame.wrap(frame));
+        return addFrame(Frame.of(frame));
     }
 
     /**
-     * Add a frame containing an int value to the beginning of the list.
+     * Add a frame containing an {@code int} value to the beginning of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushInt(int frame) {
-        return pushFrame(Frame.wrap(frame));
+        return pushFrame(Frame.of(frame));
     }
 
     /**
@@ -302,23 +302,23 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add a frame containing a long value to the end of the list.
+     * Add a frame containing a {@code long} value to the end of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addLong(long frame) {
-        return addFrame(Frame.wrap(frame));
+        return addFrame(Frame.of(frame));
     }
 
     /**
-     * Add a frame containing a long value to the beginning of the list.
+     * Add a frame containing a {@code long} value to the beginning of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushLong(long frame) {
-        return pushFrame(Frame.wrap(frame));
+        return pushFrame(Frame.of(frame));
     }
 
     /**
@@ -331,23 +331,23 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add a frame containing a short value to the end of the list.
+     * Add a frame containing a {@code short} value to the end of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addShort(short frame) {
-        return addFrame(Frame.wrap(frame));
+        return addFrame(Frame.of(frame));
     }
 
     /**
-     * Add a frame containing a short value to the beginning of the list.
+     * Add a frame containing a {@code short} value to the beginning of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushShort(short frame) {
-        return pushFrame(Frame.wrap(frame));
+        return pushFrame(Frame.of(frame));
     }
 
     /**
@@ -360,23 +360,23 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add a frame containing a byte to the end of the list.
+     * Add a frame containing a {@code byte} to the end of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addByte(byte frame) {
-        return addFrame(Frame.wrap(frame));
+        return addFrame(Frame.of(frame));
     }
 
     /**
-     * Add a frame containing a byte to the beginning of the list.
+     * Add a frame containing a {@code byte} to the beginning of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushByte(byte frame) {
-        return pushFrame(Frame.wrap(frame));
+        return pushFrame(Frame.of(frame));
     }
 
     /**
@@ -389,40 +389,40 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add a frame to the end of the list.
+     * Add a frame containing bytes in the given Buffer to the end of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addBuffer(ByteBuffer frame) {
         return addFrame(new Frame(frame));
     }
 
     /**
-     * Add a frame to the beginning of the list.
+     * Add a frame containing bytes in the given Buffer to the beginning of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushBuffer(ByteBuffer frame) {
         return pushFrame(new Frame(frame));
     }
 
     /**
-     * Add a frame to the end of the list.
+     * Add a frame containing the given bytes to the end of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addBytes(byte[] frame) {
         return addFrame(new Frame(frame));
     }
 
     /**
-     * Add a frame to the beginning of the list.
+     * Add a frame containing the given bytes to the beginning of the list.
      *
      * @param frame The frame to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushBytes(byte[] frame) {
         return pushFrame(new Frame(frame));
@@ -438,10 +438,10 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add the frames to the end of the list.
+     * Add the given frames to the end of the list.
      * 
      * @param frames The frames to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addFrames(List<Frame> frames) {
         this.frames.addAll(frames);
@@ -449,10 +449,10 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add all frames from the given message to the end of the list.
+     * Add all frames from the given Message to the end of the list.
      * 
      * @param payload The original message, containing frames to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message addFrames(Message payload) {
         frames.addAll(payload.frames);
@@ -460,11 +460,11 @@ public class Message implements Iterable<Message.Frame> {
     }
 
     /**
-     * Add frames to the end of the list, in reverse order, such that the
-     * elements are in the same order as in the original message.
+     * Add frames to the beginning of the list, in reverse order, such that the
+     * elements are in the same order as in the original List.
      * 
      * @param frames The frames to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushFrames(List<Frame> frames) {
         ListIterator<Frame> itr = frames.listIterator(frames.size());
@@ -477,10 +477,10 @@ public class Message implements Iterable<Message.Frame> {
 
     /**
      * Add frames to the beginning of the list, in reverse order, such that
-     * the elements are in the same order as in the original message.
+     * the elements are in the same order as in the original Message.
      * 
      * @param payload The original message, containing frames to be added
-     * @return This message, for method chaining
+     * @return This Message, for method chaining
      */
     public Message pushFrames(Message payload) {
         Iterator<Frame> itr = payload.frames.descendingIterator();
@@ -616,13 +616,14 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Convert the data to a string using the configured {@link Charset}.
+         * Returns a String value encoded into the buffer as a byte and bytes
+         * using the default character set.
          * 
          * @return The frame, as a String
          * @see Message#CHARSET
          */
         public String getString() {
-            return new String(buffer.array(), CHARSET);
+            return new String(getBytes(), CHARSET);
         }
 
         /**
@@ -674,13 +675,14 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Returns a String value encoded into the buffer as a short and bytes
+         * Returns a String value encoded into the buffer as a byte and bytes
          * using the default character set.
-         * <p>
-         * TODO: Rename to {@link #getString()}?
          *
          * @return A String value
+         *
+         * @deprecated Use {@link #getString()} instead.
          */
+        @Deprecated
         public String getChars() {
             return new String(getBytes(), CHARSET);
         }
@@ -690,13 +692,13 @@ public class Message implements Iterable<Message.Frame> {
          * a sequence of strings using the default character set.
          *
          * @return A list of strings
-         * @see #getChars()
+         * @see #getString()
          */
         public List<String> getStrings() {
             int size = getInt();
             List<String> strings = new ArrayList<>(size);
             while (size-- > 0) {
-                strings.add(getChars());
+                strings.add(getString());
             }
 
             return strings;
@@ -729,7 +731,7 @@ public class Message implements Iterable<Message.Frame> {
          * a sequence of strings using the default character set.
          *
          * @return A list of strings
-         * @see #getChars()
+         * @see #getClob()
          */
         public List<String> getClobs() {
             int size = getInt();
@@ -746,13 +748,14 @@ public class Message implements Iterable<Message.Frame> {
          * a sequence of pairs of strings using the default character set.
          *
          * @return A list of strings
-         * @see #getChars()
+         * @see #getString()
+         * @see #getClob()
          */
         public Map<String, String> getMap() {
             int size = getInt();
             Map<String, String> map = new HashMap<>(size, 1.0f);
             while (size-- > 0) {
-                map.put(getChars(), getClob());
+                map.put(getString(), getClob());
             }
 
             return map;
@@ -772,11 +775,11 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Convert the frame to a string, for use in debugging.
+         * Convert the data to a string using the configured {@link Charset}.
          */
         @Override
         public String toString() {
-            return "Frame{data=" + getString() + '}';
+            return new String(buffer.array(), CHARSET);
         }
 
         /**
@@ -788,20 +791,36 @@ public class Message implements Iterable<Message.Frame> {
             return buffer.capacity() == 0;
         }
 
-        public static Frame wrap(byte value) {
+        public static Frame of(byte value) {
             return new FrameBuilder(1).putByte(value).build();
         }
 
-        public static Frame wrap(short value) {
+        public static Frame of(short value) {
             return new FrameBuilder(2).putShort(value).build();
         }
 
-        public static Frame wrap(int value) {
+        public static Frame of(int value) {
             return new FrameBuilder(4).putInt(value).build();
         }
 
-        public static Frame wrap(long value) {
+        public static Frame of(long value) {
             return new FrameBuilder(8).putLong(value).build();
+        }
+
+        public static Frame of(String value) {
+            return new Frame(value);
+        }
+
+        public static Frame of(byte[] value) {
+            return new Frame(value);
+        }
+
+        public static Frame of(List<String> values) {
+            return new FrameBuilder().putStrings(values).build();
+        }
+
+        public static Frame of(Map<String, String> values) {
+            return new FrameBuilder().putMap(values).build();
         }
     }
 
@@ -812,10 +831,18 @@ public class Message implements Iterable<Message.Frame> {
     public static class FrameBuilder {
         private ByteBuffer buffer;
 
+        /**
+         * Construct a builder with an initial buffer size of 32 bytes.
+         */
         public FrameBuilder() {
             this(32);
         }
 
+        /**
+         * Construct a builder with a given initial buffer size.
+         *
+         * @param capacity The initial size of the buffer
+         */
         public FrameBuilder(int capacity) {
             this.buffer = ByteBuffer.allocate(capacity);
         }
