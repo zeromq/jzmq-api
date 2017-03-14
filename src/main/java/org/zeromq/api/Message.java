@@ -792,38 +792,92 @@ public class Message implements Iterable<Message.Frame> {
             return buffer.capacity() == 0;
         }
 
+        /**
+         * Create a frame containing a single {@code byte} value.
+         *
+         * @param value The {@code byte} value
+         * @return A new Frame
+         */
         public static Frame of(byte value) {
             return new FrameBuilder(1).putByte(value).build();
         }
 
+        /**
+         * Create a frame containing a single {@code short} value.
+         *
+         * @param value The {@code short} value
+         * @return A new Frame
+         */
         public static Frame of(short value) {
             return new FrameBuilder(2).putShort(value).build();
         }
 
+        /**
+         * Create a frame containing a single {@code int} value.
+         *
+         * @param value The {@code int} value
+         * @return A new Frame
+         */
         public static Frame of(int value) {
             return new FrameBuilder(4).putInt(value).build();
         }
 
+        /**
+         * Create a frame containing a single {@code long} value.
+         *
+         * @param value The {@code long} value
+         * @return A new Frame
+         */
         public static Frame of(long value) {
             return new FrameBuilder(8).putLong(value).build();
         }
 
+        /**
+         * Create a frame containing a single String value.
+         *
+         * @param value The String value
+         * @return A new Frame
+         */
         public static Frame of(String value) {
             return new Frame(value);
         }
 
+        /**
+         * Create a frame containing a single {@code byte[]} value.
+         *
+         * @param value The {@code byte[]} value
+         * @return A new Frame
+         */
         public static Frame of(byte[] value) {
             return new Frame(value);
         }
 
+        /**
+         * Create a frame containing a single List of String values.
+         *
+         * @param values The List of String values
+         * @return A new Frame
+         */
         public static Frame of(List<String> values) {
             return new FrameBuilder().putStrings(values).build();
         }
 
+        /**
+         * Create a frame containing a single Map of String pairs.
+         *
+         * @param values The Map of String pairs
+         * @return A new Frame
+         */
         public static Frame of(Map<String, String> values) {
             return new FrameBuilder().putMap(values).build();
         }
 
+        /**
+         * Create a frame containing the given buffer.
+         *
+         * @param buffer The buffer
+         * @return A new Frame
+         */
         public static Frame of(ByteBuffer buffer) {
             return new Frame(buffer);
         }
