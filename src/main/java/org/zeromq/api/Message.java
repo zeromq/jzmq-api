@@ -533,7 +533,8 @@ public class Message implements Iterable<Message.Frame> {
      * <p>
      * This should only be used for debugging and tracing, inefficient in
      * handling large messages.
-     * 
+     *
+     * @param sb The StringBuilder
      * @return A StringBuilder with the message in human readable format
      */
     protected StringBuilder dump(StringBuilder sb) {

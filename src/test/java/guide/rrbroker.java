@@ -12,7 +12,7 @@ public class rrbroker {
             Poller poller = context.buildPoller()
                     .withPollable(context.newPollable(frontEnd, PollerType.POLL_IN), new Forwarder(backEnd))
                     .withPollable(context.newPollable(backEnd, PollerType.POLL_IN), new Forwarder(frontEnd))
-                    .create();
+                    .build();
 
             poller.poll();
         }

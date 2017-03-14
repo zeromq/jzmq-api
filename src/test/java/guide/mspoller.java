@@ -34,7 +34,7 @@ public class mspoller {
                         System.out.println(new String(subscribed));
                     }
                 })
-                .create();
+                .build();
 
         while (true) {
             poller.poll();

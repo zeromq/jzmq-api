@@ -171,17 +171,11 @@ public class SocketBuilder implements Bindable, Connectable {
         return socketSpec;
     }
 
-    /**
-     * todo: javadoc me
-     */
     public SocketBuilder withReceiveTimeout(int receiveTimeout) {
         getSocketSpec().receiveTimeout = receiveTimeout;
         return this;
     }
 
-    /**
-     * todo: javadoc me
-     */
     public SocketBuilder withSendTimeout(int sendTimeout) {
         getSocketSpec().sendTimeout = sendTimeout;
         return this;
