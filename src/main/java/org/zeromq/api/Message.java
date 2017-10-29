@@ -973,6 +973,10 @@ public class Message implements Iterable<Message.Frame> {
          * @return This builder, for method chaining
          */
         public FrameBuilder putBytes(byte[] bytes, int offset, int length) {
+            if (length > Byte.MAX_VALUE) {
+                throw new IllegalArgumentException("Value too large, use putBlob instead of putBytes.");
+            }
+
             checkCapacity(length + 1);
             buffer.put((byte) length);
             buffer.put(bytes, offset, length);
@@ -980,13 +984,17 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Put an encoded String value into the buffer as a byte and bytes
+         * Put an encoded String value into the buffer as a byte and string
          * using the default character set.
          *
          * @param value A String value
          * @return This builder, for method chaining
          */
         public FrameBuilder putString(String value) {
+            if (value.length() > Byte.MAX_VALUE) {
+                throw new IllegalArgumentException("Value too large, use putClob instead of putString.");
+            }
+
             return putBytes(value.getBytes(CHARSET));
         }
 
@@ -1042,7 +1050,7 @@ public class Message implements Iterable<Message.Frame> {
         }
 
         /**
-         * Put a list of encoded String values into the buffer as an int and strings
+         * Put a list of encoded String values into the buffer as an int and clobs
          * using the default character set.
          *
          * @param strings A List of String values
