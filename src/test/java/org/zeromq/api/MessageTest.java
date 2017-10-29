@@ -185,14 +185,14 @@ public class MessageTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testPutLargeBytes() {
-        byte[] bytes = new byte[255];
+        byte[] bytes = new byte[256];
         Arrays.fill(bytes, (byte) '\0');
         new Message.FrameBuilder().putBytes(bytes).build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPutLargeString() {
-        char[] chars = new char[255];
+        char[] chars = new char[256];
         Arrays.fill(chars, 'a');
         String string = new String(chars);
         new Message.FrameBuilder().putString(string).build();

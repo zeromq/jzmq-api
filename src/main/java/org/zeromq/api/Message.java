@@ -669,7 +669,7 @@ public class Message implements Iterable<Message.Frame> {
          * @return A byte array
          */
         public byte[] getBytes() {
-            int len = buffer.get();
+            int len = buffer.get() & 0xff;
             byte[] buf = new byte[len];
             buffer.get(buf);
             return buf;
@@ -973,7 +973,7 @@ public class Message implements Iterable<Message.Frame> {
          * @return This builder, for method chaining
          */
         public FrameBuilder putBytes(byte[] bytes, int offset, int length) {
-            if (length > Byte.MAX_VALUE) {
+            if (length > 255) {
                 throw new IllegalArgumentException("Value too large, use putBlob instead of putBytes.");
             }
 
@@ -991,11 +991,15 @@ public class Message implements Iterable<Message.Frame> {
          * @return This builder, for method chaining
          */
         public FrameBuilder putString(String value) {
-            if (value.length() > Byte.MAX_VALUE) {
+            int length = value.length();
+            if (length > 255) {
                 throw new IllegalArgumentException("Value too large, use putClob instead of putString.");
             }
 
-            return putBytes(value.getBytes(CHARSET));
+            checkCapacity(length + 1);
+            buffer.put((byte) length);
+            buffer.put(value.getBytes(CHARSET));
+            return this;
         }
 
         /**
