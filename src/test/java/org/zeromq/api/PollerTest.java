@@ -36,7 +36,7 @@ public class PollerTest {
                         requestReceived.set(true);
                     }
                 })
-                .create();
+                .build();
 
         Socket request = context.buildSocket(SocketType.REQ).connect("inproc://repSocket");
         request.send("hello".getBytes());
@@ -57,7 +57,7 @@ public class PollerTest {
                         socket.send("hello".getBytes());
                     }
                 })
-                .create();
+                .build();
 
 
         testClass.poll(100L);

@@ -115,7 +115,7 @@ public class CloneServerImpl implements CloneServer {
 
                 String prefix = "";
                 if (!message.isEmpty()) {
-                    prefix = message.popFrame().getString();
+                    prefix = message.popString();
                 }
 
                 // Send state snapshot to client

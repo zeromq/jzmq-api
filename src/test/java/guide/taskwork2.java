@@ -22,7 +22,7 @@ public class taskwork2 {
         Poller poller = context.buildPoller()
                 .withPollable(context.newPollable(receiver, PollerType.POLL_IN), new Worker(sender))
                 .withPollable(context.newPollable(controller, PollerType.POLL_IN), new Stopper(shouldStop))
-                .create();
+                .build();
 
         while (!shouldStop.get()) {
             poller.poll();
