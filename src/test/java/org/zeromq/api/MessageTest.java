@@ -5,6 +5,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNull;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
@@ -180,6 +181,21 @@ public class MessageTest {
 
         Frame frame = new Frame(buffer.array());
         assertEquals(string, frame.getString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutLargeBytes() {
+        byte[] bytes = new byte[256];
+        Arrays.fill(bytes, (byte) '\0');
+        new Message.FrameBuilder().putBytes(bytes).build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutLargeString() {
+        char[] chars = new char[256];
+        Arrays.fill(chars, 'a');
+        String string = new String(chars);
+        new Message.FrameBuilder().putString(string).build();
     }
 
     @Test
