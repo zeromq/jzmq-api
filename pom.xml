@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.zeromq</groupId>
   <artifactId>jzmq-api</artifactId>
   <packaging>jar</packaging>
   <description>A Java ØMQ API for abstracting the various implementations of ZeroMQ Message Transport Protocol</description>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <name>jzmq-api</name>
   <url>https://github.com/zeromq/jzmq-api</url>
   <licenses>
