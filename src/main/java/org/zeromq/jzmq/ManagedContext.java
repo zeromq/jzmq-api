@@ -192,7 +192,7 @@ public class ManagedContext implements Context {
 
     @Deprecated
     public ZMQ.Poller newZmqPoller(int initialNumberOfItems) {
-        return new ZMQ.Poller(initialNumberOfItems);
+        return context.poller(initialNumberOfItems);
     }
 
     @Deprecated

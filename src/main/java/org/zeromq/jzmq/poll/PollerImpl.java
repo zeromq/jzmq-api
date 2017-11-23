@@ -22,7 +22,7 @@ public class PollerImpl implements Poller {
     private final List<PollListener> listeners = new ArrayList<>();
 
     public PollerImpl(ManagedContext context, Map<Pollable, PollListener> pollableMap) {
-        this.poller = new ZMQ.Poller(pollables.size());
+        this.poller = context.getZMQContext().poller(pollables.size());
         for (Map.Entry<Pollable, PollListener> entry : pollableMap.entrySet()) {
             pollables.add(entry.getKey());
             listeners.add(entry.getValue());

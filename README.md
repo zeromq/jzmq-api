@@ -10,8 +10,11 @@ The API is still in it's infancy and will be subject to much change.
 
 ## Installation
 
-Before you can begin using this library, you need to have the zmq and jzmq
-shared libraries in either: `/usr/lib`, `/usr/local/lib`.
+This library supports using both jzmq and JeroMQ via profiles. The default is JeroMQ.
+
+Before you can begin using this library with jzmq, you need to have the zmq and jzmq shared libraries in either:
+* `/usr/lib`
+* `/usr/local/lib`.
 
 ## Getting Started
 
