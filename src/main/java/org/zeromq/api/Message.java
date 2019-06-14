@@ -1083,6 +1083,7 @@ public class Message implements Iterable<Message.Frame> {
          * @return The new frame
          */
         public Frame build() {
+            buffer.flip();
             return new Frame(buffer);
         }
 
