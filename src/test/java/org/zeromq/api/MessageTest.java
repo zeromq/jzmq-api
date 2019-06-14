@@ -89,6 +89,12 @@ public class MessageTest {
     }
 
     @Test
+    public void testGetInt() {
+        Frame frame = Frame.of(100);
+        assertEquals(100, frame.getInt());
+    }
+
+    @Test
     public void testPutInt_0x77777777() {
         Frame frame = Frame.of(0x77777777);
 
