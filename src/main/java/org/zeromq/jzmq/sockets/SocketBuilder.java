@@ -25,9 +25,9 @@ public class SocketBuilder implements Bindable, Connectable {
 
     public class SocketSpec {
         public long swapSize;
-        public long linger;
-        public long sendHighwatermark;
-        public long receiveHighWatermark;
+        public int linger;
+        public int sendHighwatermark;
+        public int receiveHighWatermark;
         public int receiveTimeout = -1;
         public int sendTimeout = -1;
         public SocketType socketType;
@@ -57,8 +57,22 @@ public class SocketBuilder implements Bindable, Connectable {
      * 
      * @param lingerMS the linger period in millis
      * @return builder object
+     * @deprecated The linger option has only integer range, use {@link SocketBuilder#withLinger(int)} instead.
      */
+    @Deprecated
     public SocketBuilder withLinger(long lingerMS) {
+        getSocketSpec().linger = Long.valueOf(lingerMS).intValue();
+        return this;
+    }
+
+    /**
+     * Set the linger period for the specified socket. The linger period determines how long pending which have yet to
+     * sent to a peer shall linger in memory after a socket is closed.
+     *
+     * @param lingerMS the linger period in millis
+     * @return builder object
+     */
+    public SocketBuilder withLinger(int lingerMS) {
         getSocketSpec().linger = lingerMS;
         return this;
     }
@@ -68,7 +82,7 @@ public class SocketBuilder implements Bindable, Connectable {
      * 
      * @return linger period
      */
-    public long getLinger() {
+    public int getLinger() {
         return getSocketSpec().linger;
     }
 
@@ -125,8 +139,21 @@ public class SocketBuilder implements Bindable, Connectable {
      * 
      * @param sendHWM The send high watermark
      * @return builder object
+     * @deprecated This option uses integer range, use {@link SocketBuilder#withSendHighWatermark(int)} instead.
      */
+    @Deprecated
     public SocketBuilder withSendHighWatermark(long sendHWM) {
+        getSocketSpec().sendHighwatermark = Long.valueOf(sendHWM).intValue();
+        return this;
+    }
+
+    /**
+     * Set the send high watermark.
+     *
+     * @param sendHWM The send high watermark
+     * @return builder object
+     */
+    public SocketBuilder withSendHighWatermark(int sendHWM) {
         getSocketSpec().sendHighwatermark = sendHWM;
         return this;
     }
@@ -136,7 +163,7 @@ public class SocketBuilder implements Bindable, Connectable {
      * 
      * @return send high watermark
      */
-    public long getSendHighWaterMark() {
+    public int getSendHighWaterMark() {
         return getSocketSpec().sendHighwatermark;
     }
 
@@ -152,8 +179,28 @@ public class SocketBuilder implements Bindable, Connectable {
      * 
      * @param receiveHWM recv high water mark
      * @return builder object
+     * @deprecated This option uses integer range, use {@link #withReceiveHighWatermark(int)} instead.
      */
+    @Deprecated
     public SocketBuilder withReceiveHighWatermark(long receiveHWM) {
+        getSocketSpec().receiveHighWatermark = Long.valueOf(receiveHWM).intValue();
+        return this;
+    }
+
+    /**
+     * The RECVHWM option shall set the high water mark (HWM) for inbound messages on the specified socket. The HWM is a
+     * hard limit on the maximum number of outstanding 0MQ shall queue in memory for any single peer that the specified
+     * socket is communicating with.
+     *
+     * If this limit has been reached the socket shall enter an exceptional state and depending on the socket type, 0MQ
+     * shall take appropriate action such as blocking or dropping sent messages. Refer to the individual socket
+     * descriptions in <a href="http://api.zeromq.org/3-2:zmq-socket">zmq_socket(3)</a> for details on the exact action
+     * taken for each socket type.
+     *
+     * @param receiveHWM recv high water mark
+     * @return builder object
+     */
+    public SocketBuilder withReceiveHighWatermark(int receiveHWM) {
         getSocketSpec().receiveHighWatermark = receiveHWM;
         return this;
     }
@@ -163,7 +210,7 @@ public class SocketBuilder implements Bindable, Connectable {
      * 
      * @return receive high water mark
      */
-    public long getReceiveHighWaterMark() {
+    public int getReceiveHighWaterMark() {
         return getSocketSpec().receiveHighWatermark;
     }
 
