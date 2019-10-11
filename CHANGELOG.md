@@ -1,6 +1,16 @@
 # Changelog
 
-## v0.1.0 (unreleased)
+## v0.2.0
+
+* [#44](https://github.com/zeromq/jzmq-api/pull/44): Fix deprecation warnings
+* [#43](https://github.com/zeromq/jzmq-api/pull/43): Flip ByteBuffer when building a new frame [bug fix]
+* [#41](https://github.com/zeromq/jzmq-api/pull/41): Upgrade pom
+  * Upgraded to jeromq 0.5.1
+  * Upgraded plugins
+  * Removed oss-parent
+* [#39](https://github.com/zeromq/jzmq-api/pull/39): Upgrade to jeromq 0.4.3
+
+## v0.1.0
 
 * [#37](https://github.com/zeromq/jzmq-api/pull/37): Improvements for large byte values in FrameBuilder
   * Add error checking for large byte/string values
